@@ -47,6 +47,7 @@ body {
 .box-selectTitle {
   font: 600 13px 'Open Sans';
   margin-bottom: 3px;
+  text-transform: uppercase;
 }
 
 .box-container.is-hidden {

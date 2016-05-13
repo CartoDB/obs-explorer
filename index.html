@@ -30,7 +30,7 @@
           </div>
         </div>  
         <div class="box-select">
-          <h2 class="box-selectTitle">MALE POPULATION</h2>
+          <h2 class="box-selectTitle js-box-selectTitle">MALE POPULATION</h2>
           <div class="box-selectInfo">
             <h3 class="box-figure js-figure">256,982</h3>
             <p class="box-figureInfo"><span class="js-percent">45</span>% of total (<span class="js-total">545,065</span>)</p>
@@ -70,7 +70,10 @@
         $( ".js-result-category li" ).on( "click", function() {
           $(".js-result-category li").removeClass( "is-selected" );
           $(this).toggleClass( "is-selected" );
+          $(".js-box-selectTitle").text($(this).text());
         }); 
+
+
       };
       var scrollFunction = function(){
         $(".js-result-category").niceScroll({
