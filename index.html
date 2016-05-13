@@ -56,26 +56,12 @@
             <li><a href="#">Two or more races Population</a></li>
             <li><a href="#">Population not Hispanic</a></li>
           </ul>
-          <ul class="box-resultList js-result-categoryInfo">
-            <li><a href="#">Total Population</a></li>
-            <li class="is-selected"><a href="#">Male Population</a></li>
-            <li><a href="#">Female Population</a></li>
-            <li><a href="#">White Population</a></li>
-            <li><a href="#">Black or African American Population</a></li>
-            <li><a href="#">Asian Population</a></li>
-            <li><a href="#">Hispanic Population</a></li>
-            <li><a href="#">American Indian and Alaska Native Population</a></li>
-            <li><a href="#">Other race Population</a></li>
-            <li><a href="#">Two or more races Population</a></li>
-            <li><a href="#">Population not Hispanic</a></li>
-            <li><a href="#">Not a U.S. Citizen Population</a></li>
-            <li><a href="#">Population 3 Years and Over</a></li>
-          </ul>
       </div>
     </div>
   </div>
 
   <script type="text/javascript">
+
     $( document ).ready(function() {
       /* read json */
       $.getJSON( "data.json", function( data ) {
@@ -87,15 +73,17 @@
           "class": "box-navNavigation",
           html: items.join( "" )
         }).appendTo( ".box-nav" );
-      });
+      })
+        .done(function(){
+          $( ".box-navNavigation a" ).on( "click", function() {
+            var txt = $(this).text();
+            $(".js-box-input").text(txt);
+            $(".box-navNavigation a").removeClass( "is-selected" );
+            $(this).toggleClass( "is-selected" );
+          });
+        });
 
-
-      $( ".box-navNavigation a" ).on( "click", function() {
-        console.log("rabo");
-        $(".box-navNavigation a").removeClass( "is-selected" );
-        $(this).toggleClass( "is-selected" );
-      });
-
+    
       $( ".js-result-category li" ).on( "click", function() {
         $(".js-result-category li").removeClass( "is-selected" );
         $(this).toggleClass( "is-selected" );
@@ -104,6 +92,10 @@
       $( ".js-result-categoryInfo li" ).on( "click", function() {
         $(".js-result-categoryInfo li").removeClass( "is-selected" );
         $(this).toggleClass( "is-selected" );
+      });
+
+      $( ".box-input" ).on( "click", function() {
+        $(this).toggleClass( "is-open" );
       });
 
       $( ".js-box-input" ).on( "click", function() {

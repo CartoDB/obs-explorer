@@ -12,17 +12,6 @@
       {
         "label_1": "Female Population"
       }
-    ],
-    "filter_2":[
-      {
-        "label_2": "Population completed High School"
-      },
-      {
-        "label_2": "Population completed less than one year of college, no degree"
-      },
-      {
-        "label_2": "Population completed more than one year of college, no degree"
-      }
     ]
   },
   {
@@ -37,17 +26,6 @@
       },
       {
         "label_1": "Female Population"
-      }
-    ],
-    "filter_2":[
-      {
-        "label_2": "Population completed High School"
-      },
-      {
-        "label_2": "Population completed less than one year of college, no degree"
-      },
-      {
-        "label_2": "Population completed more than one year of college, no degree"
       }
     ]
   },
@@ -64,17 +42,6 @@
       {
         "label_1": "Female Population"
       }
-    ],
-    "filter_2":[
-      {
-        "label_2": "Population completed High School"
-      },
-      {
-        "label_2": "Population completed less than one year of college, no degree"
-      },
-      {
-        "label_2": "Population completed more than one year of college, no degree"
-      }
     ]
   },
   {
@@ -89,17 +56,6 @@
       },
       {
         "label_1": "Female Population"
-      }
-    ],
-    "filter_2":[
-      {
-        "label_2": "Population completed High School"
-      },
-      {
-        "label_2": "Population completed less than one year of college, no degree"
-      },
-      {
-        "label_2": "Population completed more than one year of college, no degree"
       }
     ]
   },
@@ -116,17 +72,6 @@
       {
         "label_1": "Female Population"
       }
-    ],
-    "filter_2":[
-      {
-        "label_2": "Population completed High School"
-      },
-      {
-        "label_2": "Population completed less than one year of college, no degree"
-      },
-      {
-        "label_2": "Population completed more than one year of college, no degree"
-      }
     ]
   },
   {
@@ -142,17 +87,6 @@
       {
         "label_1": "Female Population"
       }
-    ],
-    "filter_2":[
-      {
-        "label_2": "Population completed High School"
-      },
-      {
-        "label_2": "Population completed less than one year of college, no degree"
-      },
-      {
-        "label_2": "Population completed more than one year of college, no degree"
-      }
     ]
   },
   {
@@ -167,17 +101,6 @@
       },
       {
         "label_1": "Female Population"
-      }
-    ],
-    "filter_2":[
-      {
-        "label_2": "Population completed High School"
-      },
-      {
-        "label_2": "Population completed less than one year of college, no degree"
-      },
-      {
-        "label_2": "Population completed more than one year of college, no degree"
       }
     ]
   }
