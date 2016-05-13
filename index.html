@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>Your Website</title>
+  <link rel="stylesheet" type="text/css" href="css/reset.css">
+  <link rel="stylesheet" type="text/css" href="css/app.css">
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js"></script>
+
+
+</head>
+
+<body>
+
+  <div id="map"></div>
+
+  <div class="box">
+    <div class="box-inner">
+      <div class="box-header">
+        <div class="box-select">
+          <h2 class="box-selectTitle">CHOOSE A MEASUREMENT</h2>
+          <div class="box-input">
+            <h2 class="js-box-input">Male Population</h2>
+          </div>
+        </div>  
+        <div class="box-select">
+          <h2 class="box-selectTitle">MALE POPULATION</h2>
+          <div class="box-selectInfo">
+            <h3 class="box-figure js-figure">256,982</h3>
+            <p class="box-figureInfo"><span class="js-percent">45</span>% of total (<span class="js-total">545,065</span>)</p>
+          </div>
+        </div>
+      </div>
+      <div class="box-container is-hidden">
+        <nav class="box-nav">
+          <ul class="box-navNavigation">
+            <li><a href="#">BOUNDARIES</a></li>
+            <li><a href="#">POPULATION</a></li>
+            <li><a href="#">AGE</a></li>
+            <li><a href="#">GENDER</a></li>
+            <li><a href="#">ETHNICITY</a></li>
+            <li><a href="#">COMMUTERS</a></li>
+            <li><a href="#">HOUSEHOLDS</a></li>
+          </ul>
+        </nav>
+        <div class="box-result">
+          <ul class="box-resultList js-result-category">
+            <li><a href="#">Total Population</a></li>
+            <li class="is-selected"><a href="#">Male Population</a></li>
+            <li><a href="#">Female Population</a></li>
+            <li><a href="#">White Population</a></li>
+            <li><a href="#">Black or African American Population</a></li>
+            <li><a href="#">Asian Population</a></li>
+            <li><a href="#">Hispanic Population</a></li>
+            <li><a href="#">American Indian and Alaska Native Population</a></li>
+            <li><a href="#">Other race Population</a></li>
+            <li><a href="#">Two or more races Population</a></li>
+            <li><a href="#">Population not Hispanic</a></li>
+            <li><a href="#">Not a U.S. Citizen Population</a></li>
+            <li><a href="#">Population 3 Years and Over</a></li>
+            <li><a href="#">American Indian and Alaska Native Population</a></li>
+            <li><a href="#">Other race Population</a></li>
+            <li><a href="#">Two or more races Population</a></li>
+            <li><a href="#">Population not Hispanic</a></li>
+          </ul>
+          <ul class="box-resultList js-result-categoryInfo">
+            <li><a href="#">Total Population</a></li>
+            <li class="is-selected"><a href="#">Male Population</a></li>
+            <li><a href="#">Female Population</a></li>
+            <li><a href="#">White Population</a></li>
+            <li><a href="#">Black or African American Population</a></li>
+            <li><a href="#">Asian Population</a></li>
+            <li><a href="#">Hispanic Population</a></li>
+            <li><a href="#">American Indian and Alaska Native Population</a></li>
+            <li><a href="#">Other race Population</a></li>
+            <li><a href="#">Two or more races Population</a></li>
+            <li><a href="#">Population not Hispanic</a></li>
+            <li><a href="#">Not a U.S. Citizen Population</a></li>
+            <li><a href="#">Population 3 Years and Over</a></li>
+          </ul>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    $( document ).ready(function() {
+      $( ".box-navNavigation li" ).on( "click", function() {
+        $(".box-navNavigation li").removeClass( "is-selected" );
+        $(this).toggleClass( "is-selected" );
+      });
+      $( ".js-result-category li" ).on( "click", function() {
+        $(".js-result-category li").removeClass( "is-selected" );
+        $(this).toggleClass( "is-selected" );
+      });
+      $( ".js-result-categoryInfo li" ).on( "click", function() {
+        $(".js-result-categoryInfo li").removeClass( "is-selected" );
+        $(this).toggleClass( "is-selected" );
+      });
+
+      $( ".js-box-input" ).on( "click", function() {
+        console.log("rabo");
+        $(".box-container").toggleClass( "is-hidden" );
+      });
+      
+    });
+
+  </script>
+
+</body>
+
+</html>
