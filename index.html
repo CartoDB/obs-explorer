@@ -7,6 +7,8 @@
   <link rel="stylesheet" type="text/css" href="css/reset.css">
   <link rel="stylesheet" type="text/css" href="css/app.css">
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
   <script src="js/jquery.nicescroll.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js"></script>
@@ -41,10 +43,13 @@
       </div>
     </div>
   </div>
+  <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
 
   <script type="text/javascript">
 
     $( document ).ready(function() {
+      cartodb.createVis('map', 'https://team.cartodb.com/u/piensaenpixel/api/v2/viz/3ae0b708-136b-11e6-97d4-0ea31932ec1d/viz.json');
+
       /* read json */
       var subitemsMenu = function(e,f){
         var id = $(e).attr("data-value")
