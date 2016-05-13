@@ -3,169 +3,181 @@
     "label": "All",
     "filter_1":
     [
-      {
-        "label_1": "All Population 1",
+      { 
+        "label_1": "Median Age",
         "value": "2000"
       },
       {
-        "label_1": "All Population 2",
+        "label_1": "Population 25 Years and Over",
         "value": "2000"
       },
       {
-        "label_1": "All Population 3",
+         "label_1": "Median Household Income in the past 12 Months",
+         "value": "2000"
+      },
+      {
+         "label_1": "Gini Index",
+         "value": "2000"
+      },
+      {
+         "label_1": "Per Capita Income in the past 12 Months",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income less than $10,000",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $10,000 to $14,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $15,000 to $19,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $20,000 To $24,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $25,000 To $29,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $30,000 To $34,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $35,000 To $39,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $40,000 To $44,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $45,000 To $49,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $50,000 To $59,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $60,000 To $74,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $75,000 To $99,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $100,000 To $124,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $125,000 To $149,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $150,000 To $199,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $200,000 Or More",
+         "value": "2000"
+      },
+      {
+         "label_1": "Male Population",
+         "value": "2000"
+      },
+      {
+         "label_1": "Female Population",
+         "value": "2000"
+       },
+       {
+         "label_1": "White Population",
+         "value": "2000"
+      },
+      {
+         "label_1": "Black or African American Population",
+         "value": "2000"
+      },
+      {
+         "label_1": "Asian Population",
+         "value": "2000"
+      },
+      {
+         "label_1": "Hispanic Population",
+         "value": "2000"
+      },
+      {
+         "label_1": "American Indian and Alaska Native Population",
+         "value": "2000"
+      },
+      {
+         "label_1": "Other Race population",
+         "value": "2000"
+      },
+      {
+         "label_1": "Two or more races population",
+         "value": "2000"
+      },
+      {
+         "label_1": "Population not Hispanic",
+         "value": "2000"
+      },
+      {
+        "label_1": "Workers age 16 and over who do not work from home",
         "value": "2000"
       },
       {
-        "label_1": "All Population 2",
+        "label_1": "Number of workers with less than 10 minute commute",
         "value": "2000"
       },
       {
-        "label_1": "All Population 3",
+        "label_1": "Number of workers with a commute between 35 and 44 minutes",
         "value": "2000"
       },
       {
-        "label_1": "All Population 2",
+        "label_1": "Number of workers with a commute of over 60 minutes",
         "value": "2000"
       },
       {
-        "label_1": "All Population 3",
+        "label_1": "Aggregate travel time to work",
         "value": "2000"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2000"
+         "label_1": "White Population",
+         "value": "2000"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2000"
+         "label_1": "Black or African American Population",
+         "value": "2000"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2000"
+         "label_1": "Asian Population",
+         "value": "2000"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2000"
+         "label_1": "Hispanic Population",
+         "value": "2000"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2000"
+         "label_1": "American Indian and Alaska Native Population",
+         "value": "2000"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2000"
+         "label_1": "Other Race population",
+         "value": "2000"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2000"
+         "label_1": "Two or more races population",
+         "value": "2000"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
+         "label_1": "Population not Hispanic",
+         "value": "2000"
       }
     ]
   },
@@ -173,35 +185,95 @@
     "label": "Age",
     "filter_1":
     [
-      {
-        "label_1": "Age Population 1",
+      { 
+        "label_1": "Median Age",
         "value": "2000"
       },
       {
-        "label_1": "Age Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "Age Population 3",
+        "label_1": "Population 25 Years and Over",
         "value": "2000"
       }
     ]
   },
   {
-    "label": "Population",
+    "label": "Income",
     "filter_1":
     [
       {
-        "label_1": "Population Population 1",
-        "value": "2000"
+         "label_1": "Median Household Income in the past 12 Months",
+         "value": "2000"
       },
       {
-        "label_1": "Population Population 2",
-        "value": "2000"
+         "label_1": "Gini Index",
+         "value": "2000"
       },
       {
-        "label_1": "Population Population 3",
-        "value": "2000"
+         "label_1": "Per Capita Income in the past 12 Months",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income less than $10,000",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $10,000 to $14,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $15,000 to $19,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $20,000 To $24,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $25,000 To $29,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $30,000 To $34,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $35,000 To $39,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $40,000 To $44,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $45,000 To $49,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $50,000 To $59,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $60,000 To $74,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $75,000 To $99,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $100,000 To $124,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $125,000 To $149,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $150,000 To $199,999",
+         "value": "2000"
+      },
+      {
+         "label_1": "Households with income of $200,000 Or More",
+         "value": "2000"
       }
     ]
   },
@@ -210,17 +282,13 @@
     "filter_1":
     [
       {
-        "label_1": "Gender Population 1",
-        "value": "2000"
+         "label_1": "Male Population",
+         "value": "2000"
       },
       {
-        "label_1": "Gender Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "Gender Population 3",
-        "value": "2000"
-      }
+         "label_1": "Female Population",
+         "value": "2000"
+       }
     ]
   },
   {
@@ -228,33 +296,61 @@
     "filter_1":
     [
       {
-        "label_1": "Ethnicity Population 1",
-        "value": "2000"
+         "label_1": "White Population",
+         "value": "2000"
       },
       {
-        "label_1": "Ethnicity Population 2",
-        "value": "2000"
+         "label_1": "Black or African American Population",
+         "value": "2000"
       },
       {
-        "label_1": "Ethnicity Population 3",
-        "value": "2000"
+         "label_1": "Asian Population",
+         "value": "2000"
+      },
+      {
+         "label_1": "Hispanic Population",
+         "value": "2000"
+      },
+      {
+         "label_1": "American Indian and Alaska Native Population",
+         "value": "2000"
+      },
+      {
+         "label_1": "Other Race population",
+         "value": "2000"
+      },
+      {
+         "label_1": "Two or more races population",
+         "value": "2000"
+      },
+      {
+         "label_1": "Population not Hispanic",
+         "value": "2000"
       }
     ]
   },
   {
-    "label": "Commuters",
+    "label": "Work and Commuting",
     "filter_1":
     [
       {
-        "label_1": "Commuters Population 1",
+        "label_1": "Workers age 16 and over who do not work from home",
         "value": "2000"
       },
       {
-        "label_1": "Commuters Population 2",
+        "label_1": "Number of workers with less than 10 minute commute",
         "value": "2000"
       },
       {
-        "label_1": "Commuters Population 3",
+        "label_1": "Number of workers with a commute between 35 and 44 minutes",
+        "value": "2000"
+      },
+      {
+        "label_1": "Number of workers with a commute of over 60 minutes",
+        "value": "2000"
+      },
+      {
+        "label_1": "Aggregate travel time to work",
         "value": "2000"
       }
     ]
@@ -264,16 +360,40 @@
     "filter_1":
     [
       {
-        "label_1": "Households Population 1",
-        "value": "2000"
+         "label_1": "Housing Units",
+         "value": "2000"
       },
       {
-        "label_1": "Households Population 2",
-        "value": "2000"
+         "label_1": "Vacant Housing Units",
+         "value": "2000"
       },
       {
-        "label_1": "Households Population 3",
-        "value": "2000"
+         "label_1": "Vacant Housing Units for Rent",
+         "value": "2000"
+      },
+      {
+         "label_1": "Vacant Housing Units for Sale",
+         "value": "2000"
+      },
+      {
+         "label_1": "Median Rent",
+         "value": "2000"
+      },
+      {
+         "label_1": "Percent of Household Income Spent on Rent",
+         "value": "2000"
+      },
+      {
+         "label_1": "Owner-occupied Housing Units",
+         "value": "2000"
+      },
+      {
+         "label_1": "Owner-occupied Housing Units valued at $1,000,000 or more.",
+         "value": "2000"
+      },
+      {
+         "label_1": "Owner-occupied Housing Units with a Mortgage",
+         "value": "2000"
       }
     ]
   }
