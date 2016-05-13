@@ -3,6 +3,11 @@ body, html {
   min-height: 100%;
 }
 
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+
 #map {
   position: absolute;
   top: 0;
@@ -104,7 +109,20 @@ body, html {
   padding-bottom: 4px;
   font: 400 24px/36px 'Open Sans';
   color: #3AA9E3;
-  cursor: pointer
+  cursor: pointer;
+  position: relative;
 }
-
+.box-input:after {
+  content:"";
+  display: block;
+  position: absolute;
+  width: 13px;
+  height: 12px;
+  background: url(../img/arrow.svg) no-repeat;
+  right: 0;
+  bottom: 12px;
+}
+.box-input.is-open:after {
+  transform: rotate(180deg);
+}
 
