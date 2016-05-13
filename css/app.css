@@ -88,6 +88,9 @@ body {
 .box-navNavigation li a.is-selected {
   color: #3AA9E3;
 }
+.box-result {
+  margin: 0 -16px;
+}
 .box-resultList {
   font: 400 16px/32px 'Open Sans';
   display: -webkit-flex;
@@ -97,7 +100,8 @@ body {
   flex-wrap: wrap;
 }
 .box-resultList li {
-  width: calc(50% - 16px);
+  width: calc(50% - 32px);
+  margin: 0 16px;
 }
 .box-resultList a {
   color: #AAAAAA;
