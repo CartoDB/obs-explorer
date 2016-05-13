@@ -24,7 +24,7 @@
         <div class="box-select">
           <h2 class="box-selectTitle">CHOOSE A MEASUREMENT</h2>
           <div class="box-input">
-            <h2 class="js-box-input">Male Population</h2>
+            <h2 class="js-box-input">All</h2>
           </div>
         </div>  
         <div class="box-select">
@@ -38,42 +38,6 @@
       <div class="box-container is-hidden">
         <nav class="box-nav"></nav>
         <div class="box-result">
-          <ul class="box-resultList js-result-category" style="height: 400px; overflow: auto;">
-            <li><a href="#">Total Population</a></li>
-            <li><a href="#">Male Population</a></li>
-            <li><a href="#">Female Population</a></li>
-            <li><a href="#">White Population</a></li>
-            <li><a href="#">Black or African American Population</a></li>
-            <li><a href="#">Asian Population</a></li>
-            <li><a href="#">Hispanic Population</a></li>
-            <li><a href="#">American Indian and Alaska Native Population</a></li>
-            <li><a href="#">Other race Population</a></li>
-            <li><a href="#">Two or more races Population</a></li>
-            <li><a href="#">Population not Hispanic</a></li>
-            <li><a href="#">Not a U.S. Citizen Population</a></li>
-            <li><a href="#">Population 3 Years and Over</a></li>
-            <li><a href="#">American Indian and Alaska Native Population</a></li>
-            <li><a href="#">Other race Population</a></li>
-            <li><a href="#">Two or more races Population</a></li>
-            <li><a href="#">Population not Hispanic</a></li>
-            <li><a href="#">Total Population</a></li>
-            <li><a href="#">Male Population</a></li>
-            <li><a href="#">Female Population</a></li>
-            <li><a href="#">White Population</a></li>
-            <li><a href="#">Black or African American Population</a></li>
-            <li><a href="#">Asian Population</a></li>
-            <li><a href="#">Hispanic Population</a></li>
-            <li><a href="#">American Indian and Alaska Native Population</a></li>
-            <li><a href="#">Other race Population</a></li>
-            <li><a href="#">Two or more races Population</a></li>
-            <li><a href="#">Population not Hispanic</a></li>
-            <li><a href="#">Not a U.S. Citizen Population</a></li>
-            <li><a href="#">Population 3 Years and Over</a></li>
-            <li><a href="#">American Indian and Alaska Native Population</a></li>
-            <li><a href="#">Other race Population</a></li>
-            <li><a href="#">Two or more races Population</a></li>
-            <li><a href="#">Population not Hispanic</a></li>
-          </ul>
       </div>
     </div>
   </div>
@@ -82,48 +46,67 @@
 
     $( document ).ready(function() {
       /* read json */
+      var subitemsMenu = function(e,f){
+        var id = $(e).attr("data-value")
+        var obj = f[id];
+        var j = obj.filter_1;
+        var subitems = [];
+        $.each( j, function( k, val ) {
+          subitems.push( "<li id='dataSubitem_" + k + "'><a href='#'>" + val.label_1 + "</a></li>" );
+        });
+
+        $( ".js-result-category" ).empty();
+        $( "<ul/>", {
+          "class": "box-resultList js-result-category",
+          html: subitems.join( "" ),
+        }).appendTo(".box-result");
+      };
+      var clickSubitem = function(){
+        $( ".js-result-category li" ).on( "click", function() {
+          $(".js-result-category li").removeClass( "is-selected" );
+          $(this).toggleClass( "is-selected" );
+        }); 
+      };
+      var scrollFunction = function(){
+        $(".js-result-category").niceScroll({
+          cursorcolor: "#ccc", // change cursor color in hex
+          cursorwidth: "4px"
+        });
+      };
       $.getJSON( "data.json", function( data ) {
         var items = [];
         $.each( data, function( key, val ) {
-            items.push( "<li id='data_" + key + "'><a href='#'>" + val.label + "</a></li>" );
+            if (items.length == 0) {
+              items.push( "<li><a class='is-selected' href='#' data-value='" + key + "'>" + val.label + "</a></li>" );
+            } else {
+              items.push( "<li><a href='#' data-value='" + key + "'>" + val.label + "</a></li>" );
+            }     
         });
         $( "<ul/>", {
           "class": "box-navNavigation",
           html: items.join( "" )
         }).appendTo( ".box-nav" );
+        subitemsMenu($( ".box-navNavigation a" ), data);
       })
-        .done(function(){
+        .done(function(data){
           $( ".box-navNavigation a" ).on( "click", function() {
             var txt = $(this).text();
             $(".js-box-input").text(txt);
             $(".box-navNavigation a").removeClass( "is-selected" );
             $(this).toggleClass( "is-selected" );
+            subitemsMenu(this, data);
+            clickSubitem();
+            scrollFunction();
           });
-        });
+          clickSubitem();
+          scrollFunction();
+        })
 
-    
-      $( ".js-result-category li" ).on( "click", function() {
-        $(".js-result-category li").removeClass( "is-selected" );
-        $(this).toggleClass( "is-selected" );
-      });
-
-      $( ".js-result-categoryInfo li" ).on( "click", function() {
-        $(".js-result-categoryInfo li").removeClass( "is-selected" );
-        $(this).toggleClass( "is-selected" );
-      });
 
       $( ".box-input" ).on( "click", function() {
         $(this).toggleClass( "is-open" );
         $(".box-container").toggleClass( "is-hidden" );
       });
-
-
-
-      $(".js-result-category").niceScroll({
-        cursorcolor: "#ccc", // change cursor color in hex
-        cursorwidth: "4px"
-      });
-
     });
 
   </script>

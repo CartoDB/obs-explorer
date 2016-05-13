@@ -4,13 +4,127 @@
     "filter_1":
     [
       {
-        "label_1": "Total Population"
+        "label_1": "All Population 1"
       },
       {
-        "label_1": "Male Population"
+        "label_1": "All Population 2"
       },
       {
-        "label_1": "Female Population"
+        "label_1": "All Population 3"
+      },
+      {
+        "label_1": "All Population 2"
+      },
+      {
+        "label_1": "All Population 3"
+      },
+      {
+        "label_1": "All Population 2"
+      },
+      {
+        "label_1": "All Population 3"
+      },
+      {
+        "label_1": "All Population 2"
+      },
+      {
+        "label_1": "All Population 3"
+      },
+      {
+        "label_1": "All Population 2"
+      },
+      {
+        "label_1": "All Population 3"
+      },
+      {
+        "label_1": "All Population 2"
+      },
+      {
+        "label_1": "All Population 3"
+      },
+      {
+        "label_1": "All Population 2"
+      },
+      {
+        "label_1": "All Population 3"
+      },
+      {
+        "label_1": "All Population 2"
+      },
+      {
+        "label_1": "All Population 3"
+      },
+      {
+        "label_1": "All Population 2"
+      },
+      {
+        "label_1": "All Population 3"
+      },
+      {
+        "label_1": "All Population 2"
+      },
+      {
+        "label_1": "All Population 3"
+      },
+      {
+        "label_1": "All Population 2"
+      },
+      {
+        "label_1": "All Population 3"
+      },
+      {
+        "label_1": "All Population 2"
+      },
+      {
+        "label_1": "All Population 3"
+      },
+      {
+        "label_1": "All Population 2"
+      },
+      {
+        "label_1": "All Population 3"
+      },
+      {
+        "label_1": "All Population 2"
+      },
+      {
+        "label_1": "All Population 3"
+      },
+      {
+        "label_1": "All Population 2"
+      },
+      {
+        "label_1": "All Population 3"
+      },
+      {
+        "label_1": "All Population 2"
+      },
+      {
+        "label_1": "All Population 3"
+      },
+      {
+        "label_1": "All Population 2"
+      },
+      {
+        "label_1": "All Population 3"
+      },
+      {
+        "label_1": "All Population 2"
+      },
+      {
+        "label_1": "All Population 3"
+      },
+      {
+        "label_1": "All Population 2"
+      },
+      {
+        "label_1": "All Population 3"
+      },
+      {
+        "label_1": "All Population 2"
+      },
+      {
+        "label_1": "All Population 3"
       }
     ]
   },
@@ -19,13 +133,13 @@
     "filter_1":
     [
       {
-        "label_1": "Total Population"
+        "label_1": "Age Population 1"
       },
       {
-        "label_1": "Male Population"
+        "label_1": "Age Population 2"
       },
       {
-        "label_1": "Female Population"
+        "label_1": "Age Population 3"
       }
     ]
   },
@@ -34,13 +148,13 @@
     "filter_1":
     [
       {
-        "label_1": "Total Population"
+        "label_1": "Population Population 1"
       },
       {
-        "label_1": "Male Population"
+        "label_1": "Population Population 2"
       },
       {
-        "label_1": "Female Population"
+        "label_1": "Population Population 3"
       }
     ]
   },
@@ -49,13 +163,13 @@
     "filter_1":
     [
       {
-        "label_1": "Total Population"
+        "label_1": "Gender Population 1"
       },
       {
-        "label_1": "Male Population"
+        "label_1": "Gender Population 2"
       },
       {
-        "label_1": "Female Population"
+        "label_1": "Gender Population 3"
       }
     ]
   },
@@ -64,13 +178,13 @@
     "filter_1":
     [
       {
-        "label_1": "Total Population"
+        "label_1": "Ethnicity Population 1"
       },
       {
-        "label_1": "Male Population"
+        "label_1": "Ethnicity Population 2"
       },
       {
-        "label_1": "Female Population"
+        "label_1": "Ethnicity Population 3"
       }
     ]
   },
@@ -79,13 +193,13 @@
     "filter_1":
     [
       {
-        "label_1": "Total Population"
+        "label_1": "Commuters Population 1"
       },
       {
-        "label_1": "Male Population"
+        "label_1": "Commuters Population 2"
       },
       {
-        "label_1": "Female Population"
+        "label_1": "Commuters Population 3"
       }
     ]
   },
@@ -94,13 +208,13 @@
     "filter_1":
     [
       {
-        "label_1": "Total Population"
+        "label_1": "Households Population 1"
       },
       {
-        "label_1": "Male Population"
+        "label_1": "Households Population 2"
       },
       {
-        "label_1": "Female Population"
+        "label_1": "Households Population 3"
       }
     ]
   }
