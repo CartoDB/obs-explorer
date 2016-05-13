@@ -112,7 +112,7 @@ body {
   color: #AAAAAA;
   text-decoration: none;
 }
-.box-resultList li.is-selected a {
+.box-resultList li a.is-selected {
   color: #3AA9E3;
 }
 

@@ -5,7 +5,63 @@
     [
       {
         "label_1": "All Population 1",
-        "value": "2000"
+        "value": "2001"
+      },
+      {
+        "label_1": "All Population 2",
+        "value": "2002"
+      },
+      {
+        "label_1": "All Population 3",
+        "value": "2003"
+      },
+      {
+        "label_1": "All Population 2",
+        "value": "2004"
+      },
+      {
+        "label_1": "All Population 3",
+        "value": "2005"
+      },
+      {
+        "label_1": "All Population 2",
+        "value": "2006"
+      },
+      {
+        "label_1": "All Population 3",
+        "value": "2007"
+      },
+      {
+        "label_1": "All Population 2",
+        "value": "2008"
+      },
+      {
+        "label_1": "All Population 3",
+        "value": "2009"
+      },
+      {
+        "label_1": "All Population 2",
+        "value": "2010"
+      },
+      {
+        "label_1": "All Population 3",
+        "value": "2011"
+      },
+      {
+        "label_1": "All Population 2",
+        "value": "2012"
+      },
+      {
+        "label_1": "All Population 3",
+        "value": "2013"
+      },
+      {
+        "label_1": "All Population 2",
+        "value": "2014"
+      },
+      {
+        "label_1": "All Population 3",
+        "value": "2015"
       },
       {
         "label_1": "All Population 2",
@@ -13,7 +69,39 @@
       },
       {
         "label_1": "All Population 3",
-        "value": "2000"
+        "value": "2016"
+      },
+      {
+        "label_1": "All Population 2",
+        "value": "2017"
+      },
+      {
+        "label_1": "All Population 3",
+        "value": "2018"
+      },
+      {
+        "label_1": "All Population 2",
+        "value": "2019"
+      },
+      {
+        "label_1": "All Population 3",
+        "value": "2020"
+      },
+      {
+        "label_1": "All Population 2",
+        "value": "2021"
+      },
+      {
+        "label_1": "All Population 3",
+        "value": "2022"
+      },
+      {
+        "label_1": "All Population 2",
+        "value": "2023"
+      },
+      {
+        "label_1": "All Population 3",
+        "value": "2024"
       },
       {
         "label_1": "All Population 2",
@@ -21,7 +109,7 @@
       },
       {
         "label_1": "All Population 3",
-        "value": "2000"
+        "value": "2025"
       },
       {
         "label_1": "All Population 2",
@@ -29,143 +117,55 @@
       },
       {
         "label_1": "All Population 3",
-        "value": "2000"
+        "value": "2026"
       },
       {
         "label_1": "All Population 2",
-        "value": "2000"
+        "value": "2027"
       },
       {
         "label_1": "All Population 3",
-        "value": "2000"
+        "value": "2028"
       },
       {
         "label_1": "All Population 2",
-        "value": "2000"
+        "value": "2029"
       },
       {
         "label_1": "All Population 3",
-        "value": "2000"
+        "value": "2030"
       },
       {
         "label_1": "All Population 2",
-        "value": "2000"
+        "value": "2031"
       },
       {
         "label_1": "All Population 3",
-        "value": "2000"
+        "value": "2032"
       },
       {
         "label_1": "All Population 2",
-        "value": "2000"
+        "value": "2033"
       },
       {
         "label_1": "All Population 3",
-        "value": "2000"
+        "value": "2034"
       },
       {
         "label_1": "All Population 2",
-        "value": "2000"
+        "value": "2035"
       },
       {
         "label_1": "All Population 3",
-        "value": "2000"
+        "value": "2036"
       },
       {
         "label_1": "All Population 2",
-        "value": "2000"
+        "value": "2037"
       },
       {
         "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 2",
-        "value": "2000"
-      },
-      {
-        "label_1": "All Population 3",
-        "value": "2000"
+        "value": "2038"
       }
     ]
   },
@@ -175,15 +175,15 @@
     [
       {
         "label_1": "Age Population 1",
-        "value": "2000"
+        "value": "2039"
       },
       {
         "label_1": "Age Population 2",
-        "value": "2000"
+        "value": "2040"
       },
       {
         "label_1": "Age Population 3",
-        "value": "2000"
+        "value": "2041"
       }
     ]
   },
@@ -193,15 +193,15 @@
     [
       {
         "label_1": "Population Population 1",
-        "value": "2000"
+        "value": "2042"
       },
       {
         "label_1": "Population Population 2",
-        "value": "2000"
+        "value": "2043"
       },
       {
         "label_1": "Population Population 3",
-        "value": "2000"
+        "value": "2044"
       }
     ]
   },
@@ -211,15 +211,15 @@
     [
       {
         "label_1": "Gender Population 1",
-        "value": "2000"
+        "value": "2045"
       },
       {
         "label_1": "Gender Population 2",
-        "value": "2000"
+        "value": "2046"
       },
       {
         "label_1": "Gender Population 3",
-        "value": "2000"
+        "value": "2047"
       }
     ]
   },
@@ -229,15 +229,15 @@
     [
       {
         "label_1": "Ethnicity Population 1",
-        "value": "2000"
+        "value": "2048"
       },
       {
         "label_1": "Ethnicity Population 2",
-        "value": "2000"
+        "value": "2049"
       },
       {
         "label_1": "Ethnicity Population 3",
-        "value": "2000"
+        "value": "2059"
       }
     ]
   },
@@ -247,15 +247,15 @@
     [
       {
         "label_1": "Commuters Population 1",
-        "value": "2000"
+        "value": "2051"
       },
       {
         "label_1": "Commuters Population 2",
-        "value": "2000"
+        "value": "2052"
       },
       {
         "label_1": "Commuters Population 3",
-        "value": "2000"
+        "value": "2053"
       }
     ]
   },
@@ -265,15 +265,15 @@
     [
       {
         "label_1": "Households Population 1",
-        "value": "2000"
+        "value": "2054"
       },
       {
         "label_1": "Households Population 2",
-        "value": "2000"
+        "value": "2055"
       },
       {
         "label_1": "Households Population 3",
-        "value": "2000"
+        "value": "2056"
       }
     ]
   }

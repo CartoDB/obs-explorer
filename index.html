@@ -52,12 +52,12 @@
 
       /* read json */
       var subitemsMenu = function(e,f){
-        var id = $(e).attr("data-value")
+        var id = $(e).attr("data-value");
         var obj = f[id];
         var j = obj.filter_1;
         var subitems = [];
         $.each( j, function( k, val ) {
-          subitems.push( "<li id='dataSubitem_" + k + "'><a href='#'>" + val.label_1 + "</a></li>" );
+          subitems.push( "<li><a href='#' data-value='" + val.value + "'>" + val.label_1 + "</a></li>" );
         });
 
         $( ".js-result-category" ).empty();
@@ -66,14 +66,14 @@
           html: subitems.join( "" ),
         }).appendTo(".box-result");
       };
+
       var clickSubitem = function(){
-        $( ".js-result-category li" ).on( "click", function() {
-          $(".js-result-category li").removeClass( "is-selected" );
+        $( ".js-result-category li a" ).on( "click", function() {
+          $(".js-result-category li a").removeClass( "is-selected" );
           $(this).toggleClass( "is-selected" );
           $(".js-box-selectTitle").text($(this).text());
-        }); 
-
-
+          $(".js-figure").text($(this).attr('data-value'));
+        });
       };
       var scrollFunction = function(){
         $(".js-result-category").niceScroll({
