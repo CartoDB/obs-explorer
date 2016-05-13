@@ -1,9 +1,184 @@
 [
-  {"itemName":"Test item no. 1","id":5},
-  {"itemName":"Test item no. 2","id":6},
-  {"itemName":"Test item no. 3","id":7},
-  {"itemName":"Test item no. 4","id":8},
-  {"itemName":"Test item no. 5","id":9},
-  {"itemName":"Test item no. 6","id":10},
-  {"itemName":"Test item no. 7","id":11}
+  {
+    "label": "All",
+    "filter_1":
+    [
+      {
+        "label_1": "Total Population"
+      },
+      {
+        "label_1": "Male Population"
+      },
+      {
+        "label_1": "Female Population"
+      }
+    ],
+    "filter_2":[
+      {
+        "label_2": "Population completed High School"
+      },
+      {
+        "label_2": "Population completed less than one year of college, no degree"
+      },
+      {
+        "label_2": "Population completed more than one year of college, no degree"
+      }
+    ]
+  },
+  {
+    "label": "Age",
+    "filter_1":
+    [
+      {
+        "label_1": "Total Population"
+      },
+      {
+        "label_1": "Male Population"
+      },
+      {
+        "label_1": "Female Population"
+      }
+    ],
+    "filter_2":[
+      {
+        "label_2": "Population completed High School"
+      },
+      {
+        "label_2": "Population completed less than one year of college, no degree"
+      },
+      {
+        "label_2": "Population completed more than one year of college, no degree"
+      }
+    ]
+  },
+  {
+    "label": "Population",
+    "filter_1":
+    [
+      {
+        "label_1": "Total Population"
+      },
+      {
+        "label_1": "Male Population"
+      },
+      {
+        "label_1": "Female Population"
+      }
+    ],
+    "filter_2":[
+      {
+        "label_2": "Population completed High School"
+      },
+      {
+        "label_2": "Population completed less than one year of college, no degree"
+      },
+      {
+        "label_2": "Population completed more than one year of college, no degree"
+      }
+    ]
+  },
+  {
+    "label": "Gender",
+    "filter_1":
+    [
+      {
+        "label_1": "Total Population"
+      },
+      {
+        "label_1": "Male Population"
+      },
+      {
+        "label_1": "Female Population"
+      }
+    ],
+    "filter_2":[
+      {
+        "label_2": "Population completed High School"
+      },
+      {
+        "label_2": "Population completed less than one year of college, no degree"
+      },
+      {
+        "label_2": "Population completed more than one year of college, no degree"
+      }
+    ]
+  },
+  {
+    "label": "Ethnicity",
+    "filter_1":
+    [
+      {
+        "label_1": "Total Population"
+      },
+      {
+        "label_1": "Male Population"
+      },
+      {
+        "label_1": "Female Population"
+      }
+    ],
+    "filter_2":[
+      {
+        "label_2": "Population completed High School"
+      },
+      {
+        "label_2": "Population completed less than one year of college, no degree"
+      },
+      {
+        "label_2": "Population completed more than one year of college, no degree"
+      }
+    ]
+  },
+  {
+    "label": "Commuters",
+    "filter_1":
+    [
+      {
+        "label_1": "Total Population"
+      },
+      {
+        "label_1": "Male Population"
+      },
+      {
+        "label_1": "Female Population"
+      }
+    ],
+    "filter_2":[
+      {
+        "label_2": "Population completed High School"
+      },
+      {
+        "label_2": "Population completed less than one year of college, no degree"
+      },
+      {
+        "label_2": "Population completed more than one year of college, no degree"
+      }
+    ]
+  },
+  {
+    "label": "Households",
+    "filter_1":
+    [
+      {
+        "label_1": "Total Population"
+      },
+      {
+        "label_1": "Male Population"
+      },
+      {
+        "label_1": "Female Population"
+      }
+    ],
+    "filter_2":[
+      {
+        "label_2": "Population completed High School"
+      },
+      {
+        "label_2": "Population completed less than one year of college, no degree"
+      },
+      {
+        "label_2": "Population completed more than one year of college, no degree"
+      }
+    ]
+  }
 ]

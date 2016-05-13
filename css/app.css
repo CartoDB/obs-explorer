@@ -78,8 +78,9 @@ body, html {
 .box-navNavigation li a {
   color: #636D72;
   text-decoration: none;
+  text-transform: uppercase;
 }
-.box-navNavigation li.is-selected a {
+.box-navNavigation li a.is-selected {
   color: #3AA9E3;
 }
 .box-resultList {

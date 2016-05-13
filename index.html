@@ -35,17 +35,7 @@
         </div>
       </div>
       <div class="box-container is-hidden">
-        <nav class="box-nav">
-          <ul class="box-navNavigation">
-            <li><a href="#">BOUNDARIES</a></li>
-            <li><a href="#">POPULATION</a></li>
-            <li><a href="#">AGE</a></li>
-            <li><a href="#">GENDER</a></li>
-            <li><a href="#">ETHNICITY</a></li>
-            <li><a href="#">COMMUTERS</a></li>
-            <li><a href="#">HOUSEHOLDS</a></li>
-          </ul>
-        </nav>
+        <nav class="box-nav"></nav>
         <div class="box-result">
           <ul class="box-resultList js-result-category">
             <li><a href="#">Total Population</a></li>
@@ -87,24 +77,39 @@
 
   <script type="text/javascript">
     $( document ).ready(function() {
-      $( ".box-navNavigation li" ).on( "click", function() {
-        $(".box-navNavigation li").removeClass( "is-selected" );
+      /* read json */
+      $.getJSON( "data.json", function( data ) {
+        var items = [];
+        $.each( data, function( key, val ) {
+            items.push( "<li id='data_" + key + "'><a href='#'>" + val.label + "</a></li>" );
+        });
+        $( "<ul/>", {
+          "class": "box-navNavigation",
+          html: items.join( "" )
+        }).appendTo( ".box-nav" );
+      });
+
+
+      $( ".box-navNavigation a" ).on( "click", function() {
+        console.log("rabo");
+        $(".box-navNavigation a").removeClass( "is-selected" );
         $(this).toggleClass( "is-selected" );
       });
+
       $( ".js-result-category li" ).on( "click", function() {
         $(".js-result-category li").removeClass( "is-selected" );
         $(this).toggleClass( "is-selected" );
       });
+
       $( ".js-result-categoryInfo li" ).on( "click", function() {
         $(".js-result-categoryInfo li").removeClass( "is-selected" );
         $(this).toggleClass( "is-selected" );
       });
 
       $( ".js-box-input" ).on( "click", function() {
-        console.log("rabo");
         $(".box-container").toggleClass( "is-hidden" );
       });
-      
+
     });
 
   </script>
