@@ -8,6 +8,7 @@
   <link rel="stylesheet" type="text/css" href="css/app.css">
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+  <script src="js/jquery.nicescroll.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js"></script>
 
 
@@ -37,9 +38,26 @@
       <div class="box-container is-hidden">
         <nav class="box-nav"></nav>
         <div class="box-result">
-          <ul class="box-resultList js-result-category">
+          <ul class="box-resultList js-result-category" style="height: 400px; overflow: auto;">
             <li><a href="#">Total Population</a></li>
-            <li class="is-selected"><a href="#">Male Population</a></li>
+            <li><a href="#">Male Population</a></li>
+            <li><a href="#">Female Population</a></li>
+            <li><a href="#">White Population</a></li>
+            <li><a href="#">Black or African American Population</a></li>
+            <li><a href="#">Asian Population</a></li>
+            <li><a href="#">Hispanic Population</a></li>
+            <li><a href="#">American Indian and Alaska Native Population</a></li>
+            <li><a href="#">Other race Population</a></li>
+            <li><a href="#">Two or more races Population</a></li>
+            <li><a href="#">Population not Hispanic</a></li>
+            <li><a href="#">Not a U.S. Citizen Population</a></li>
+            <li><a href="#">Population 3 Years and Over</a></li>
+            <li><a href="#">American Indian and Alaska Native Population</a></li>
+            <li><a href="#">Other race Population</a></li>
+            <li><a href="#">Two or more races Population</a></li>
+            <li><a href="#">Population not Hispanic</a></li>
+            <li><a href="#">Total Population</a></li>
+            <li><a href="#">Male Population</a></li>
             <li><a href="#">Female Population</a></li>
             <li><a href="#">White Population</a></li>
             <li><a href="#">Black or African American Population</a></li>
@@ -100,6 +118,11 @@
 
       $( ".js-box-input" ).on( "click", function() {
         $(".box-container").toggleClass( "is-hidden" );
+      });
+
+      $(".js-result-category").niceScroll({
+        cursorcolor: "#ccc", // change cursor color in hex
+        cursorwidth: "4px"
       });
 
     });
