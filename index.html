@@ -61,7 +61,6 @@
           var updateStats= function(){
             column_name = selected_column
             bounds = nativeMap.getBounds()
-            console.log('bounds ', [bounds.getSouthWest().lng, bounds.getSouthWest().lat, bounds.getNorthEast().lng, bounds.getNorthEast().lat].join(','))
             if (selected_agg_type=='sum'){
               query = "SELECT sum({{column_name}}) AS total_value, \
                           sum( CASE WHEN the_geom && ST_MakeEnvelope({{bounds}}, 4326) THEN {{column_name}} ELSE 0 END )  AS value\
@@ -78,7 +77,6 @@
                         {{table_name}}.the_geom && ST_MakeEnvelope({{bounds}}, 4326) \
                         group by avg_total.total"
             }
-            console.log(query)
             sql.execute(query, {  
               column_name: column_name, 
               table_name: table_name,
@@ -86,7 +84,6 @@
               bounds: [bounds.getNorthEast().lng, bounds.getNorthEast().lat, bounds.getSouthWest().lng, bounds.getSouthWest().lat].join(',')
             })
               .done(function(data) {
-                console.log(data)
                 $(".js-figure").text(Math.floor(data.rows[0].value));
                 $(".js-percent").text(Math.floor(data.rows[0].value*100.0/data.rows[0].total_value));
                 $(".js-total").text(Math.floor(data.rows[0].total_value));
@@ -119,7 +116,6 @@
               $(".js-box-selectTitle").text($(this).text());
             
               var column_name = $(this).attr('data-col')
-              console.log("seeting column name ", column_name)
               sublayer.setSQL('with stats as( select max('+column_name+'), min('+column_name+') from '+table_name+')\
                                                           select ('+column_name+'-stats.min)/(stats.max-stats.min) as val from stats, ' +table_name);
 
