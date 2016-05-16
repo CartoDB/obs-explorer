@@ -117,7 +117,7 @@
             
               var column_name = $(this).attr('data-col')
               sublayer.setSQL('with stats as( select max('+column_name+'), min('+column_name+') from '+table_name+')\
-                                                          select ('+column_name+'-stats.min)/(stats.max-stats.min) as val from stats, ' +table_name);
+                                                          select the_geom_webmercator, ('+column_name+'-stats.min)/(stats.max-stats.min) as val from stats, ' +table_name);
 
               var css = sublayer.getCartoCSS();
               sublayer.setCartoCSS(css);
