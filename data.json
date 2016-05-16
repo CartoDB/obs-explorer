@@ -125,6 +125,7 @@
         "data_col": "black_pop",
         "label_1": "Black or African American Population",
         "value": "2000"
+
       },
       {
         "data_col": "asian_pop",
@@ -220,6 +221,7 @@
         "data_col": "not_hispanic_pop",
         "label_1": "Population not Hispanic",
         "value": "2000"
+
       }
     ],
     "label": "All"
