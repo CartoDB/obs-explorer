@@ -1,280 +1,573 @@
 [
   {
-    "label": "All",
-    "filter_1":
-    [
+    "filter_1": [
       {
-        "label_1": "All Population 1",
-        "value": "2001"
+        "data_col": "median_age",
+        "label_1": "Median Age",
+        "value": "2000",
+        "type": "avg"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2002"
+        "data_col": "pop_25_years_over",
+        "label_1": "Population 25 Years and Over",
+        "value": "2000",
+        "type": "sum"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2003"
+        "data_col": "median_income",
+        "label_1": "Median Household Income in the past 12 Months",
+        "value": "2000",
+        "type" : "avg"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2004"
+        "data_col": "gini_index",
+        "label_1": "Gini Index",
+        "value": "2000",
+        "type" : "avg"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2005"
+        "data_col": "income_per_capita",
+        "label_1": "Per Capita Income in the past 12 Months",
+        "value": "2000",
+        "type" : "avg"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2006"
+        "data_col": "income_less_10000",
+        "label_1": "Households with income less than $10,000",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2007"
+        "data_col": "income_10000_14999",
+        "label_1": "Households with income of $10,000 to $14,999",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2008"
+        "data_col": "income_15000_19999",
+        "label_1": "Households with income of $15,000 to $19,999",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2009"
+        "data_col": "income_20000_24999",
+        "label_1": "Households with income of $20,000 To $24,999",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2010"
+        "data_col": "income_25000_29999",
+        "label_1": "Households with income of $25,000 To $29,999",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2011"
+        "data_col": "income_30000_34999",
+        "label_1": "Households with income of $30,000 To $34,999",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2012"
+        "data_col": "income_35000_39999",
+        "label_1": "Households with income of $35,000 To $39,999",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2013"
+        "data_col": "income_40000_44999",
+        "label_1": "Households with income of $40,000 To $44,999",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2014"
+        "data_col": "income_45000_49999",
+        "label_1": "Households with income of $45,000 To $49,999",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2015"
+        "data_col": "income_50000_59999",
+        "label_1": "Households with income of $50,000 To $59,999",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2000"
+        "data_col": "income_60000_74999",
+        "label_1": "Households with income of $60,000 To $74,999",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2016"
+        "data_col": "income_75000_99999",
+        "label_1": "Households with income of $75,000 To $99,999",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2017"
+        "data_col": "income_100000_124999",
+        "label_1": "Households with income of $100,000 To $124,999",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2018"
+        "data_col": "income_125000_149999",
+        "label_1": "Households with income of $125,000 To $149,999",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2019"
+        "data_col": "income_150000_199999",
+        "label_1": "Households with income of $150,000 To $199,999",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2020"
+        "data_col": "income_200000_or_more",
+        "label_1": "Households with income of $200,000 Or More",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2021"
+        "data_col": "male_pop",
+        "label_1": "Male Population",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2022"
+        "data_col": "female_pop",
+        "label_1": "Female Population",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2023"
+        "data_col": "white_pop",
+        "label_1": "White Population",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2024"
+        "data_col": "black_pop",
+        "label_1": "Black or African American Population",
+        "value": "2000",
+        "type" : "sum"
+
       },
       {
-        "label_1": "All Population 2",
-        "value": "2000"
+        "data_col": "asian_pop",
+        "label_1": "Asian Population",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2025"
+        "data_col": "hispanic_pop",
+        "label_1": "Hispanic Population",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2000"
+        "data_col": "amerindian_pop",
+        "label_1": "American Indian and Alaska Native Population",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2026"
+        "data_col": "other_race_pop",
+        "label_1": "Other Race population",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2027"
+        "data_col": "two_or_more_races_pop",
+        "label_1": "Two or more races population",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2028"
+        "data_col": "not_hispanic_pop",
+        "label_1": "Population not Hispanic",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2029"
+        "data_col": "commuters_16_over",
+        "label_1": "Workers age 16 and over who do not work from home",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2030"
+        "data_col": "commute_less_10_mins",
+        "label_1": "Number of workers with less than 10 minute commute",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2031"
+        "data_col": "commute_35_44_mins",
+        "label_1": "Number of workers with a commute between 35 and 44 minutes",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2032"
+        "data_col": "commute_60_more_mins",
+        "label_1": "Number of workers with a commute of over 60 minutes",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2033"
+        "data_col": "aggregate_travel_time_to_work",
+        "label_1": "Aggregate travel time to work",
+        "value": "2000",
+        "type" : "avg"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2034"
+        "data_col": "white_pop",
+        "label_1": "White Population",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2035"
+        "data_col": "black_pop",
+        "label_1": "Black or African American Population",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2036"
+        "data_col": "asian_pop",
+        "label_1": "Asian Population",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 2",
-        "value": "2037"
+        "data_col": "hispanic_pop",
+        "label_1": "Hispanic Population",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "All Population 3",
-        "value": "2038"
+        "data_col": "amerindian_pop",
+        "label_1": "American Indian and Alaska Native Population",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "other_race_pop",
+        "label_1": "Other Race population",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "two_or_more_races_pop",
+        "label_1": "Two or more races population",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "not_hispanic_pop",
+        "label_1": "Population not Hispanic",
+        "value": "2000",
+        "type" : "sum"
+
       }
-    ]
+    ],
+    "label": "All"
   },
   {
-    "label": "Age",
-    "filter_1":
-    [
+    "filter_1": [
       {
-        "label_1": "Age Population 1",
-        "value": "2039"
+        "data_col": "median_age",
+        "label_1": "Median Age",
+        "value": "2000",
+        "type" : "agv"
       },
       {
-        "label_1": "Age Population 2",
-        "value": "2040"
-      },
-      {
-        "label_1": "Age Population 3",
-        "value": "2041"
+        "data_col": "pop_25_years_over",
+        "label_1": "Population 25 Years and Over",
+        "value": "2000",
+        "type" : "sum"
       }
-    ]
+    ],
+    "label": "Age"
   },
   {
-    "label": "Population",
-    "filter_1":
-    [
+    "filter_1": [
       {
-        "label_1": "Population Population 1",
-        "value": "2042"
+        "data_col": "median_income",
+        "label_1": "Median Household Income in the past 12 Months",
+        "value": "2000",
+        "type" : "avg"
       },
       {
-        "label_1": "Population Population 2",
-        "value": "2043"
+        "data_col": "gini_index",
+        "label_1": "Gini Index",
+        "value": "2000",
+        "type" : "avg"
       },
       {
-        "label_1": "Population Population 3",
-        "value": "2044"
+        "data_col": "income_per_capita",
+        "label_1": "Per Capita Income in the past 12 Months",
+        "value": "2000",
+        "type" : "avg"
+      },
+      {
+        "data_col": "income_less_10000",
+        "label_1": "Households with income less than $10,000",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "income_10000_14999",
+        "label_1": "Households with income of $10,000 to $14,999",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "income_15000_19999",
+        "label_1": "Households with income of $15,000 to $19,999",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "income_20000_24999",
+        "label_1": "Households with income of $20,000 To $24,999",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "income_25000_29999",
+        "label_1": "Households with income of $25,000 To $29,999",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "income_30000_34999",
+        "label_1": "Households with income of $30,000 To $34,999",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "income_35000_39999",
+        "label_1": "Households with income of $35,000 To $39,999",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "income_40000_44999",
+        "label_1": "Households with income of $40,000 To $44,999",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "income_45000_49999",
+        "label_1": "Households with income of $45,000 To $49,999",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "income_50000_59999",
+        "label_1": "Households with income of $50,000 To $59,999",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "income_60000_74999",
+        "label_1": "Households with income of $60,000 To $74,999",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "income_75000_99999",
+        "label_1": "Households with income of $75,000 To $99,999",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "income_100000_124999",
+        "label_1": "Households with income of $100,000 To $124,999",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "income_125000_149999",
+        "label_1": "Households with income of $125,000 To $149,999",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "income_150000_199999",
+        "label_1": "Households with income of $150,000 To $199,999",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "income_200000_or_more",
+        "label_1": "Households with income of $200,000 Or More",
+        "value": "2000",
+        "type" : "sum"
       }
-    ]
+    ],
+    "label": "Income"
   },
   {
-    "label": "Gender",
-    "filter_1":
-    [
+    "filter_1": [
       {
-        "label_1": "Gender Population 1",
-        "value": "2045"
+        "data_col": "male_pop",
+        "label_1": "Male Population",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "Gender Population 2",
-        "value": "2046"
-      },
-      {
-        "label_1": "Gender Population 3",
-        "value": "2047"
+        "data_col": "female_pop",
+        "label_1": "Female Population",
+        "value": "2000",
+        "type" : "sum"
       }
-    ]
+    ],
+    "label": "Gender"
   },
   {
-    "label": "Ethnicity",
-    "filter_1":
-    [
+    "filter_1": [
       {
-        "label_1": "Ethnicity Population 1",
-        "value": "2048"
+        "data_col": "white_pop",
+        "label_1": "White Population",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "Ethnicity Population 2",
-        "value": "2049"
+        "data_col": "black_pop",
+        "label_1": "Black or African American Population",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "Ethnicity Population 3",
-        "value": "2059"
+        "data_col": "asian_pop",
+        "label_1": "Asian Population",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "hispanic_pop",
+        "label_1": "Hispanic Population",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "amerindian_pop",
+        "label_1": "American Indian and Alaska Native Population",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "other_race_pop",
+        "label_1": "Other Race population",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "two_or_more_races_pop",
+        "label_1": "Two or more races population",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "not_hispanic_pop",
+        "label_1": "Population not Hispanic",
+        "value": "2000",
+        "type" : "sum"
       }
-    ]
+    ],
+    "label": "Ethnicity"
   },
   {
-    "label": "Commuters",
-    "filter_1":
-    [
+    "filter_1": [
       {
-        "label_1": "Commuters Population 1",
-        "value": "2051"
+        "data_col": "commuters_16_over",
+        "label_1": "Workers age 16 and over who do not work from home",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "Commuters Population 2",
-        "value": "2052"
+        "data_col": "commute_less_10_mins",
+        "label_1": "Number of workers with less than 10 minute commute",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "Commuters Population 3",
-        "value": "2053"
+        "data_col": "commute_35_44_mins",
+        "label_1": "Number of workers with a commute between 35 and 44 minutes",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "commute_60_more_mins",
+        "label_1": "Number of workers with a commute of over 60 minutes",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "aggregate_travel_time_to_work",
+        "label_1": "Aggregate travel time to work",
+        "value": "2000",
+        "type" : "avg"
       }
-    ]
+    ],
+    "label": "Work and Commuting"
   },
   {
-    "label": "Households",
-    "filter_1":
-    [
+    "filter_1": [
       {
-        "label_1": "Households Population 1",
-        "value": "2054"
+        "data_col": "housing_units",
+        "label_1": "Housing Units",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "Households Population 2",
-        "value": "2055"
+        "data_col": "vacant_housing_units",
+        "label_1": "Vacant Housing Units",
+        "value": "2000",
+        "type" : "sum"
       },
       {
-        "label_1": "Households Population 3",
-        "value": "2056"
+        "data_col": "vacant_housing_units_for_rent",
+        "label_1": "Vacant Housing Units for Rent",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "vacant_housing_units_for_sale",
+        "label_1": "Vacant Housing Units for Sale",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "median_rent",
+        "label_1": "Median Rent",
+        "value": "2000",
+        "type" : "avg"
+      },
+      {
+        "data_col": "percent_income_spent_on_rent",
+        "label_1": "Percent of Household Income Spent on Rent",
+        "value": "2000",
+        "type" : "avg"
+      },
+      {
+        "data_col": "owner_occupied_housing_units",
+        "label_1": "Owner-occupied Housing Units",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "million_dollar_housing_units",
+        "label_1": "Owner-occupied Housing Units valued at $1,000,000 or more.",
+        "value": "2000",
+        "type" : "sum"
+      },
+      {
+        "data_col": "mortgaged_housing_units",
+        "label_1": "Owner-occupied Housing Units with a Mortgage",
+        "value": "2000",
+        "type" : "sum"
       }
-    ]
+    ],
+    "label": "Households"
   }
 ]

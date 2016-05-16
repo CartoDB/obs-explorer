@@ -46,75 +46,130 @@
   <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
 
   <script type="text/javascript">
-
+  var sublayer;
     $( document ).ready(function() {
-      cartodb.createVis('map', 'https://team.cartodb.com/u/piensaenpixel/api/v2/viz/3ae0b708-136b-11e6-97d4-0ea31932ec1d/viz.json');
+      var selected_column = 'total_pop'
+      var selected_agg_type = 'sum'
+      cartodb.createVis('map', 'https://observatory.cartodb.com/api/v2/viz/b28e2a62-1b75-11e6-bad5-0e5db1731f59/viz.json')
+        .done(function(map,layers){
+          sublayer = layers[1].getSubLayer(0);
 
-      /* read json */
-      var subitemsMenu = function(e,f){
-        var id = $(e).attr("data-value");
-        var obj = f[id];
-        var j = obj.filter_1;
-        var subitems = [];
-        $.each( j, function( k, val ) {
-          subitems.push( "<li><a href='#' data-value='" + val.value + "'>" + val.label_1 + "</a></li>" );
-        });
+          var nativeMap = map.getNativeMap()
+          var table_name = 'observatory_blogpost_hero'
+          var sql = new cartodb.SQL({ user: 'observatory' });
+          
+          var updateStats= function(){
+            column_name = selected_column
+            bounds = nativeMap.getBounds()
+            if (selected_agg_type=='sum'){
+              query = "SELECT sum({{column_name}}) AS total_value, \
+                          sum( CASE WHEN the_geom && ST_MakeEnvelope({{bounds}}, 4326) THEN {{column_name}} ELSE 0 END )  AS value\
+                          FROM {{table_name}} "
+            }
+            else if (selected_agg_type=='avg'){
+              query = "with avg_total as(\
+                        select avg({{column_name}}) as total from {{table_name}} \
+                      )\
+                      SELECT avg({{column_name}}) AS value, \
+                          avg_total.total as total_value \
+                          FROM {{table_name}}, avg_total \
+                          where \
+                        {{table_name}}.the_geom && ST_MakeEnvelope({{bounds}}, 4326) \
+                        group by avg_total.total"
+            }
+            sql.execute(query, {  
+              column_name: column_name, 
+              table_name: table_name,
+              agg_type: selected_agg_type,
+              bounds: [bounds.getNorthEast().lng, bounds.getNorthEast().lat, bounds.getSouthWest().lng, bounds.getSouthWest().lat].join(',')
+            })
+              .done(function(data) {
+                $(".js-figure").text(Math.floor(data.rows[0].value));
+                $(".js-percent").text(Math.floor(data.rows[0].value*100.0/data.rows[0].total_value));
+                $(".js-total").text(Math.floor(data.rows[0].total_value));
+            })
+          }
+          
+          nativeMap.on('move', updateStats.bind(this))
 
-        $( ".js-result-category" ).empty();
-        $( "<ul/>", {
-          "class": "box-resultList js-result-category",
-          html: subitems.join( "" ),
-        }).appendTo(".box-result");
-      };
+          /* read json */
+          var subitemsMenu = function(e,f){
+            var id = $(e).attr("data-value");
+            var obj = f[id];
+            var j = obj.filter_1;
+            var subitems = [];
+            $.each( j, function( k, val ) {
+              subitems.push( "<li><a href='#' data-agg='"+val.type+"' data-col='"+val.data_col+"' data-value='" + val.value + "'>" + val.label_1 + "</a></li>" );
+            });
 
-      var clickSubitem = function(){
-        $( ".js-result-category li a" ).on( "click", function() {
-          $(".js-result-category li a").removeClass( "is-selected" );
-          $(this).toggleClass( "is-selected" );
-          $(".js-box-selectTitle").text($(this).text());
-          $(".js-figure").text($(this).attr('data-value'));
-        });
-      };
-      var scrollFunction = function(){
-        $(".js-result-category").niceScroll({
-          cursorcolor: "#ccc", // change cursor color in hex
-          cursorwidth: "4px"
-        });
-      };
-      $.getJSON( "data.json", function( data ) {
-        var items = [];
-        $.each( data, function( key, val ) {
-            if (items.length == 0) {
-              items.push( "<li><a class='is-selected' href='#' data-value='" + key + "'>" + val.label + "</a></li>" );
-            } else {
-              items.push( "<li><a href='#' data-value='" + key + "'>" + val.label + "</a></li>" );
-            }     
-        });
-        $( "<ul/>", {
-          "class": "box-navNavigation",
-          html: items.join( "" )
-        }).appendTo( ".box-nav" );
-        subitemsMenu($( ".box-navNavigation a" ), data);
-      })
-        .done(function(data){
-          $( ".box-navNavigation a" ).on( "click", function() {
-            var txt = $(this).text();
-            $(".js-box-input").text(txt);
-            $(".box-navNavigation a").removeClass( "is-selected" );
-            $(this).toggleClass( "is-selected" );
-            subitemsMenu(this, data);
-            clickSubitem();
-            scrollFunction();
+            $( ".js-result-category" ).empty();
+            $( "<ul/>", {
+              "class": "box-resultList js-result-category",
+              html: subitems.join( "" ),
+            }).appendTo(".box-result");
+          };
+
+          var clickSubitem = function(){
+            $( ".js-result-category li a" ).on( "click", function() {
+              $(".js-result-category li a").removeClass( "is-selected" );
+              $(this).toggleClass( "is-selected" );
+              $(".js-box-selectTitle").text($(this).text());
+            
+              var column_name = $(this).attr('data-col')
+              sublayer.setSQL('with stats as( select max('+column_name+'), min('+column_name+') from '+table_name+')\
+                                                          select the_geom_webmercator, ('+column_name+'-stats.min)/(stats.max-stats.min) as val from stats, ' +table_name);
+
+              var css = sublayer.getCartoCSS();
+              sublayer.setCartoCSS(css);
+              
+              selected_column    = $(this).attr('data-col')
+              selected_agg_type  = $(this).attr('data-agg')
+              updateStats();                                        
+              
+              
+            });
+          };
+          var scrollFunction = function(){
+            $(".js-result-category").niceScroll({
+              cursorcolor: "#ccc", // change cursor color in hex
+              cursorwidth: "4px"
+            });
+          };
+          $.getJSON( "data.json", function( data ) {
+            var items = [];
+            $.each( data, function( key, val ) {
+                if (items.length == 0) {
+                  items.push( "<li><a class='is-selected' href='#'  data-value='" + key + "'>" + val.label + "</a></li>" );
+                } else {
+                  items.push( "<li><a href='#' data-value='" + key + "'>" + val.label + "</a></li>" );
+                }     
+            });
+            $( "<ul/>", {
+              "class": "box-navNavigation",
+              html: items.join( "" )
+            }).appendTo( ".box-nav" );
+            subitemsMenu($( ".box-navNavigation a" ), data);
+          })
+            .done(function(data){
+              $( ".box-navNavigation a" ).on( "click", function() {
+                var txt = $(this).text();
+                $(".js-box-input").text(txt);
+                $(".box-navNavigation a").removeClass( "is-selected" );
+                $(this).toggleClass( "is-selected" );
+                subitemsMenu(this, data);
+                clickSubitem();
+                scrollFunction();
+              });
+              clickSubitem();
+              scrollFunction();
+            })
+
+
+          $( ".box-input" ).on( "click", function() {
+            $(this).toggleClass( "is-open" );
+            $(".box-container").toggleClass( "is-hidden" );
           });
-          clickSubitem();
-          scrollFunction();
         })
-
-
-      $( ".box-input" ).on( "click", function() {
-        $(this).toggleClass( "is-open" );
-        $(".box-container").toggleClass( "is-hidden" );
-      });
     });
 
   </script>
