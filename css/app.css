@@ -24,6 +24,9 @@ body {
   left: 20px;
   z-index: 1000001;
 }
+.box-icon {
+  margin-right: 10px;
+}
 .box-inner {
   background: #FFFFFF;
   box-shadow: 0px 2px 10px 0px rgba(0,0,0,0.15);
