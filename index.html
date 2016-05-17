@@ -12,13 +12,12 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
   <script src="js/jquery.nicescroll.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js"></script>
-
-
 </head>
 
 <body>
-
   <div id="map"></div>
+
+  <canvas id="cover"></canvas>
 
   <div class="box">
     <div class="box-inner">
@@ -125,39 +124,64 @@
       var selected_column = 'housing_units';
       var selected_agg_type = 'sum';
       var mapCenter = [37.800, -122.002];
-      cartodb.createVis('map', 'https://observatory.cartodb.com/api/v2/viz/d996e7b2-1c78-11e6-b921-0e31c9be1b51/viz.json', { zoom: 10, center: mapCenter, zoomControl: false, search: true})
+
+      var circle = {
+        size: 120,
+        x: 200,
+        y: 200
+      };
+
+      var canvas = document.getElementById('cover');
+      ctx = canvas.getContext('2d');
+
+      canvas.height = $(window).height();
+      canvas.width = $(window).width();
+      circle.y = canvas.height / 2;
+      circle.x = canvas.width / 2;
+
+      ctx.fillStyle = "rgba(255,0,0,0)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      var mask = document.createElement('canvas');
+      mask.width = canvas.width;
+      mask.height = canvas.height;
+      var maskCtx = mask.getContext('2d');
+      maskCtx.fillStyle = "rgba(0,0,0,0.4)";
+      maskCtx.fillRect(0, 0, mask.width, mask.height);
+      maskCtx.globalCompositeOperation = 'destination-out';
+      maskCtx.arc(circle.x, circle.y, circle.size, 0, 2*Math.PI);
+      maskCtx.fill();
+      ctx.drawImage(mask,0,0);
+
+      cartodb.createVis('map', 'https://observatory.cartodb.com/api/v2/viz/d996e7b2-1c78-11e6-b921-0e31c9be1b51/viz.json', { zoom: 11, center: mapCenter})
         .done(function(map,layers){
           sublayer = layers[1].getSubLayer(0);
 
           var nativeMap = map.getNativeMap()
+          nativeMap.doubleClickZoom.disable();
+          nativeMap.scrollWheelZoom.disable();
+          nativeMap.boxZoom.disable();
+          nativeMap.touchZoom.disable();
+          var el = $('.cartodb-zoom');
+          el.remove()
 
-          var circle = L.circle(mapCenter, 6400,{
-                				    color: 'black',
-                				    fillColor: 'white',
-                				    fillOpacity: 0.0,
-                            stroke: true,
-                            weight: 14
-                			 }).addTo(nativeMap);
+          var circle = L.circle(mapCenter, 7200,{
+            fillColor: 'red',
+            fillOpacity: 0,
+            stroke: false,
+            weight: 14,
+            clickable: false
+          }).addTo(nativeMap);
 
-          circle.on({
-                mousedown: function () {
-                  nativeMap.on('mousemove', function (e) {
-                    circle.setLatLng(e.latlng);
-                  });
-                }
-             });
-             nativeMap.on('mouseup',function(e){
-               nativeMap.removeEventListener('mousemove');
-               updateStats();
-             })
-
+          nativeMap.on('moveend', function(e){
+            circle.setLatLng(e.target.getCenter())
+            updateStats()
+          });
 
           var table_name = 'data_observatory_hero'
           var sql = new cartodb.SQL({ user: 'observatory' });
 
           var updateStats= function(){
             column_name = selected_column
-            // bounds = nativeMap.getBounds()
 
             if (selected_agg_type=='sum'){
               query = "SELECT  \
@@ -185,13 +209,10 @@
             })
               .done(function(data) {
                 $(".js-figure").text(Math.floor(data.rows[0].value));
-                // $(".js-percent").text(Math.floor(data.rows[0].value*100.0/data.rows[0].total_value));
-                // $(".js-total").text(Math.floor(data.rows[0].total_value));
             })
           }
 
           updateStats();
-          // nativeMap.on('move', updateStats.bind(this))
 
           /* read json */
           var subitemsMenu = function(e,f){
@@ -229,7 +250,6 @@
               selected_column    = $(this).attr('data-col')
               selected_agg_type  = $(this).attr('data-agg')
               updateStats();
-
 
             });
           };
@@ -276,21 +296,13 @@
               scrollFunction();
             })
 
-
           $( ".box-input" ).on( "click", function() {
             $(this).toggleClass( "is-open" );
             maxHeightList();
             $(".box-container").toggleClass( "is-hidden" );
           });
         })
-
-
-
-
     });
-
   </script>
-
 </body>
-
 </html>
