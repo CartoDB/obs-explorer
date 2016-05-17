@@ -123,7 +123,7 @@
     $( document ).ready(function() {
       var selected_column = 'housing_units';
       var selected_agg_type = 'sum';
-      var mapCenter = [37.800, -122.002];
+      var mapCenter = [37.804444, -122.270833];
 
       var circle = {
         size: 120,
@@ -145,7 +145,7 @@
       mask.width = canvas.width;
       mask.height = canvas.height;
       var maskCtx = mask.getContext('2d');
-      maskCtx.fillStyle = "rgba(0,0,0,0.4)";
+      maskCtx.fillStyle = "rgba(0,0,0,0.5)";
       maskCtx.fillRect(0, 0, mask.width, mask.height);
       maskCtx.globalCompositeOperation = 'destination-out';
       maskCtx.arc(circle.x, circle.y, circle.size, 0, 2*Math.PI);
