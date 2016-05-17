@@ -98,8 +98,7 @@
               </svg>
 
             </div>
-            <h3 class="box-figure js-figure">54507</h3>
-            <p class="box-figureInfo"><span class="js-percent">6</span>% of total (<span class="js-total">851206</span>)</p>
+            <h3 class="box-figure js-figure">43192</h3>
           </div>
         </div>
       </div>
@@ -125,14 +124,14 @@
     $( document ).ready(function() {
       var selected_column = 'housing_units';
       var selected_agg_type = 'sum';
-      var mapCenter = [40.766, -73.97];
-      cartodb.createVis('map', 'https://observatory.cartodb.com/api/v2/viz/b28e2a62-1b75-11e6-bad5-0e5db1731f59/viz.json', { zoom: 13, center: mapCenter, zoomControl: false})
+      var mapCenter = [37.800, -122.002];
+      cartodb.createVis('map', 'https://observatory.cartodb.com/api/v2/viz/d996e7b2-1c78-11e6-b921-0e31c9be1b51/viz.json', { zoom: 10, center: mapCenter, zoomControl: false})
         .done(function(map,layers){
           sublayer = layers[1].getSubLayer(0);
 
           var nativeMap = map.getNativeMap()
 
-          var circle = L.circle([40.766, -73.97], 900,{
+          var circle = L.circle(mapCenter, 6400,{
                 				    color: 'black',
                 				    fillColor: 'white',
                 				    fillOpacity: 0.0,
@@ -153,7 +152,7 @@
              })
 
 
-          var table_name = 'observatory_blogpost_hero'
+          var table_name = 'data_observatory_hero'
           var sql = new cartodb.SQL({ user: 'observatory' });
 
           var updateStats= function(){
@@ -185,8 +184,8 @@
             })
               .done(function(data) {
                 $(".js-figure").text(Math.floor(data.rows[0].value));
-                $(".js-percent").text(Math.floor(data.rows[0].value*100.0/data.rows[0].total_value));
-                $(".js-total").text(Math.floor(data.rows[0].total_value));
+                // $(".js-percent").text(Math.floor(data.rows[0].value*100.0/data.rows[0].total_value));
+                // $(".js-total").text(Math.floor(data.rows[0].total_value));
             })
           }
 
