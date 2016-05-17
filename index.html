@@ -46,7 +46,16 @@
   <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
 
   <script type="text/javascript">
-  var sublayer;
+    var sublayer;
+
+    var maxHeightList = function(){
+      var heightScreen = $(window).height();
+      var heightNavigation = 86;
+      var heightHeader = $('.box-header').height();
+      var maxHeightScroll = (heightScreen) - (40 + heightNavigation + heightHeader) - 64;
+      $('.box-resultList').css('max-height', maxHeightScroll);
+    };
+
     $( document ).ready(function() {
       var selected_column = 'total_pop'
       var selected_agg_type = 'sum'
@@ -103,10 +112,12 @@
             });
 
             $( ".js-result-category" ).empty();
+            $( ".box-result" ).empty();
             $( "<ul/>", {
               "class": "box-resultList js-result-category",
               html: subitems.join( "" ),
             }).appendTo(".box-result");
+            maxHeightList();
           };
 
           var clickSubitem = function(){
@@ -167,9 +178,14 @@
 
           $( ".box-input" ).on( "click", function() {
             $(this).toggleClass( "is-open" );
+            maxHeightList();
             $(".box-container").toggleClass( "is-hidden" );
           });
         })
+        
+
+        
+
     });
 
   </script>

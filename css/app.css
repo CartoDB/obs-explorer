@@ -22,7 +22,7 @@ body {
   top: 20px;
   right: 20px;
   left: 20px;
-  z-index: 1000;
+  z-index: 1000001;
 }
 .box-inner {
   background: #FFFFFF;
@@ -80,7 +80,7 @@ body {
 }
 .box-navNavigation li {
   margin-right: 16px;
-  font: 600 16px/24px 'Open Sans';
+  font: 600 13px/20px 'Open Sans';
 }
 .box-navNavigation li a {
   color: #636D72;
@@ -100,13 +100,16 @@ body {
   -webkit-align-items: baseline;
   align-items: baseline;
   flex-wrap: wrap;
-  max-height: 400px;
   overflow: auto;
 }
 .box-resultList
  li {
   width: calc(50% - 32px);
   margin: 0 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  color: #AAAAAA;
 }
 .box-resultList a {
   color: #AAAAAA;
@@ -140,3 +143,7 @@ body {
   transform: rotate(180deg);
 }
 
+div.cartodb-zoom {
+  position: absolute !important;
+  bottom: 60px;
+}
