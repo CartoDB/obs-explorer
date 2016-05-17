@@ -26,11 +26,11 @@
         <div class="box-select">
           <h2 class="box-selectTitle">CHOOSE A MEASUREMENT</h2>
           <div class="box-input">
-            <h2 class="js-box-input">All</h2>
+            <h2 class="js-box-input">Households</h2>
           </div>
         </div>
         <div class="box-select">
-          <h2 class="box-selectTitle js-box-selectTitle">MALE POPULATION</h2>
+          <h2 class="box-selectTitle js-box-selectTitle">HOUSING UNITS</h2>
           <div class="box-selectInfo">
             <div class="box-icon">
                             <!-- all -->
@@ -98,8 +98,8 @@
               </svg>
 
             </div>
-            <h3 class="box-figure js-figure">256,982</h3>
-            <p class="box-figureInfo"><span class="js-percent">45</span>% of total (<span class="js-total">545,065</span>)</p>
+            <h3 class="box-figure js-figure">54507</h3>
+            <p class="box-figureInfo"><span class="js-percent">6</span>% of total (<span class="js-total">851206</span>)</p>
           </div>
         </div>
       </div>
@@ -123,7 +123,7 @@
     };
 
     $( document ).ready(function() {
-      var selected_column = 'total_pop';
+      var selected_column = 'housing_units';
       var selected_agg_type = 'sum';
       var mapCenter = [40.766, -73.97];
       cartodb.createVis('map', 'https://observatory.cartodb.com/api/v2/viz/b28e2a62-1b75-11e6-bad5-0e5db1731f59/viz.json', { zoom: 13, center: mapCenter, zoomControl: false})
@@ -132,16 +132,6 @@
 
           var nativeMap = map.getNativeMap()
 
-
-                  //  var invCircle = L.circle([40.766, -73.97], 900,{
-                  //        				    color: 'black',
-                  //        				    fillColor: 'white',
-                  //        				    fillOpacity: 0.9,
-                  //                    stroke: false,
-                  //                    weight: 0,
-                  //                    fillRule: 'inherit'
-                  //        			 }).addTo(nativeMap);
-
           var circle = L.circle([40.766, -73.97], 900,{
                 				    color: 'black',
                 				    fillColor: 'white',
@@ -149,7 +139,6 @@
                             stroke: true,
                             weight: 14
                 			 }).addTo(nativeMap);
-
 
           circle.on({
                 mousedown: function () {
@@ -178,7 +167,7 @@
             }
             else if (selected_agg_type=='avg'){
               query = "with avg_total as(\
-                        select cdb_math_mode({{column_name}}) as total from {{table_name}} \
+                        select avg({{column_name}}) as total from {{table_name}} \
                       )\
                       SELECT avg({{column_name}}) AS value, \
                           avg_total.total as total_value \
