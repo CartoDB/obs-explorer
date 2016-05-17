@@ -190,6 +190,7 @@
             $( ".js-result-category li a" ).on( "click", function() {
               $(".js-result-category li a").removeClass( "is-selected" );
               $(this).toggleClass( "is-selected" );
+              $('.box-container').toggleClass( "is-hidden" );
               $(".js-box-selectTitle").text($(this).text());
             
               var column_name = $(this).attr('data-col')
