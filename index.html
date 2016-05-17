@@ -125,7 +125,7 @@
       var selected_column = 'housing_units';
       var selected_agg_type = 'sum';
       var mapCenter = [37.800, -122.002];
-      cartodb.createVis('map', 'https://observatory.cartodb.com/api/v2/viz/d996e7b2-1c78-11e6-b921-0e31c9be1b51/viz.json', { zoom: 10, center: mapCenter, zoomControl: false})
+      cartodb.createVis('map', 'https://observatory.cartodb.com/api/v2/viz/d996e7b2-1c78-11e6-b921-0e31c9be1b51/viz.json', { zoom: 10, center: mapCenter, zoomControl: false, search: true})
         .done(function(map,layers){
           sublayer = layers[1].getSubLayer(0);
 
