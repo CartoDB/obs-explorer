@@ -160,9 +160,10 @@
             // bounds = nativeMap.getBounds()
 
             if (selected_agg_type=='sum'){
-              query = "SELECT sum({{column_name}}) AS total_value, \
-                          sum( CASE WHEN the_geom && ST_Transform(ST_Buffer(ST_Transform(CDB_LatLng({{center}}),3857),{{radius}}),4326) THEN {{column_name}} ELSE 0 END )  AS value\
-                          FROM {{table_name}} "
+              query = "SELECT  \
+                          sum({{column_name}})  AS value\
+                          FROM {{table_name}} \
+                          WHERE the_geom && ST_Transform(ST_Buffer(ST_Transform(CDB_LatLng({{center}}),3857),{{radius}}),4326)"
             }
             else if (selected_agg_type=='avg'){
               query = "with avg_total as(\
