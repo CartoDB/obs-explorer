@@ -28,7 +28,7 @@
           <div class="box-input">
             <h2 class="js-box-input">All</h2>
           </div>
-        </div>  
+        </div>
         <div class="box-select">
           <h2 class="box-selectTitle js-box-selectTitle">MALE POPULATION</h2>
           <div class="box-selectInfo">
@@ -123,40 +123,76 @@
     };
 
     $( document ).ready(function() {
-      var selected_column = 'total_pop'
-      var selected_agg_type = 'sum'
-      cartodb.createVis('map', 'https://observatory.cartodb.com/api/v2/viz/b28e2a62-1b75-11e6-bad5-0e5db1731f59/viz.json')
+      var selected_column = 'total_pop';
+      var selected_agg_type = 'sum';
+      var mapCenter = [40.766, -73.97];
+      cartodb.createVis('map', 'https://observatory.cartodb.com/api/v2/viz/b28e2a62-1b75-11e6-bad5-0e5db1731f59/viz.json', { zoom: 13, center: mapCenter, zoomControl: false})
         .done(function(map,layers){
           sublayer = layers[1].getSubLayer(0);
 
           var nativeMap = map.getNativeMap()
+
+
+                  //  var invCircle = L.circle([40.766, -73.97], 900,{
+                  //        				    color: 'black',
+                  //        				    fillColor: 'white',
+                  //        				    fillOpacity: 0.9,
+                  //                    stroke: false,
+                  //                    weight: 0,
+                  //                    fillRule: 'inherit'
+                  //        			 }).addTo(nativeMap);
+
+          var circle = L.circle([40.766, -73.97], 900,{
+                				    color: 'black',
+                				    fillColor: 'white',
+                				    fillOpacity: 0.0,
+                            stroke: true,
+                            weight: 14
+                			 }).addTo(nativeMap);
+
+
+          circle.on({
+                mousedown: function () {
+                  nativeMap.on('mousemove', function (e) {
+                    circle.setLatLng(e.latlng);
+                  });
+                }
+             });
+             nativeMap.on('mouseup',function(e){
+               nativeMap.removeEventListener('mousemove');
+               updateStats();
+             })
+
+
           var table_name = 'observatory_blogpost_hero'
           var sql = new cartodb.SQL({ user: 'observatory' });
-          
+
           var updateStats= function(){
             column_name = selected_column
-            bounds = nativeMap.getBounds()
+            // bounds = nativeMap.getBounds()
+
             if (selected_agg_type=='sum'){
               query = "SELECT sum({{column_name}}) AS total_value, \
-                          sum( CASE WHEN the_geom && ST_MakeEnvelope({{bounds}}, 4326) THEN {{column_name}} ELSE 0 END )  AS value\
+                          sum( CASE WHEN the_geom && ST_Transform(ST_Buffer(ST_Transform(CDB_LatLng({{center}}),3857),{{radius}}),4326) THEN {{column_name}} ELSE 0 END )  AS value\
                           FROM {{table_name}} "
             }
             else if (selected_agg_type=='avg'){
               query = "with avg_total as(\
-                        select avg({{column_name}}) as total from {{table_name}} \
+                        select cdb_math_mode({{column_name}}) as total from {{table_name}} \
                       )\
                       SELECT avg({{column_name}}) AS value, \
                           avg_total.total as total_value \
                           FROM {{table_name}}, avg_total \
                           where \
-                        {{table_name}}.the_geom && ST_MakeEnvelope({{bounds}}, 4326) \
+                        {{table_name}}.the_geom && ST_Transform(ST_Buffer(ST_Transform(CDB_LatLng({{center}}),3857),{{radius}}),4326) \
                         group by avg_total.total"
             }
-            sql.execute(query, {  
-              column_name: column_name, 
+            sql.execute(query, {
+              column_name: column_name,
               table_name: table_name,
               agg_type: selected_agg_type,
-              bounds: [bounds.getNorthEast().lng, bounds.getNorthEast().lat, bounds.getSouthWest().lng, bounds.getSouthWest().lat].join(',')
+              center: [circle.getLatLng().lat, circle.getLatLng().lng].join(','),
+              radius: circle.getRadius()
             })
               .done(function(data) {
                 $(".js-figure").text(Math.floor(data.rows[0].value));
@@ -164,8 +200,9 @@
                 $(".js-total").text(Math.floor(data.rows[0].total_value));
             })
           }
-          
-          nativeMap.on('move', updateStats.bind(this))
+
+          updateStats();
+          // nativeMap.on('move', updateStats.bind(this))
 
           /* read json */
           var subitemsMenu = function(e,f){
@@ -192,19 +229,19 @@
               $(this).toggleClass( "is-selected" );
               $('.box-container').toggleClass( "is-hidden" );
               $(".js-box-selectTitle").text($(this).text());
-            
+
               var column_name = $(this).attr('data-col')
               sublayer.setSQL('with stats as( select max('+column_name+'), min('+column_name+') from '+table_name+')\
                                                           select the_geom_webmercator, ('+column_name+'-stats.min)/(stats.max-stats.min) as val from stats, ' +table_name);
 
               var css = sublayer.getCartoCSS();
               sublayer.setCartoCSS(css);
-              
+
               selected_column    = $(this).attr('data-col')
               selected_agg_type  = $(this).attr('data-agg')
-              updateStats();                                        
-              
-              
+              updateStats();
+
+
             });
           };
           var scrollFunction = function(){
@@ -220,7 +257,7 @@
                   items.push( "<li><a class='is-selected' href='#'  data-value='" + key + "'>" + val.label + "</a></li>" );
                 } else {
                   items.push( "<li><a href='#' data-value='" + key + "'>" + val.label + "</a></li>" );
-                }     
+                }
             });
             $( "<ul/>", {
               "class": "box-navNavigation",
@@ -257,9 +294,9 @@
             $(".box-container").toggleClass( "is-hidden" );
           });
         })
-        
 
-        
+
+
 
     });
 
