@@ -45,7 +45,7 @@
                   </g>
               </svg>
               <!-- age -->
-              <svg class="age" style="display: none;" width="27px" height="27px" viewBox="0 0 27 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+              <svg class="agegender" style="display: none;" width="27px" height="27px" viewBox="0 0 27 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                   <defs></defs>
                   <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                       <g id="-Icons" transform="translate(-96.000000, -290.000000)" fill="#2E3C43">
@@ -291,6 +291,7 @@
                   txtDown = txtDown.toLowerCase();
                   var dest = txtDown;
                   dest = dest.split(" ").join("");
+                  dest = dest.replace('&', '');
                   if($( ".box-icon svg" ).hasClass(dest)) {
                     $( ".box-icon svg."+dest ).show();
                   }
