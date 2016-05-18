@@ -3,15 +3,18 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <title>Your Website</title>
+  <title>Data Observatory Sample Data</title>
   <link rel="stylesheet" type="text/css" href="css/reset.css">
   <link rel="stylesheet" type="text/css" href="css/app.css">
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+  <link rel="stylesheet" href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/themes/css/cartodb.css" />
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
   <script src="js/jquery.nicescroll.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js"></script>
+
+
+
 </head>
 
 <body>
@@ -107,7 +110,7 @@
       </div>
     </div>
   </div>
-  <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+  <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/cartodb.js"></script>
 
   <script type="text/javascript">
     var sublayer;
@@ -178,7 +181,7 @@
           });
 
           var table_name = 'data_observatory_hero'
-          var sql = new cartodb.SQL({ user: 'observatory' });
+          var sql = new cartodb.SQL({ user: 'observatory', 'https': true });
 
           var updateStats= function(){
             column_name = selected_column
