@@ -190,7 +190,8 @@
               query = "SELECT  \
                           sum({{column_name}})  AS value\
                           FROM {{table_name}} \
-                          WHERE the_geom && ST_Transform(ST_Buffer(ST_Transform(CDB_LatLng({{center}}),3857),{{radius}}),4326)"
+                          WHERE \
+                          ST_INTERSECTS( {{table_name}}.the_geom, ST_Transform(ST_Buffer(ST_Transform(CDB_LatLng({{center}}),3857),{{radius}}),4326))"
             }
             else if (selected_agg_type=='avg'){
               query = "with avg_total as(\
@@ -199,8 +200,8 @@
                       SELECT avg({{column_name}}) AS value, \
                           avg_total.total as total_value \
                           FROM {{table_name}}, avg_total \
-                          where \
-                        {{table_name}}.the_geom && ST_Transform(ST_Buffer(ST_Transform(CDB_LatLng({{center}}),3857),{{radius}}),4326) \
+                          WHERE \
+                          ST_INTERSECTS(ST_Transform( {{table_name}}.the_geom, ST_Buffer(ST_Transform(CDB_LatLng({{center}}),3857),{{radius}}),4326)) \
                         group by avg_total.total"
             }
             sql.execute(query, {
