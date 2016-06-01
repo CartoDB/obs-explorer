@@ -39,7 +39,7 @@ $( document ).ready(function() {
   //maskCtx.fill();
   //ctx.drawImage(mask,0,0);
 
-  cartodb.createVis('map', 'http://localhost:8000/viz.json', {
+  cartodb.createVis('map', 'viz.json', {
     zoom: 11, center: mapCenter
   })
     .done(function(map,layers){
