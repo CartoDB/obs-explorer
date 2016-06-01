@@ -11,7 +11,7 @@ var maxHeightList = function(){
 $( document ).ready(function() {
   var selected_column = 'housing_units';
   var selected_agg_type = 'sum';
-  var mapCenter = [37.800, -122.002];
+  var mapCenter = [37.804444, -122.270833];
   var circle = {
     size: 120,
     x: 200,
@@ -49,12 +49,13 @@ $( document ).ready(function() {
       nativeMap.scrollWheelZoom.disable();
       nativeMap.boxZoom.disable();
       nativeMap.touchZoom.disable();
+      nativeMap.keyboard.disable();
       var el = $('.cartodb-zoom');
       el.remove()
 
       var circle = L.circle(mapCenter, 7200,{
         fillColor: 'red',
-        fillOpacity: 0.6,
+        fillOpacity: 0,
         stroke: false,
         weight: 14,
         clickable: false
@@ -69,7 +70,7 @@ $( document ).ready(function() {
       var geom_table = 'obs_6c1309a64d8f3e6986061f4d1ca7b57743e75e74'
       var geom_geoid = 'geoid'
       var data_geoid = 'geoid'
-      var sql = new cartodb.SQL({ user: 'observatory' });
+      var sql = new cartodb.SQL({ user: 'observatory', 'https': true });
 
       var updateStats= function(){
         column_name = selected_column
@@ -105,8 +106,6 @@ $( document ).ready(function() {
         })
           .done(function(data) {
             $(".js-figure").text(Math.floor(data.rows[0].value));
-            $(".js-percent").text(Math.floor(data.rows[0].value*100.0/data.rows[0].total_value));
-            $(".js-total").text(Math.floor(data.rows[0].total_value));
         })
       }
 
@@ -215,6 +214,7 @@ $( document ).ready(function() {
               var txtDown = $(this).text();
               txtDown = txtDown.toLowerCase();
               var dest = txtDown;
+              dest = dest.split(" ").join("");
               dest = dest.split(" ").join("");
               if($( ".box-icon svg" ).hasClass(dest)) {
                 $( ".box-icon svg."+dest ).show();
