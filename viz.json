@@ -1,0 +1,169 @@
+vizjson({
+  "id": "d996e7b2-1c78-11e6-b921-0e31c9be1b51",
+  "version": "0.1.0",
+  "title": "obswanderer",
+  "likes": 0,
+  "description": null,
+  "scrollwheel": false,
+  "legends": false,
+  "url": null,
+  "map_provider": "leaflet",
+  "bounds": [
+    [
+      37.309014074276,
+      -123.11279296875
+    ],
+    [
+      38.305025290537,
+      -120.76446533203
+    ]
+  ],
+  "center": "[37.808698976006774, -121.93862915039061]",
+  "zoom": 9,
+  "updated_at": "2016-05-17T23:10:58+00:00",
+  "layers": [
+    {
+      "options": {
+        "default": "true",
+        "url": "http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png",
+        "subdomains": "abcd",
+        "minZoom": "0",
+        "maxZoom": "18",
+        "name": "Positron",
+        "className": "positron_rainbow_labels",
+        "attribution": "&copy; <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"http://cartodb.com/attributions\">CartoDB</a>",
+        "labels": {
+          "url": "http://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png"
+        },
+        "urlTemplate": "http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png"
+      },
+      "infowindow": null,
+      "tooltip": null,
+      "id": "cebf4968-e6ff-492b-a1a5-154234367b6a",
+      "order": 0,
+      "type": "tiled"
+    },
+    {
+      "type": "layergroup",
+      "options": {
+        "user_name": "observatory",
+        "maps_api_template": "https://{user}.cartodb.com:443",
+        "sql_api_template": "https://{user}.cartodb.com:443",
+        "tiler_protocol": "http",
+        "tiler_domain": "cartodb.com",
+        "tiler_port": "80",
+        "sql_api_protocol": "http",
+        "sql_api_domain": "cartodb.com",
+        "sql_api_endpoint": "/api/v2/sql",
+        "sql_api_port": 80,
+        "filter": "mapnik",
+        "layer_definition": {
+          "stat_tag": "d996e7b2-1c78-11e6-b921-0e31c9be1b51",
+          "version": "1.0.1",
+          "layers": [
+            {
+              "id": "812bedf4-d137-45bc-9d66-beada0c96153",
+              "type": "CartoDB",
+              "infowindow": {
+                "fields": [
+                  
+                ],
+                "template_name": "table/views/infowindow_light",
+                "template": "<div class=\"cartodb-popup v2\">\n  <a href=\"#close\" class=\"cartodb-popup-close-button close\">x</a>\n  <div class=\"cartodb-popup-content-wrapper\">\n    <div class=\"cartodb-popup-content\">\n      {{#content.fields}}\n        {{#title}}<h4>{{title}}</h4>{{/title}}\n        {{#value}}\n          <p {{#type}}class=\"{{ type }}\"{{/type}}>{{{ value }}}</p>\n        {{/value}}\n        {{^value}}\n          <p class=\"empty\">null</p>\n        {{/value}}\n      {{/content.fields}}\n    </div>\n  </div>\n  <div class=\"cartodb-popup-tip-container\"></div>\n</div>\n",
+                "alternative_names": {
+                  
+                },
+                "width": 226,
+                "maxHeight": 180
+              },
+              "tooltip": {
+                "fields": [
+                  
+                ],
+                "template_name": "tooltip_light",
+                "template": "<div class=\"cartodb-tooltip-content-wrapper\">\n  <div class=\"cartodb-tooltip-content\">\n  {{#fields}}\n    {{#title}}\n    <h4>{{title}}</h4>\n    {{/title}}\n    <p>{{{ value }}}</p>\n  {{/fields}}\n  </div>\n</div>",
+                "alternative_names": {
+                  
+                },
+                "maxHeight": 180
+              },
+              "legend": {
+                "type": "none",
+                "show_title": false,
+                "title": "",
+                "template": "",
+                "visible": true
+              },
+              "order": 1,
+              "visible": true,
+              "options": {
+                "layer_name": "data",
+                "cartocss": "/** choropleth visualization */\n\n@1:#672044;\n@2:#8b3058;\n@3:#ad466c;\n@4:#cc607d;\n@5:#e38191;\n@6:#f4a3a8;\n@7:#ffc6c4;\n\n#data{\n  polygon-fill: #F7F7F7;\n  polygon-opacity: 0.8;\n  line-color: #FFF;\n  line-width: 0.1;\n  line-opacity: 1;\n}\n#data [ val <= 1] {\n   polygon-fill: @1;\n}\n#data [ val <= 0.32] {\n   polygon-fill: @2;\n}\n#data [ val <= 0.16] {\n   polygon-fill: @3;\n}\n#data [ val <= 0.08] {\n   polygon-fill: @4;\n}\n#data [ val <= 0.04] {\n   polygon-fill: @5;\n}\n#data [ val <= 0.02] {\n   polygon-fill: @6;\n}\n#data [ val <= 0.01] {\n   polygon-fill: @7;\n}",
+                "cartocss_version": "2.1.1",
+                "interactivity": "cartodb_id",
+                "sql": "with stats as( select max(housing_units), min(housing_units) from obs_1a098da56badf5f32e336002b0a81708c40d29cd)\n select data.cartodb_id, geom.the_geom_webmercator, (housing_units-stats.min)/(stats.max-stats.min) as val from obs_1a098da56badf5f32e336002b0a81708c40d29cd data,\nobs_6c1309a64d8f3e6986061f4d1ca7b57743e75e74 geom,\nstats\nwhere data.geoid = geom.geoid",
+                "table_name": "\"\"."
+              }
+            }
+          ]
+        },
+        "attribution": ""
+      }
+    },
+    {
+      "options": {
+        "default": "true",
+        "url": "http://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png",
+        "subdomains": "abcd",
+        "minZoom": "0",
+        "maxZoom": "18",
+        "attribution": "&copy; <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"http://cartodb.com/attributions\">CartoDB</a>",
+        "urlTemplate": "http://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png",
+        "type": "Tiled",
+        "name": "Positron Labels"
+      },
+      "infowindow": null,
+      "tooltip": null,
+      "id": "45f9591a-a90c-4beb-8f55-6781effe634c",
+      "order": 2,
+      "type": "tiled"
+    }
+  ],
+  "overlays": [
+    {
+      "type": "zoom",
+      "order": 6,
+      "options": {
+        "x": 20,
+        "y": 60,
+        "display": true
+      },
+      "template": "<a href=\"#zoom_in\" class=\"zoom_in\">+</a> <a href=\"#zoom_out\" class=\"zoom_out\">-</a>"
+    },
+    {
+      "type": "loader",
+      "order": 8,
+      "options": {
+        "display": true,
+        "x": 20,
+        "y": 150
+      },
+      "template": "<div class=\"loader\" original-title=\"\"></div>"
+    },
+    {
+      "type": "logo",
+      "order": 9,
+      "options": {
+        "display": true,
+        "x": 10,
+        "y": 40
+      },
+      "template": ""
+    }
+  ],
+  "prev": null,
+  "next": null,
+  "transition_options": {
+    "time": 0
+  }
+})
