@@ -11,8 +11,14 @@ var maxHeightList = function(){
 };
 
 $( document ).ready(function() {
-  var selected_column = 'housing_units';
-  var selected_agg_type = 'sum';
+  var selection = {
+    aggregate: 'sum',
+    dataTablename: 'obs_1a098da56badf5f32e336002b0a81708c40d29cd',
+    geomTablename: 'obs_6c1309a64d8f3e6986061f4d1ca7b57743e75e74',
+    dataDataColname: 'housing_units',
+    geomGeoidColname: 'geoid',
+    dataGeoidColname: 'geoid'
+  };
   var mapCenter = [37.804444, -122.270833];
   //var circle = {
   //  size: 120,
@@ -49,10 +55,6 @@ $( document ).ready(function() {
 
       var nativeMap = map.getNativeMap();
 
-      var dataTable = 'obs_1a098da56badf5f32e336002b0a81708c40d29cd';
-      var geomTable = 'obs_6c1309a64d8f3e6986061f4d1ca7b57743e75e74';
-      var geomGeoid = 'geoid';
-      var dataGeoid = 'geoid';
       var sql = new cartodb.SQL({ user: 'observatory', 'https': true });
 
       nativeMap.doubleClickZoom.enable();
@@ -114,48 +116,55 @@ $( document ).ready(function() {
       //updateStats();
 
       /* read json */
-      var subitemsMenu = function(e, f) {
-        var id = $(e).attr("data-value");
-        var obj = f[id];
-        var j = obj.filter_1;
+      var subitemsMenu = function($el, tags) {
+        var id = $el.attr("data-value");
+        var tag = tags[id];
+        var measures = tag.measures;
         var subitems = [];
-        $.each( j, function( k, val ) {
+        $.each(measures, function( _, val ) {
           if (val) {
-            subitems.push( "<li><a href='#' data-agg='" + val.type +
-                          "' data-col='" + val.data_colname + "' data-value='" +
-                          val.value + "'>" + val.label_1 + "</a></li>" );
+            var $link = $("<a href='#'></a>");
+            $link.text(val.name);
+            $link.data(val);
+            subitems.push($("<li />").append($link));
           }
         });
 
         $( ".js-result-category" ).empty();
         $( ".box-result" ).empty();
-        $( "<ul/>", {
-          "class": "box-resultList js-result-category",
-          html: subitems.join( "" )
-        }).appendTo(".box-result");
+        var $ul = $( "<ul/>", {
+          "class": "box-resultList js-result-category"
+        });
+        for (var i = 0; i < subitems.length; i += 1) {
+          $ul.append(subitems[i]);
+        }
+        $ul.appendTo(".box-result");
         maxHeightList();
       };
 
       var clickSubitem = function(){
         $( ".js-result-category li a" ).on( "click", function() {
+          selection = $(this).data();
           $(".js-result-category li a").removeClass( "is-selected" );
           $(this).toggleClass( "is-selected" );
           $('.box-container').toggleClass( "is-hidden" );
           $(".js-box-selectTitle").text($(this).text());
 
-          var columnName = $(this).attr('data-col');
-
-          sublayer.setSQL('with stats as( select max('+columnName+'), min(' +
-                          columnName + ') from '+dataTable+')\
-            select data.cartodb_id, geom.the_geom_webmercator, \
-                   (data.'+columnName+'-stats.min)/(stats.max-stats.min) as \
-            val from stats, ' + dataTable + ' data, ' + geomTable + ' geom \
-            where data.' + dataGeoid + ' = geom.' + geomGeoid);
+          var sql =
+            'WITH stats AS(SELECT MAX(' + selection.dataDataColname + '), \
+                                  MIN(' + selection.dataDataColname + ') \
+                           FROM '+ selection.dataTablename + ') \
+             SELECT data.cartodb_id, geom.the_geom_webmercator, \
+                    (data.'+ selection.dataDataColname + '-stats.min)/ \
+                    (stats.max-stats.min) AS \
+             val FROM stats, ' + selection.dataTablename + ' data, ' +
+               selection.geomTablename + ' geom \
+             WHERE data.' + selection.dataGeoidColname + ' = \
+                   geom.' + selection.geomGeoidColname;
+          sublayer.setSQL(sql);
           var css = sublayer.getCartoCSS();
           sublayer.setCartoCSS(css);
 
-          selected_column    = $(this).attr('data-col');
-          selected_agg_type  = $(this).attr('data-agg');
           //updateStats();
         });
       };
@@ -199,11 +208,13 @@ $( document ).ready(function() {
             var findMeasures =
               'SELECT name as label, \
                  (SELECT JSON_AGG(( \
-                   \'{"label_1":"\' || replace(name, \'"\', \'\\"\') || \
-                   \'","value":"2000","type":"\' || data_c.aggregate || \
-                   \'","data_colname":"\' || data_data_ct.colname || \
-                   \'","data_tablename":"\' || data_t.tablename || \
-                   \'"}\' \
+                   \'{"name":"\' || replace(name, \'"\', \'\\"\') || \
+                   \'","aggregate":"\' || data_c.aggregate || \
+                   \'","dataTablename":"\' || data_t.tablename || \
+                   \'","dataDataColname":"\' || data_data_ct.colname || \
+                   \'","dataGeoidColname":"\' || data_geoid_ct.colname || \
+                   \'","geomTablename":"{{geomTablename}}" \
+                      ,"geomGeoidColname":"{{geomGeoidColname}}" }\' \
                    )::json) \
                    FROM obs_column data_c, obs_column_tag ctag, \
                         obs_column_table data_data_ct, \
@@ -215,20 +226,22 @@ $( document ).ready(function() {
                      AND data_data_ct.table_id = data_t.id \
                      AND data_geoid_ct.column_id = \'{{geoidColId}}\'\
                      AND data_geoid_ct.table_id = data_t.id \
-                 ) AS filter_1 \
+                 ) AS measures \
                FROM obs_tag t \
                WHERE type ILIKE \'subsection\' and id LIKE \'tags.%\' \
                GROUP BY id, name';
 
             sql.execute(findMeasures, {
-              geoidColId: bestGeom.geoid_col_id
+              geoidColId: bestGeom.geoid_col_id,
+              geomGeoidColname: bestGeom.geom_geoid_colname,
+              geomTablename: bestGeom.geom_tablename
             })
               .done(function (rawdata) {
                 var data = [];
                 for (var i = 0; i < rawdata.rows.length; i += 1) {
-                  var row = rawdata.rows[i];
-                  if (row.filter_1) {
-                    data.push(row);
+                  var tag = rawdata.rows[i];
+                  if (tag.measures) {
+                    data.push(tag);
                   }
                 }
                 var items = [];
@@ -251,17 +264,17 @@ $( document ).ready(function() {
               .done(function(rawdata){
                 var data = [];
                 for (var i = 0; i < rawdata.rows.length; i += 1) {
-                  var row = rawdata.rows[i];
-                  if (row.filter_1) {
-                    data.push(row);
+                  var tag = rawdata.rows[i];
+                  if (tag.measures) {
+                    data.push(tag);
                   }
                 }
-                $( ".box-navNavigation a" ).on( "click", function() {
+                $( ".box-navNavigation a" ).on("click", function() {
                   var txt = $(this).text();
                   $(".js-box-input").text(txt);
                   $(".box-navNavigation a").removeClass( "is-selected" );
                   $(this).toggleClass( "is-selected" );
-                  subitemsMenu(this, data);
+                  subitemsMenu($(this), data);
                   clickSubitem();
                   scrollFunction();
                   $( ".box-icon svg" ).hide();
