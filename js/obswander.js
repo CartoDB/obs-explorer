@@ -1,3 +1,5 @@
+/*jshint multistr: true, browser: true*/
+/*globals $, cartodb*/
 var sublayer;
 
 var maxHeightList = function(){
@@ -12,11 +14,11 @@ $( document ).ready(function() {
   var selected_column = 'housing_units';
   var selected_agg_type = 'sum';
   var mapCenter = [37.804444, -122.270833];
-  var circle = {
-    size: 120,
-    x: 200,
-    y: 200
-  };
+  //var circle = {
+  //  size: 120,
+  //  x: 200,
+  //  y: 200
+  //};
 
   //var canvas = document.getElementById('cover');
   //ctx = canvas.getContext('2d');
@@ -42,10 +44,16 @@ $( document ).ready(function() {
   cartodb.createVis('map', 'viz.json', {
     zoom: 11, center: mapCenter
   })
-    .done(function(map,layers){
+    .done(function(map, layers){
       sublayer = layers[1].getSubLayer(0);
 
       var nativeMap = map.getNativeMap();
+
+      var dataTable = 'obs_1a098da56badf5f32e336002b0a81708c40d29cd';
+      var geomTable = 'obs_6c1309a64d8f3e6986061f4d1ca7b57743e75e74';
+      var geomGeoid = 'geoid';
+      var dataGeoid = 'geoid';
+      var sql = new cartodb.SQL({ user: 'observatory', 'https': true });
 
       nativeMap.doubleClickZoom.enable();
       nativeMap.scrollWheelZoom.enable();
@@ -65,12 +73,6 @@ $( document ).ready(function() {
       //  circle.setLatLng(e.target.getCenter());
       //  updateStats();
       //});
-
-      var data_table = 'obs_1a098da56badf5f32e336002b0a81708c40d29cd'
-      var geom_table = 'obs_6c1309a64d8f3e6986061f4d1ca7b57743e75e74'
-      var geom_geoid = 'geoid'
-      var data_geoid = 'geoid'
-      var sql = new cartodb.SQL({ user: 'observatory', 'https': true });
 
       //var updateStats= function(){
       //  column_name = selected_column
@@ -112,7 +114,7 @@ $( document ).ready(function() {
       //updateStats();
 
       /* read json */
-      var subitemsMenu = function(e,f){
+      var subitemsMenu = function(e, f) {
         var id = $(e).attr("data-value");
         var obj = f[id];
         var j = obj.filter_1;
@@ -141,14 +143,14 @@ $( document ).ready(function() {
           $('.box-container').toggleClass( "is-hidden" );
           $(".js-box-selectTitle").text($(this).text());
 
-          var column_name = $(this).attr('data-col');
+          var columnName = $(this).attr('data-col');
 
-          sublayer.setSQL('with stats as( select max('+column_name+'), min('+column_name+') \
-                            from '+data_table+')\
+          sublayer.setSQL('with stats as( select max('+columnName+'), min(' +
+                          columnName + ') from '+dataTable+')\
             select data.cartodb_id, geom.the_geom_webmercator, \
-                   (data.'+column_name+'-stats.min)/(stats.max-stats.min) as val \
-            from stats, ' + data_table + ' data, ' + geom_table + ' geom \
-            where data.' + data_geoid + ' = geom.' + geom_geoid);
+                   (data.'+columnName+'-stats.min)/(stats.max-stats.min) as \
+            val from stats, ' + dataTable + ' data, ' + geomTable + ' geom \
+            where data.' + dataGeoid + ' = geom.' + geomGeoid);
           var css = sublayer.getCartoCSS();
           sublayer.setCartoCSS(css);
 
@@ -164,83 +166,97 @@ $( document ).ready(function() {
         });
       };
 
-      query = 'SELECT name as label, \
-                     (SELECT JSON_AGG(( \
-                       \'{"label_1":"\' || replace(name, \'"\', \'\\"\') || \
-                       \'","value":"2000","type":"\' || aggregate || \
-                       \'","data_col":"\' || ctable.colname || \
-                       \'"}\' \
-                       )::json) \
-                       FROM obs_column c, obs_column_tag ctag, \
-                            obs_column_table ctable, obs_table tab \
-                       WHERE c.id = ctag.column_id \
-                         AND ctag.tag_id = t.id \
-                         AND c.id = ctable.column_id \
-                         AND ctable.table_id = tab.id \
-                         and c.aggregate ILIKE \'SUM\' \
-                         AND tab.tablename = \'' + data_table + '\' \
-                     ) AS filter_1 \
-                     FROM obs_tag t \
-                     WHERE type ILIKE \'subsection\' and id LIKE \'tags.%\' \
-                     GROUP BY id, name'
+      var updateMenu = function() {
+        var findMeasures = 'SELECT name as label, \
+                       (SELECT JSON_AGG(( \
+                         \'{"label_1":"\' || replace(name, \'"\', \'\\"\') || \
+                         \'","value":"2000","type":"\' || aggregate || \
+                         \'","data_col":"\' || ctable.colname || \
+                         \'"}\' \
+                         )::json) \
+                         FROM obs_column c, obs_column_tag ctag, \
+                              obs_column_table ctable, obs_table tab \
+                         WHERE c.id = ctag.column_id \
+                           AND ctag.tag_id = t.id \
+                           AND c.id = ctable.column_id \
+                           AND ctable.table_id = tab.id \
+                           and c.aggregate ILIKE \'SUM\' \
+                           AND tab.tablename = \'{{dataTable}}\' \
+                       ) AS filter_1 \
+                       FROM obs_tag t \
+                       WHERE type ILIKE \'subsection\' and id LIKE \'tags.%\' \
+                       GROUP BY id, name';
 
-      $.getJSON( 'http://observatory.cartodb.com/api/v2/sql', {
-        q: query
-      }, function( rawdata ) {
-        var data = [];
-        for (var i = 0; i < rawdata.rows.length; i += 1) {
-            row = rawdata.rows[i];
-            if (row.filter_1) {
-                data.push(row);
-            }
-        }
-        var items = [];
-        $.each( data, function( key, val ) {
-            if (items.length == 0) {
-              items.push( "<li><a class='is-selected' href='#'  data-value='" + key + "'>" + val.label + "</a></li>" );
-            } else {
-              items.push( "<li><a href='#' data-value='" + key + "'>" + val.label + "</a></li>" );
-            }
-        });
-        $( "<ul/>", {
-          "class": "box-navNavigation",
-          html: items.join( "" )
-        }).appendTo( ".box-nav" );
-        subitemsMenu($( ".box-navNavigation a" ), data);
-      })
-        .done(function(rawdata){
-          var data = [];
-          for (var i = 0; i < rawdata.rows.length; i += 1) {
-              row = rawdata.rows[i];
+        //$.getJSON( 'http://observatory.cartodb.com/api/v2/sql', {
+        //  q: findMeasures
+        //}, function( rawdata ) {
+        sql.execute(findMeasures, {
+          dataTable: dataTable
+        })
+          .done(function (rawdata) {
+            var data = [];
+            for (var i = 0; i < rawdata.rows.length; i += 1) {
+              var row = rawdata.rows[i];
               if (row.filter_1) {
-                  data.push(row);
+                data.push(row);
               }
-          }
-          $( ".box-navNavigation a" ).on( "click", function() {
-            var txt = $(this).text();
-            $(".js-box-input").text(txt);
-            $(".box-navNavigation a").removeClass( "is-selected" );
-            $(this).toggleClass( "is-selected" );
-            subitemsMenu(this, data);
+            }
+            var items = [];
+            $.each( data, function( key, val ) {
+              if (items.length === 0) {
+                items.push("<li><a class='is-selected' href='#' data-value='"+
+                           key + "'>" + val.label + "</a></li>");
+              } else {
+                items.push( "<li><a href='#' data-value='" + key + "'>" +
+                           val.label + "</a></li>" );
+              }
+            });
+            $('.box-nav').empty();
+            $( "<ul/>", {
+              "class": "box-navNavigation",
+              html: items.join( "" )
+            }).appendTo( ".box-nav" );
+            subitemsMenu($( ".box-navNavigation a" ), data);
+          })
+          .done(function(rawdata){
+            var data = [];
+            for (var i = 0; i < rawdata.rows.length; i += 1) {
+              var row = rawdata.rows[i];
+              if (row.filter_1) {
+                data.push(row);
+              }
+            }
+            $( ".box-navNavigation a" ).on( "click", function() {
+              var txt = $(this).text();
+              $(".js-box-input").text(txt);
+              $(".box-navNavigation a").removeClass( "is-selected" );
+              $(this).toggleClass( "is-selected" );
+              subitemsMenu(this, data);
+              clickSubitem();
+              scrollFunction();
+              $( ".box-icon svg" ).hide();
+                var txtDown = $(this).text();
+                txtDown = txtDown.toLowerCase();
+                var dest = txtDown;
+                dest = dest.split(" ").join("");
+                if($( ".box-icon svg" ).hasClass(dest)) {
+                  $( ".box-icon svg."+dest ).show();
+                }
+            });
             clickSubitem();
             scrollFunction();
-            $( ".box-icon svg" ).hide();
-              var txtDown = $(this).text();
-              txtDown = txtDown.toLowerCase();
-              var dest = txtDown;
-              dest = dest.split(" ").join("");
-              if($( ".box-icon svg" ).hasClass(dest)) {
-                $( ".box-icon svg."+dest ).show();
-              }
           });
-          clickSubitem();
-          scrollFunction();
-        })
+      };
+
+      nativeMap.on('moveend', function(e) {
+        updateMenu();
+      });
 
       $( ".box-input" ).on( "click", function() {
         $(this).toggleClass( "is-open" );
         maxHeightList();
         $(".box-container").toggleClass( "is-hidden" );
       });
-    })
+      updateMenu();
+    });
 });
