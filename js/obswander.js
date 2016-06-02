@@ -187,9 +187,6 @@ $( document ).ready(function() {
                        WHERE type ILIKE \'subsection\' and id LIKE \'tags.%\' \
                        GROUP BY id, name';
 
-        //$.getJSON( 'http://observatory.cartodb.com/api/v2/sql', {
-        //  q: findMeasures
-        //}, function( rawdata ) {
         sql.execute(findMeasures, {
           dataTable: dataTable
         })
