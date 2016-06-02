@@ -42,7 +42,7 @@ $( document ).ready(function() {
   //ctx.drawImage(mask,0,0);
 
   cartodb.createVis('map', 'viz.json', {
-    zoom: 11, center: mapCenter
+    zoom: 11, center: mapCenter, search: true
   })
     .done(function(map, layers){
       sublayer = layers[1].getSubLayer(0);
@@ -122,7 +122,7 @@ $( document ).ready(function() {
         $.each( j, function( k, val ) {
           if (val) {
             subitems.push( "<li><a href='#' data-agg='" + val.type +
-                          "' data-col='" + val.data_col + "' data-value='" +
+                          "' data-col='" + val.data_colname + "' data-value='" +
                           val.value + "'>" + val.label_1 + "</a></li>" );
           }
         });
@@ -167,81 +167,115 @@ $( document ).ready(function() {
       };
 
       var updateMenu = function() {
-        var findMeasures = 'SELECT name as label, \
-                       (SELECT JSON_AGG(( \
-                         \'{"label_1":"\' || replace(name, \'"\', \'\\"\') || \
-                         \'","value":"2000","type":"\' || aggregate || \
-                         \'","data_col":"\' || ctable.colname || \
-                         \'"}\' \
-                         )::json) \
-                         FROM obs_column c, obs_column_tag ctag, \
-                              obs_column_table ctable, obs_table tab \
-                         WHERE c.id = ctag.column_id \
-                           AND ctag.tag_id = t.id \
-                           AND c.id = ctable.column_id \
-                           AND ctable.table_id = tab.id \
-                           and c.aggregate ILIKE \'SUM\' \
-                           AND tab.tablename = \'{{dataTable}}\' \
-                       ) AS filter_1 \
-                       FROM obs_tag t \
-                       WHERE type ILIKE \'subsection\' and id LIKE \'tags.%\' \
-                       GROUP BY id, name';
-
-        sql.execute(findMeasures, {
-          dataTable: dataTable
+        var findAvailableGeoms =
+          "SELECT geom_t.id AS geom_t_id, \
+                  geom_t.tablename AS geom_tablename, \
+                  geom_geoid_ct.colname AS geom_geoid_colname, \
+                  geom_geom_ct.colname AS geom_geom_colname, \
+                  geom_geom_c.weight, geom_t.timespan, \
+                  geom_geoid_c.id AS geoid_col_id \
+           FROM obs_column_to_column c2c, \
+                obs_table geom_t, obs_column_table geom_geoid_ct, \
+                obs_column geom_geoid_c, obs_column geom_geom_c, \
+                obs_column_table geom_geom_ct \
+           WHERE c2c.reltype = 'geom_ref' \
+             AND c2c.source_id = geom_geoid_c.id \
+             AND c2c.target_id = geom_geom_c.id \
+             AND geom_geoid_c.id = geom_geoid_ct.column_id \
+             AND geom_geoid_ct.table_id = geom_t.id \
+             AND geom_geom_ct.table_id = geom_t.id \
+             AND geom_geom_ct.column_id = geom_geom_c.id \
+             AND geom_geom_c.type ILIKE 'geometry' \
+             AND ST_Intersects(geom_t.bounds::Box2D, \
+                               ST_MakeEnvelope({{bounds}})) \
+           ORDER BY geom_geom_c.weight DESC, geom_t.timespan DESC, geom_t.id";
+        var bounds = nativeMap.getBounds().toBBoxString();
+        sql.execute(findAvailableGeoms, {
+          bounds: bounds
         })
           .done(function (rawdata) {
-            var data = [];
-            for (var i = 0; i < rawdata.rows.length; i += 1) {
-              var row = rawdata.rows[i];
-              if (row.filter_1) {
-                data.push(row);
-              }
-            }
-            var items = [];
-            $.each( data, function( key, val ) {
-              if (items.length === 0) {
-                items.push("<li><a class='is-selected' href='#' data-value='"+
-                           key + "'>" + val.label + "</a></li>");
-              } else {
-                items.push( "<li><a href='#' data-value='" + key + "'>" +
-                           val.label + "</a></li>" );
-              }
-            });
-            $('.box-nav').empty();
-            $( "<ul/>", {
-              "class": "box-navNavigation",
-              html: items.join( "" )
-            }).appendTo( ".box-nav" );
-            subitemsMenu($( ".box-navNavigation a" ), data);
-          })
-          .done(function(rawdata){
-            var data = [];
-            for (var i = 0; i < rawdata.rows.length; i += 1) {
-              var row = rawdata.rows[i];
-              if (row.filter_1) {
-                data.push(row);
-              }
-            }
-            $( ".box-navNavigation a" ).on( "click", function() {
-              var txt = $(this).text();
-              $(".js-box-input").text(txt);
-              $(".box-navNavigation a").removeClass( "is-selected" );
-              $(this).toggleClass( "is-selected" );
-              subitemsMenu(this, data);
-              clickSubitem();
-              scrollFunction();
-              $( ".box-icon svg" ).hide();
-                var txtDown = $(this).text();
-                txtDown = txtDown.toLowerCase();
-                var dest = txtDown;
-                dest = dest.split(" ").join("");
-                if($( ".box-icon svg" ).hasClass(dest)) {
-                  $( ".box-icon svg."+dest ).show();
+            var availableGeoms = rawdata.rows;
+            var bestGeom = availableGeoms[0];
+            var findMeasures =
+              'SELECT name as label, \
+                 (SELECT JSON_AGG(( \
+                   \'{"label_1":"\' || replace(name, \'"\', \'\\"\') || \
+                   \'","value":"2000","type":"\' || data_c.aggregate || \
+                   \'","data_colname":"\' || data_data_ct.colname || \
+                   \'","data_tablename":"\' || data_t.tablename || \
+                   \'"}\' \
+                   )::json) \
+                   FROM obs_column data_c, obs_column_tag ctag, \
+                        obs_column_table data_data_ct, \
+                        obs_column_table data_geoid_ct, \
+                        obs_table data_t \
+                   WHERE data_c.id = ctag.column_id \
+                     AND ctag.tag_id = t.id \
+                     AND data_data_ct.column_id = data_c.id  \
+                     AND data_data_ct.table_id = data_t.id \
+                     AND data_geoid_ct.column_id = \'{{geoidColId}}\'\
+                     AND data_geoid_ct.table_id = data_t.id \
+                 ) AS filter_1 \
+               FROM obs_tag t \
+               WHERE type ILIKE \'subsection\' and id LIKE \'tags.%\' \
+               GROUP BY id, name';
+
+            sql.execute(findMeasures, {
+              geoidColId: bestGeom.geoid_col_id
+            })
+              .done(function (rawdata) {
+                var data = [];
+                for (var i = 0; i < rawdata.rows.length; i += 1) {
+                  var row = rawdata.rows[i];
+                  if (row.filter_1) {
+                    data.push(row);
+                  }
                 }
-            });
-            clickSubitem();
-            scrollFunction();
+                var items = [];
+                $.each( data, function( key, val ) {
+                  if (items.length === 0) {
+                    items.push("<li><a class='is-selected' href='#' data-value='"+
+                               key + "'>" + val.label + "</a></li>");
+                  } else {
+                    items.push( "<li><a href='#' data-value='" + key + "'>" +
+                               val.label + "</a></li>" );
+                  }
+                });
+                $('.box-nav').empty();
+                $( "<ul/>", {
+                  "class": "box-navNavigation",
+                  html: items.join( "" )
+                }).appendTo( ".box-nav" );
+                subitemsMenu($( ".box-navNavigation a" ), data);
+              })
+              .done(function(rawdata){
+                var data = [];
+                for (var i = 0; i < rawdata.rows.length; i += 1) {
+                  var row = rawdata.rows[i];
+                  if (row.filter_1) {
+                    data.push(row);
+                  }
+                }
+                $( ".box-navNavigation a" ).on( "click", function() {
+                  var txt = $(this).text();
+                  $(".js-box-input").text(txt);
+                  $(".box-navNavigation a").removeClass( "is-selected" );
+                  $(this).toggleClass( "is-selected" );
+                  subitemsMenu(this, data);
+                  clickSubitem();
+                  scrollFunction();
+                  $( ".box-icon svg" ).hide();
+                    var txtDown = $(this).text();
+                    txtDown = txtDown.toLowerCase();
+                    var dest = txtDown;
+                    dest = dest.split(" ").join("");
+                    if($( ".box-icon svg" ).hasClass(dest)) {
+                      $( ".box-icon svg."+dest ).show();
+                    }
+                });
+                clickSubitem();
+                scrollFunction();
+              });
           });
       };
 
