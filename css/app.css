@@ -64,14 +64,29 @@ body {
 }
 .box-figure {
   color: #2E3C43;
-  font: 400 40px/48px 'Open Sans';
+  font: 400 16px/18px 'Open Sans';
   margin-right: 12px;
+  margin: 8px;
+}
+.box-figureCode {
+  overflow: scroll;
+  font-family: Courier;
+  font-size: 8px;
+  font-weight: bold;
+  background: black;
+  color: lightgreen;
+  padding: 3px;
+  border: 3px solid black;
+  border-radius: 5px;
+  width: 200px;
+  height: 50px;
 }
 
 .box-figureInfo {
   font: 400 16px/24px 'Open Sans';
   color: #979EA1;
 }
+
 
 .box-nav {
   margin-top: 45px;

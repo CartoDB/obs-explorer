@@ -19,6 +19,8 @@ $( document ).ready(function() {
     geomGeoidColname: 'geoid',
     dataGeoidColname: 'geoid'
   };
+  var findMeasures;
+  var measureSql ='';
   var mapCenter = [37.804444, -122.270833];
   //var circle = {
   //  size: 120,
@@ -112,8 +114,10 @@ $( document ).ready(function() {
       //      $(".js-figure").text(Math.floor(data.rows[0].value));
       //  })
       //}
-
-      //updateStats();
+      var updateStats = function () {
+        $('.figure-sql').val(measureSql.replace(/  (\s*)/g, '\n$1'));
+        $('.figure-timespan').text(selection.timespan);
+      };
 
       /* read json */
       var subitemsMenu = function($el, tags) {
@@ -150,22 +154,22 @@ $( document ).ready(function() {
           $('.box-container').toggleClass( "is-hidden" );
           $(".js-box-selectTitle").text($(this).text());
 
-          var sql =
-            'WITH stats AS(SELECT MAX(' + selection.dataDataColname + '), \
-                                  MIN(' + selection.dataDataColname + ') \
-                           FROM '+ selection.dataTablename + ') \
-             SELECT data.cartodb_id, geom.the_geom_webmercator, \
-                    (data.'+ selection.dataDataColname + '-stats.min)/ \
-                    (stats.max-stats.min) AS \
-             val FROM stats, ' + selection.dataTablename + ' data, ' +
-               selection.geomTablename + ' geom \
-             WHERE data.' + selection.dataGeoidColname + ' = \
-                   geom.' + selection.geomGeoidColname;
-          sublayer.setSQL(sql);
+          measureSql =
+            'WITH stats AS(SELECT MAX(' + selection.dataDataColname + '),   ' +
+            '                     MIN(' + selection.dataDataColname + ')   ' +
+            '              FROM '+ selection.dataTablename + ')   ' +
+            'SELECT data.cartodb_id, geom.the_geom_webmercator,   ' +
+            '       (data.'+ selection.dataDataColname + '-stats.min)/   ' +
+            '       (stats.max-stats.min) AS val   ' +
+            'FROM stats, ' + selection.dataTablename + ' data,   ' +
+               selection.geomTablename + ' geom   ' +
+            'WHERE data.' + selection.dataGeoidColname + ' = ' +
+                  'geom.' + selection.geomGeoidColname;
+          sublayer.setSQL(measureSql);
           var css = sublayer.getCartoCSS();
           sublayer.setCartoCSS(css);
 
-          //updateStats();
+          updateStats();
         });
       };
       var scrollFunction = function(){
@@ -205,7 +209,7 @@ $( document ).ready(function() {
           .done(function (rawdata) {
             var availableGeoms = rawdata.rows;
             var bestGeom = availableGeoms[0];
-            var findMeasures =
+            findMeasures =
               'SELECT name as label, \
                  (SELECT JSON_AGG(( \
                    \'{"name":"\' || replace(name, \'"\', \'\\"\') || \
@@ -213,6 +217,7 @@ $( document ).ready(function() {
                    \'","dataTablename":"\' || data_t.tablename || \
                    \'","dataDataColname":"\' || data_data_ct.colname || \
                    \'","dataGeoidColname":"\' || data_geoid_ct.colname || \
+                   \'","timespan":"\' || data_t.timespan || \
                    \'","geomTablename":"{{geomTablename}}" \
                       ,"geomGeoidColname":"{{geomGeoidColname}}" }\' \
                    )::json) \
