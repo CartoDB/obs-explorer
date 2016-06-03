@@ -23,32 +23,6 @@ $( document ).ready(function() {
   var findMeasures;
   var measureSql ='';
   var mapCenter = [37.804444, -122.270833];
-  //var circle = {
-  //  size: 120,
-  //  x: 200,
-  //  y: 200
-  //};
-
-  //var canvas = document.getElementById('cover');
-  //ctx = canvas.getContext('2d');
-
-  //canvas.height = $(window).height();
-  //canvas.width = $(window).width();
-  //circle.y = canvas.height / 2;
-  //circle.x = canvas.width / 2;
-
-  //ctx.fillStyle = "rgba(255,0,0,0)";
-  //ctx.fillRect(0, 0, canvas.width, canvas.height);
-  //var mask = document.createElement('canvas');
-  //mask.width = canvas.width;
-  //mask.height = canvas.height;
-  //var maskCtx = mask.getContext('2d');
-  //maskCtx.fillStyle = "rgba(0,0,0,0.6)";
-  //maskCtx.fillRect(0, 0, mask.width, mask.height);
-  //maskCtx.globalCompositeOperation = 'destination-out';
-  //maskCtx.arc(circle.x, circle.y, circle.size, 0, 2*Math.PI);
-  //maskCtx.fill();
-  //ctx.drawImage(mask,0,0);
 
   cartodb.createVis('map', 'viz.json', {
     zoom: 11, center: mapCenter, search: true
@@ -66,55 +40,6 @@ $( document ).ready(function() {
       nativeMap.touchZoom.enable();
       nativeMap.keyboard.enable();
 
-      //var circle = L.circle(mapCenter, 7200,{
-      //  fillColor: 'red',
-      //  fillOpacity: 0,
-      //  stroke: false,
-      //  weight: 14,
-      //  clickable: false
-      //}).addTo(nativeMap);
-
-      //nativeMap.on('moveend', function(e){
-      //  circle.setLatLng(e.target.getCenter());
-      //  updateStats();
-      //});
-
-      //var updateStats= function(){
-      //  column_name = selected_column
-      //  // bounds = nativeMap.getBounds()
-
-      //  if (selected_agg_type=='sum'){
-      //    query = "SELECT sum(data.{{column_name}}) AS total_value, \
-      //                sum( CASE WHEN geom.the_geom && ST_Transform(ST_Buffer(ST_Transform(CDB_LatLng({{center}}),3857),{{radius}}),4326) THEN data.{{column_name}} ELSE 0 END )  AS value\
-      //                FROM {{data_table}} data, {{geom_table}} geom \
-      //                WHERE data.{{data_geoid}} = geom.{{geom_geoid}}"
-      //  }
-      //  else if (selected_agg_type=='avg'){
-      //    query = "with avg_total as(\
-      //              select avg({{column_name}}) as total from {{data_table}} \
-      //            )\
-      //            SELECT avg(data.{{column_name}}) AS value, \
-      //                avg_total.total as total_value \
-      //                FROM {{data_table}} data, {{geom_table}} geom avg_total \
-      //                where \
-      //              data.{{data_geoid}} = geom.{{geom_geoid}} \
-      //              geom.the_geom && ST_Transform(ST_Buffer(ST_Transform(CDB_LatLng({{center}}),3857),{{radius}}),4326) \
-      //              group by avg_total.total"
-      //  }
-      //  sql.execute(query, {
-      //    column_name: column_name,
-      //    data_table: data_table,
-      //    geom_table: geom_table,
-      //    data_geoid: data_geoid,
-      //    geom_geoid: geom_geoid,
-      //    agg_type: selected_agg_type,
-      //    center: [circle.getLatLng().lat, circle.getLatLng().lng].join(','),
-      //    radius: circle.getRadius()
-      //  })
-      //    .done(function(data) {
-      //      $(".js-figure").text(Math.floor(data.rows[0].value));
-      //  })
-      //}
       var updateStats = function () {
         $('.figure-sql').val(measureSql.replace(/  (\s*)/g, '\n$1'));
         $('.figure-timespan').text(selection.timespan);
