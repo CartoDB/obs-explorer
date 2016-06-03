@@ -1,5 +1,5 @@
 /*jshint multistr: true, browser: true*/
-/*globals $, cartodb*/
+/*globals $, cartodb, _*/
 var sublayer;
 
 var maxHeightList = function(){
@@ -19,6 +19,7 @@ $( document ).ready(function() {
     geomGeoidColname: 'geoid',
     dataGeoidColname: 'geoid'
   };
+  var selectedBoundary;
   var findMeasures;
   var measureSql ='';
   var mapCenter = [37.804444, -122.270833];
@@ -172,6 +173,18 @@ $( document ).ready(function() {
           updateStats();
         });
       };
+
+      var boundarySelect = function(availableBoundaries){
+        var $boundarySelect = $('.box-boundarySelect');
+        $boundarySelect.empty();
+        $.each(availableBoundaries, function (_, boundary) {
+          var $option = $('<option />');
+          $option.data(boundary);
+          $option.text(boundary.name);
+          $boundarySelect.append($option);
+        });
+      };
+
       var scrollFunction = function(){
         $(".js-result-category").niceScroll({
           cursorcolor: "#ccc", // change cursor color in hex
@@ -186,6 +199,7 @@ $( document ).ready(function() {
                   geom_geoid_ct.colname AS geom_geoid_colname, \
                   geom_geom_ct.colname AS geom_geom_colname, \
                   geom_geom_c.weight, geom_t.timespan, \
+                  geom_geom_c.name, \
                   geom_geoid_c.id AS geoid_col_id \
            FROM obs_column_to_column c2c, \
                 obs_table geom_t, obs_column_table geom_geoid_ct, \
@@ -207,8 +221,9 @@ $( document ).ready(function() {
           bounds: bounds
         })
           .done(function (rawdata) {
-            var availableGeoms = rawdata.rows;
-            var bestGeom = availableGeoms[0];
+            var availableBoundaries = rawdata.rows;
+            selectedBoundary = availableBoundaries[0];
+            boundarySelect(availableBoundaries);
             findMeasures =
               'SELECT name as label, \
                  (SELECT JSON_AGG(( \
@@ -237,9 +252,9 @@ $( document ).ready(function() {
                GROUP BY id, name';
 
             sql.execute(findMeasures, {
-              geoidColId: bestGeom.geoid_col_id,
-              geomGeoidColname: bestGeom.geom_geoid_colname,
-              geomTablename: bestGeom.geom_tablename
+              geoidColId: selectedBoundary.geoid_col_id,
+              geomGeoidColname: selectedBoundary.geom_geoid_colname,
+              geomTablename: selectedBoundary.geom_tablename
             })
               .done(function (rawdata) {
                 var data = [];
