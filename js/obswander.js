@@ -282,14 +282,6 @@ $( document ).ready(function() {
                   subitemsMenu($(this), data);
                   clickSubitem();
                   scrollFunction();
-                  $( ".box-icon svg" ).hide();
-                    var txtDown = $(this).text();
-                    txtDown = txtDown.toLowerCase();
-                    var dest = txtDown;
-                    dest = dest.split(" ").join("");
-                    if($( ".box-icon svg" ).hasClass(dest)) {
-                      $( ".box-icon svg."+dest ).show();
-                    }
                 });
                 clickSubitem();
                 scrollFunction();
