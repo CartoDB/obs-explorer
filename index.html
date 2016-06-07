@@ -23,12 +23,51 @@
   <div class="box">
     <div class="box-inner">
       <div class="box-header">
+        <!--
         <div class="box-select">
           <h2 class="box-selectTitle">CHOOSE A SAMPLE MEASUREMENT</h2>
           <div class="box-input">
             <h2 class="js-box-input">Households</h2>
           </div>
         </div>
+        -->
+        <div class="box-select">
+          <h2 class="box-selectTitle js-box-selectTitle">Numerator</h2>
+          <div class="box-selectInfo">
+            <select class="box-numerSelect box-select">
+              <optgroup class="box-optgroupAvailable" label="Available"></optgroup>
+              <optgroup class="box-optgroupUnavailable" label="Unavailable"></optgroup>
+            </select>
+          </div>
+        </div>
+        <div class="box-select">
+          <h2 class="box-selectTitle js-box-selectTitle">Denominator</h2>
+          <div class="box-selectInfo">
+            <select class="box-denomSelect box-select">
+              <optgroup class="box-optgroupAvailable" label="Available"></optgroup>
+              <optgroup class="box-optgroupUnavailable" label="Unavailable"></optgroup>
+            </select>
+          </div>
+        </div>
+        <div class="box-select">
+          <h2 class="box-selectTitle js-box-selectTitle">Boundary</h2>
+          <div class="box-selectInfo">
+            <select class="box-geomSelect box-select">
+              <optgroup class="box-optgroupAvailable" label="Available"></optgroup>
+              <optgroup class="box-optgroupUnavailable" label="Unavailable"></optgroup>
+            </select>
+          </div>
+        </div>
+        <div class="box-select">
+          <h2 class="box-selectTitle js-box-selectTitle">Timespan</h2>
+          <div class="box-selectInfo">
+            <select class="box-timespanSelect box-select">
+              <optgroup class="box-optgroupAvailable" label="Available"></optgroup>
+              <optgroup class="box-optgroupUnavailable" label="Unavailable"></optgroup>
+            </select>
+          </div>
+        </div>
+        <!--
         <div class="box-select">
           <h2 class="box-selectTitle js-box-selectTitle">HOUSING UNITS</h2>
           <div class="box-selectInfo">
@@ -37,12 +76,15 @@
             <h3 class="box-figure figure-timespan"></h3>
           </div>
         </div>
+        -->
       </div>
+      <!--
       <div class="box-container is-hidden">
         <nav class="box-nav"></nav>
         <div class="box-result">
         </div>
       </div>
+      -->
     </div>
   </div>
   <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/cartodb.js"></script>
