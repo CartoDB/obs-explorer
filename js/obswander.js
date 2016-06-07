@@ -15,20 +15,7 @@ var sql = new cartodb.SQL({
   https: true
 });
 
-//var selection = {
-//  measure:  'us.census.acs.B11001001',
-//  boundary: 'us.census.tiger.block_group_clipped',
-//  timespan: '2010 - 2014',
-//  subsection: 'Housing'
-//};
-
 var nativeMap;
-var _selection = {
-  numer_id: 'us.census.acs.B11001001',
-  denom_id: null,
-  geom_id:  'us.census.tiger.block_group_clipped',
-  timespan_id: '2010 - 2014'
-};
 
 var openSubsection = 'tags.housing';
 
@@ -66,6 +53,17 @@ var palettes = {
 };
 
 var queries = {
+  data: "\
+    SELECT numer_colname, numer_geomref_colname, numer_tablename, \
+           denom_colname, denom_geomref_colname, denom_tablename, \
+           geom_colname, geom_geomref_colname, geom_tablename \
+    FROM obs_meta \
+    WHERE st_intersects( \
+        geom_bounds, st_makeenvelope({{ bounds }})) \
+      AND {{ numer_id }} = numer_id \
+      AND {{ denom_id }} = denom_id \
+      AND {{ geom_id }} = geom_id \
+      AND {{ timespan_id }} = numer_timespan",
   subsection: "\
     SELECT id, name, num_measures \
     FROM ( \
@@ -118,9 +116,13 @@ var queries = {
 };
 
 var getSelection = function () {
-  var bounds = nativeMap.getBounds().toBBoxString();
-  _selection.bounds = bounds;
-  return _selection; // TODO
+  return {
+    bounds: nativeMap.getBounds().toBBoxString(),
+    numer_id: $('.box-numerSelect').val(),
+    denom_id: $('.box-denomSelect').val(),
+    geom_id: $('.box-geomSelect').val(),
+    timespan_id: $('.box-timespanSelect').val()
+  };
 };
 
 var query = function (type) {
@@ -173,69 +175,29 @@ $( document ).ready(function () {
       //}));
   };
 
-  //var renderMeasures = function (subsection) {
-  //  var measures = subsection.measures;
-  //  var $ul = $( "<ul/>", {
-  //    "class": "box-resultList js-result-category"
-  //  });
+  var renderMap = function () {
+    measureSql =
+      'WITH stats AS(SELECT MAX(' + selectedMeasure.dataDataColname +
+                              '),   ' +
+      '                     MIN(' + selectedMeasure.dataDataColname +
+                               ')   ' +
+      '              FROM '+ selectedMeasure.dataTablename + ')   ' +
+      'SELECT data.cartodb_id, geom.the_geom_webmercator,   ' +
+      '       (data.'+ selectedMeasure.dataDataColname + '-stats.min)/   ' +
+      '       (stats.max-stats.min) AS val   ' +
+      'FROM stats, ' + selectedMeasure.dataTablename + ' data,   ' +
+         selectedBoundary.geomTablename + ' geom   ' +
+      'WHERE data.' + selectedMeasure.dataGeoidColname + ' = ' +
+            'geom.' + selectedBoundary.geomGeoidColname;
+    sublayer.setSQL(measureSql);
+    var css = sublayer.getCartoCSS();
+    sublayer.setCartoCSS(css);
 
-  //  $( ".js-result-category" ).empty();
-  //  $( ".box-result" ).empty();
+    renderStats();
+  };
 
-  //  $.each(measures, function (_, measure) {
-  //    if (!measure) {
-  //      return;
-  //    }
-  //    var $link = $("<a href='#'></a>")
-  //      .text(measure.name)
-  //      .data(measure)
-  //      .on('click', function(evt) {
-  //        evt.preventDefault();
-  //        selectedMeasure = $(this).data();
-  //        selectedSubsection = subsection.label;
-  //        $(".js-result-category li a").removeClass( "is-selected" );
-  //        $(this).toggleClass( "is-selected" );
-  //        $('.box-container').toggleClass( "is-hidden" );
-  //        $(".js-box-selectTitle").text($(this).text());
-
-  //        renderMap();
-  //      });
-  //    if (measure.dataColId === selectedMeasure.dataColId) {
-  //      selectedMeasure = measure;
-  //      renderMap();
-  //    }
-  //    $ul.append($("<li />").append($link));
-  //  });
-  //  $ul.appendTo(".box-result");
-  //  $(".js-result-category").niceScroll({
-  //    cursorcolor: "#ccc", // change cursor color in hex
-  //    cursorwidth: "4px"
-  //  });
-  //  maxHeightList();
-  //};
-
-  //var renderMap = function () {
-  //  measureSql =
-  //    'WITH stats AS(SELECT MAX(' + selectedMeasure.dataDataColname +
-  //                            '),   ' +
-  //    '                     MIN(' + selectedMeasure.dataDataColname +
-  //                             ')   ' +
-  //    '              FROM '+ selectedMeasure.dataTablename + ')   ' +
-  //    'SELECT data.cartodb_id, geom.the_geom_webmercator,   ' +
-  //    '       (data.'+ selectedMeasure.dataDataColname + '-stats.min)/   ' +
-  //    '       (stats.max-stats.min) AS val   ' +
-  //    'FROM stats, ' + selectedMeasure.dataTablename + ' data,   ' +
-  //       selectedBoundary.geomTablename + ' geom   ' +
-  //    'WHERE data.' + selectedMeasure.dataGeoidColname + ' = ' +
-  //          'geom.' + selectedBoundary.geomGeoidColname;
-  //  sublayer.setSQL(measureSql);
-  //  var css = sublayer.getCartoCSS();
-  //  sublayer.setCartoCSS(css);
-
-  //  renderStats();
-  //};
-  //
   var renderSelect = function (type) {
+    var selection = getSelection();
     query(type).done(function (results) {
       var $select = $('.box-' + type + 'Select');
       var $available = $select.find('.box-optgroupAvailable');
@@ -248,7 +210,7 @@ $( document ).ready(function () {
                        .text(r[type + '_name'])
                        .data(r)
                        .val(r[type + '_id']);
-        if (r[type + '_id'] === getSelection()[type + '_id']) {
+        if (r[type + '_id'] === selection[type + '_id']) {
           $option.prop('selected', true);
         }
         if (r.valid_numer && r.valid_denom && r.valid_geom && r.valid_timespan) {
@@ -286,7 +248,7 @@ $( document ).ready(function () {
         render();
       });
 
-      $('.box-select').on('change', function (evt) {
+      $('.box-select').on('change', function () {
         render();
       });
       //$('.box-boundarySelect').on('change', function (evt) {
