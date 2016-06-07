@@ -60,10 +60,10 @@ var queries = {
     FROM obs_meta \
     WHERE st_intersects( \
         geom_bounds, st_makeenvelope({{ bounds }})) \
-      AND {{ numer_id }} = numer_id \
-      AND {{ denom_id }} = denom_id \
-      AND {{ geom_id }} = geom_id \
-      AND {{ timespan_id }} = numer_timespan",
+      AND '{{ numer_id }}' = numer_id \
+      AND ('{{ denom_id }}' = denom_id OR '{{ denom_id }}' = '') \
+      AND '{{ geom_id }}' = geom_id \
+      AND '{{ timespan_id }}' = numer_timespan",
   subsection: "\
     SELECT id, name, num_measures \
     FROM ( \
@@ -176,24 +176,27 @@ $( document ).ready(function () {
   };
 
   var renderMap = function () {
-    measureSql =
-      'WITH stats AS(SELECT MAX(' + selectedMeasure.dataDataColname +
-                              '),   ' +
-      '                     MIN(' + selectedMeasure.dataDataColname +
-                               ')   ' +
-      '              FROM '+ selectedMeasure.dataTablename + ')   ' +
-      'SELECT data.cartodb_id, geom.the_geom_webmercator,   ' +
-      '       (data.'+ selectedMeasure.dataDataColname + '-stats.min)/   ' +
-      '       (stats.max-stats.min) AS val   ' +
-      'FROM stats, ' + selectedMeasure.dataTablename + ' data,   ' +
-         selectedBoundary.geomTablename + ' geom   ' +
-      'WHERE data.' + selectedMeasure.dataGeoidColname + ' = ' +
-            'geom.' + selectedBoundary.geomGeoidColname;
-    sublayer.setSQL(measureSql);
-    var css = sublayer.getCartoCSS();
-    sublayer.setCartoCSS(css);
+    query('data').done(function (results) {
+      debugger;
+    });
+    //measureSql =
+    //  'WITH stats AS(SELECT MAX(' + selectedMeasure.dataDataColname +
+    //                          '),   ' +
+    //  '                     MIN(' + selectedMeasure.dataDataColname +
+    //                           ')   ' +
+    //  '              FROM '+ selectedMeasure.dataTablename + ')   ' +
+    //  'SELECT data.cartodb_id, geom.the_geom_webmercator,   ' +
+    //  '       (data.'+ selectedMeasure.dataDataColname + '-stats.min)/   ' +
+    //  '       (stats.max-stats.min) AS val   ' +
+    //  'FROM stats, ' + selectedMeasure.dataTablename + ' data,   ' +
+    //     selectedBoundary.geomTablename + ' geom   ' +
+    //  'WHERE data.' + selectedMeasure.dataGeoidColname + ' = ' +
+    //        'geom.' + selectedBoundary.geomGeoidColname;
+    //sublayer.setSQL(measureSql);
+    //var css = sublayer.getCartoCSS();
+    //sublayer.setCartoCSS(css);
 
-    renderStats();
+    //renderStats();
   };
 
   var renderSelect = function (type) {
@@ -222,7 +225,7 @@ $( document ).ready(function () {
     });
   };
 
-  var render = function () {
+  var renderMenu = function () {
     renderSubsections();
     renderSelect('geom');
     renderSelect('numer');
@@ -245,11 +248,12 @@ $( document ).ready(function () {
       nativeMap.keyboard.enable();
 
       nativeMap.on('moveend', function () {
-        render();
+        renderMenu();
       });
 
       $('.box-select').on('change', function () {
-        render();
+        renderMenu();
+        renderMap();
       });
       //$('.box-boundarySelect').on('change', function (evt) {
       //  var $select = $(evt.target);
@@ -260,6 +264,6 @@ $( document ).ready(function () {
         maxHeightList();
         $(".box-container").toggleClass( "is-hidden" );
       });
-      render();
+      renderMenu();
     });
 });
