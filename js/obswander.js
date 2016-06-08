@@ -21,7 +21,7 @@ var openSubsection = 'tags.housing';
 
 var measureSql;
 
-var palettes = {
+var ramps = {
         'tags.people':
           '@5:#6c2167;\
           @4:#a24186;\
@@ -51,14 +51,102 @@ var palettes = {
           @4:#f17854;\
           @3:#f59e72;\
           @2:#f9c098;\
+          @1:#fde0c5;',
+        'tags.index':
+          '@5:#eb4a40;\
+          @4:#f17854;\
+          @3:#f59e72;\
+          @2:#f9c098;\
           @1:#fde0c5;'
 };
+
+/** choropleth visualization */
+
+var cartoCSS = '{{ramp}} \
+\
+#data { \
+  polygon-opacity: 0.9; \
+  polygon-gamma: 0.5; \
+  line-color: #000000; \
+  line-width: 0.25; \
+  line-opacity: 0.2; \
+  line-comp-op: hard-light; \
+ \
+  [val=null]{ \
+     polygon-fill: #cacdce; \
+  } \
+  [val <= 1] { \
+     polygon-fill: @5; \
+  } \
+  [val <= 0.333] { \
+     polygon-fill: @4; \
+  } \
+  [val <= 0.111] { \
+     polygon-fill: @3; \
+  } \
+  [val <= 0.037] { \
+     polygon-fill: @2; \
+  } \
+  [val <= 0.012] { \
+     polygon-fill: @1; \
+  } \
+}';
+
+var mapSQLPredenominated =
+  'WITH stats AS(SELECT MAX({{ numer_colname }}),   ' +
+  '                     MIN({{ numer_colname }})   ' +
+  '              FROM {{ numer_tablename }} data)   ' +
+  'SELECT data.cartodb_id, geom.the_geom_webmercator,   ' +
+  '       (data.{{ numer_colname }} - stats.min) /   ' +
+  '       (stats.max - stats.min) AS val   ' +
+  'FROM stats, {{ numer_tablename }} data,   ' +
+  '     {{geom_tablename }} geom   ' +
+  'WHERE data.{{ numer_geomref_colname }} = ' +
+  'geom.{{ geom_geomref_colname }}';
+var mapSQLAreaNormalized =
+  'WITH stats AS(SELECT MAX({{ numer_colname }} / ' +
+  '                         ST_Area(geom.the_geom_webmercator)),   ' +
+  '                     MIN({{ numer_colname }} / ' +
+  '                         ST_Area(geom.the_geom_webmercator))   ' +
+  '              FROM {{ numer_tablename }} data,  ' +
+  '                   {{ geom_tablename }} geom    ' +
+  '              WHERE data.{{ numer_geomref_colname }} =  ' +
+  '                    geom.{{ geom_geomref_colname }} )   ' +
+  'SELECT data.cartodb_id, geom.the_geom_webmercator,   ' +
+  '       ((data.{{ numer_colname }} /  ' +
+  '        ST_Area(geom.the_geom_webmercator)) - stats.min) /   ' +
+  '       (stats.max - stats.min) AS val   ' +
+  'FROM stats, {{ numer_tablename }} data,   ' +
+  '     {{geom_tablename }} geom   ' +
+  'WHERE data.{{ numer_geomref_colname }} = ' +
+  'geom.{{ geom_geomref_colname }}';
+var mapSQLDenominated =
+  'WITH stats AS(SELECT MAX(numer.{{ numer_colname }} / ' +
+  '                     NULLIF(denom.{{ denom_colname }}, 0)),   ' +
+  '                     MIN(numer.{{ numer_colname }} / ' +
+  '                     NULLIF(denom.{{ denom_colname }}, 0))   ' +
+  '              FROM {{ numer_tablename }} numer,  ' +
+  '                   {{ denom_tablename }} denom    ' +
+  '              WHERE numer.{{ numer_geomref_colname }} =  ' +
+  '                    denom.{{ denom_geomref_colname }} )   ' +
+  'SELECT numer.cartodb_id, geom.the_geom_webmercator,   ' +
+  '       ((numer.{{ numer_colname }} /  ' +
+  '        NULLIF(denom.{{ denom_colname }}, 0)) - stats.min) /   ' +
+  '       (stats.max - stats.min) AS val   ' +
+  'FROM stats, {{ numer_tablename }} numer,   ' +
+  '     {{ denom_tablename }} denom,   ' +
+  '     {{ geom_tablename }} geom   ' +
+  'WHERE numer.{{ numer_geomref_colname }} = ' +
+        'denom.{{ denom_geomref_colname }} AND ' +
+        'denom.{{ denom_geomref_colname }} = ' +
+        'geom.{{ geom_geomref_colname }}';
 
 var queries = {
   data: "\
     SELECT numer_colname, numer_geomref_colname, numer_tablename, \
            denom_colname, denom_geomref_colname, denom_tablename, \
-           geom_colname, geom_geomref_colname, geom_tablename \
+           geom_colname, geom_geomref_colname, geom_tablename, \
+           unit_tags, numer_aggregate  \
     FROM obs_meta \
     WHERE st_intersects( \
         geom_bounds, st_makeenvelope({{ bounds }})) \
@@ -80,8 +168,10 @@ var queries = {
     SELECT geom_id, MAX(geom_name) geom_name, \
                     MAX(geom_description) geom_description, \
     '{{ numer_id }}' = ANY(ARRAY_AGG(DISTINCT numer_id)) valid_numer, \
-    '{{ denom_id }}' = ANY(ARRAY_AGG(DISTINCT denom_id)) OR '{{ denom_id }}' = '' valid_denom, \
-    '{{ timespan_id }}' = ANY(ARRAY_AGG(DISTINCT numer_timespan)) valid_timespan, \
+    '{{ denom_id }}' = ANY(ARRAY_AGG(DISTINCT denom_id)) OR \
+                       '{{ denom_id }}' = '' valid_denom, \
+    '{{ timespan_id }}' = \
+         ANY(ARRAY_AGG(DISTINCT numer_timespan)) valid_timespan, \
     true valid_geom \
     FROM obs_meta \
     WHERE st_intersects(geom_bounds, st_makeenvelope({{ bounds }})) \
@@ -89,7 +179,8 @@ var queries = {
   timespan: "\
     SELECT numer_timespan timespan_id, numer_timespan timespan_name, \
     '{{ numer_id }}' = ANY(ARRAY_AGG(DISTINCT numer_id)) valid_numer, \
-    '{{ denom_id }}' = ANY(ARRAY_AGG(DISTINCT denom_id)) OR '{{ denom_id }}' = '' valid_denom, \
+    '{{ denom_id }}' = ANY(ARRAY_AGG(DISTINCT denom_id)) OR \
+                       '{{ denom_id }}' = '' valid_denom, \
     '{{ geom_id }}' = ANY(ARRAY_AGG(DISTINCT geom_id)) valid_geom, \
     true valid_timespan \
     FROM obs_meta \
@@ -99,8 +190,10 @@ var queries = {
     SELECT numer_id, MAX(numer_name) numer_name, \
                      MAX(numer_description) numer_description, \
     '{{ geom_id }}' = ANY(ARRAY_AGG(DISTINCT geom_id)) valid_geom, \
-    '{{ denom_id }}' = ANY(ARRAY_AGG(DISTINCT denom_id)) OR '{{ denom_id }}' = '' valid_denom, \
-    '{{ timespan_id }}' = ANY(ARRAY_AGG(DISTINCT numer_timespan)) valid_timespan, \
+    '{{ denom_id }}' = ANY(ARRAY_AGG(DISTINCT denom_id)) OR \
+                       '{{ denom_id }}' = '' valid_denom, \
+    '{{ timespan_id }}' = \
+            ANY(ARRAY_AGG(DISTINCT numer_timespan)) valid_timespan, \
     true valid_numer \
     FROM obs_meta \
     WHERE st_intersects(geom_bounds, st_makeenvelope({{ bounds }})) \
@@ -110,7 +203,8 @@ var queries = {
                      MAX(denom_description) denom_description, \
     '{{ numer_id }}' = ANY(ARRAY_AGG(DISTINCT numer_id)) valid_numer, \
     '{{ geom_id }}' = ANY(ARRAY_AGG(DISTINCT geom_id)) valid_geom, \
-    '{{ timespan_id }}' = ANY(ARRAY_AGG(DISTINCT numer_timespan)) valid_timespan, \
+    '{{ timespan_id }}' = \
+               ANY(ARRAY_AGG(DISTINCT numer_timespan)) valid_timespan, \
     true valid_denom \
     FROM obs_meta \
     WHERE st_intersects(geom_bounds, st_makeenvelope({{ bounds }})) \
@@ -179,50 +273,22 @@ $( document ).ready(function () {
 
   var renderMap = function () {
     query('data').done(function (results) {
-      results = results[0];
-      if (results.denom_tablename) {
-        measureSql = Mustache.render(
-          'WITH stats AS(SELECT MAX(numer.{{ numer_colname }} / ' +
-          '                         NULLIF(denom.{{ denom_colname }}, 0)),   ' +
-          '                     MIN(numer.{{ numer_colname }} / ' +
-          '                         NULLIF(denom.{{ denom_colname }}, 0))   ' +
-          '              FROM {{ numer_tablename }} numer,  ' +
-          '                   {{ denom_tablename }} denom    ' +
-          '              WHERE numer.{{ numer_geomref_colname }} =  ' +
-          '                    denom.{{ denom_geomref_colname }} )   ' +
-          'SELECT numer.cartodb_id, geom.the_geom_webmercator,   ' +
-          '       ((numer.{{ numer_colname }} /  ' +
-          '        NULLIF(denom.{{ denom_colname }}, 0)) - stats.min) /   ' +
-          '       (stats.max - stats.min) AS val   ' +
-          'FROM stats, {{ numer_tablename }} numer,   ' +
-          '     {{ denom_tablename }} denom,   ' +
-          '     {{ geom_tablename }} geom   ' +
-          'WHERE numer.{{ numer_geomref_colname }} = ' +
-                'denom.{{ denom_geomref_colname }} AND ' +
-                'denom.{{ denom_geomref_colname }} = ' +
-                'geom.{{ geom_geomref_colname }}', results);
+      var result = results[0];
+      if (!result) {
+        return;
+      }
+      var unit = result.unit_tags[0];
+      if (result.numer_aggregate === 'sum') {
+        if (result.denom_tablename) {
+          measureSql = Mustache.render(mapSQLDenominated, result);
+        } else {
+          measureSql = Mustache.render(mapSQLAreaNormalized, result);
+        }
       } else {
-        measureSql = Mustache.render(
-          'WITH stats AS(SELECT MAX({{ numer_colname }} / ' +
-          '                         ST_Area(geom.the_geom_webmercator)),   ' +
-          '                     MIN({{ numer_colname }} / ' +
-          '                         ST_Area(geom.the_geom_webmercator))   ' +
-          '              FROM {{ numer_tablename }} data,  ' +
-          '                   {{ geom_tablename }} geom    ' +
-          '              WHERE data.{{ numer_geomref_colname }} =  ' +
-          '                    geom.{{ geom_geomref_colname }} )   ' +
-          'SELECT data.cartodb_id, geom.the_geom_webmercator,   ' +
-          '       ((data.{{ numer_colname }} /  ' +
-          '        ST_Area(geom.the_geom_webmercator)) - stats.min) /   ' +
-          '       (stats.max - stats.min) AS val   ' +
-          'FROM stats, {{ numer_tablename }} data,   ' +
-          '     {{geom_tablename }} geom   ' +
-          'WHERE data.{{ numer_geomref_colname }} = ' +
-                'geom.{{ geom_geomref_colname }}', results);
+        measureSql = Mustache.render(mapSQLPredenominated, result);
       }
       sublayer.setSQL(measureSql);
-      var css = sublayer.getCartoCSS();
-      sublayer.setCartoCSS(css);
+      sublayer.setCartoCSS(Mustache.render(cartoCSS, {ramp: ramps[unit]}));
     });
 
     //renderStats();

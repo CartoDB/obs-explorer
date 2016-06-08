@@ -100,7 +100,7 @@ vizjson({
                 "cartocss": "/** choropleth visualization */\n\n@1:#672044;\n@2:#8b3058;\n@3:#ad466c;\n@4:#cc607d;\n@5:#e38191;\n@6:#f4a3a8;\n@7:#ffc6c4;\n\n#data{\n  polygon-fill: #F7F7F7;\n  polygon-opacity: 0.8;\n  line-color: #FFF;\n  line-width: 0.1;\n  line-opacity: 1;\n}\n#data [ val <= 1] {\n   polygon-fill: @1;\n}\n#data [ val <= 0.32] {\n   polygon-fill: @2;\n}\n#data [ val <= 0.16] {\n   polygon-fill: @3;\n}\n#data [ val <= 0.08] {\n   polygon-fill: @4;\n}\n#data [ val <= 0.04] {\n   polygon-fill: @5;\n}\n#data [ val <= 0.02] {\n   polygon-fill: @6;\n}\n#data [ val <= 0.01] {\n   polygon-fill: @7;\n}",
                 "cartocss_version": "2.1.1",
                 "interactivity": "cartodb_id, val",
-                "sql": "with stats as( select max(housing_units), min(housing_units) from obs_1a098da56badf5f32e336002b0a81708c40d29cd)\n select data.cartodb_id, geom.the_geom_webmercator, (housing_units-stats.min)/(stats.max-stats.min) as val from obs_1a098da56badf5f32e336002b0a81708c40d29cd data,\nobs_6c1309a64d8f3e6986061f4d1ca7b57743e75e74 geom,\nstats\nwhere data.geoid = geom.geoid",
+                "sql": "",
                 "table_name": "\"\"."
               }
             }
