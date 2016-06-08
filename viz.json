@@ -5,7 +5,7 @@ vizjson({
   "likes": 0,
   "description": null,
   "scrollwheel": false,
-  "legends": false,
+  "legends": true,
   "url": null,
   "map_provider": "leaflet",
   "bounds": [
@@ -87,17 +87,20 @@ vizjson({
                 "maxHeight": 180
               },
               "legend": {
-                "type": "none",
-                "show_title": false,
-                "title": "",
-                "template": "",
-                "visible": true
+                "type":"choropleth",
+                "show_title":false,
+                "title":"",
+                "template":"<div></div>",
+                "templateOld":"<div class='cartodb-legend choropleth'>\t\n<div class=\"legend-title\">Percent Houses &amp; Apts on </div>\n\n\n\n\n<ul>\n\t\n\t\n\t\n\t\n\t<li class=\"graph count_252\" style='border: 0'>\n\n\t<div class=\"colors\" style='text-align: right'>\n\t<div class=\"quartile\" style='text-align: left'>\n\t 0%</div>\n\t<div class=\"quartile\">1.25%</div>\n\t<div class=\"quartile\">&nbsp;&nbsp;2.5%</div>\n\t<div class=\"quartile\">3.75%</div>\n\t<div class=\"quartile\">5%+</div>\n  </div>\n  \n\t</li>\n\t\n\t\n\t\n\t\n\t<li class=\"graph count_252\">\n\n\n\n\n\t<div class=\"colors\">\n\t<div class=\"quartile\" style=\"background-color:#1e3b23\"></div>\n\t<div class=\"quartile\" style=\"background-color:#265f69\"></div>\n\t<div class=\"quartile\" style=\"background-color:#967096\"></div>\n\t<div class=\"quartile\" style=\"background-color:#f48478\"></div>\n\t</div>\n\t\n\t\n\t\n\t\n\t</li>\n\n\n\n\n</ul>\n\n\n\n\n</div>\n\n",
+                "visible":true,
+                "items":[
+                ]
               },
               "order": 1,
               "visible": true,
               "options": {
                 "layer_name": "data",
-                "cartocss": "/** choropleth visualization */\n\n@1:#672044;\n@2:#8b3058;\n@3:#ad466c;\n@4:#cc607d;\n@5:#e38191;\n@6:#f4a3a8;\n@7:#ffc6c4;\n\n#data{\n  polygon-fill: #F7F7F7;\n  polygon-opacity: 0.8;\n  line-color: #FFF;\n  line-width: 0.1;\n  line-opacity: 1;\n}\n#data [ val <= 1] {\n   polygon-fill: @1;\n}\n#data [ val <= 0.32] {\n   polygon-fill: @2;\n}\n#data [ val <= 0.16] {\n   polygon-fill: @3;\n}\n#data [ val <= 0.08] {\n   polygon-fill: @4;\n}\n#data [ val <= 0.04] {\n   polygon-fill: @5;\n}\n#data [ val <= 0.02] {\n   polygon-fill: @6;\n}\n#data [ val <= 0.01] {\n   polygon-fill: @7;\n}",
+                "cartocss": "",
                 "cartocss_version": "2.1.1",
                 "interactivity": "cartodb_id, val",
                 "sql": "",

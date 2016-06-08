@@ -22,47 +22,89 @@ var openSubsection = 'tags.housing';
 var measureSql;
 
 var ramps = {
-        'tags.people':
-          '@5:#6c2167;\
-          @4:#a24186;\
-          @3:#ca699d;\
-          @2:#e498b4;\
-          @1:#f3cbd3;',
-        'tags.money':
-          '@5:#1d4f60;\
-          @4:#2d7974;\
-          @3:#4da284;\
-          @2:#80c799;\
-          @1:#c4e6c3;',
-        'tags.households':
-          '@5:#63589f;\
-          @4:#9178c4;\
-          @3:#b998dd;\
-          @2:#dbbaed;\
-          @1:#f3e0f7;',
-        'tags.housing':
-          '@5:#2a5674;\
-          @4:#45829b;\
-          @3:#68abb8;\
-          @2:#96d0d1;\
-          @1:#d1eeea;',
-        'tags.ratio':
-          '@5:#eb4a40;\
-          @4:#f17854;\
-          @3:#f59e72;\
-          @2:#f9c098;\
-          @1:#fde0c5;',
-        'tags.index':
-          '@5:#eb4a40;\
-          @4:#f17854;\
-          @3:#f59e72;\
-          @2:#f9c098;\
-          @1:#fde0c5;'
+  'tags.people': {
+    5: '#6c2167',
+    4: '#a24186',
+    3: '#ca699d',
+    2: '#e498b4',
+    1: '#f3cbd3'
+  },
+  'tags.money': {
+    5: '#1d4f60',
+    4: '#2d7974',
+    3: '#4da284',
+    2: '#80c799',
+    1: '#c4e6c3'
+  },
+  'tags.households': {
+    5: '#63589f',
+    4: '#9178c4',
+    3: '#b998dd',
+    2: '#dbbaed',
+    1: '#f3e0f7'
+  },
+  'tags.housing': {
+    5: '#2a5674',
+    4: '#45829b',
+    3: '#68abb8',
+    2: '#96d0d1',
+    1: '#d1eeea'
+  },
+  'tags.ratio': {
+    5: '#eb4a40',
+    4: '#f17854',
+    3: '#f59e72',
+    2: '#f9c098',
+    1: '#fde0c5'
+  },
+  'tags.index': {
+    5: '#eb4a40',
+    4: '#f17854',
+    3: '#f59e72',
+    2: '#f9c098',
+    1: '#fde0c5'
+  },
+  'categorical': {
+    1: '#7F3C8D',
+    2: '#11A579',
+    3: '#3969AC',
+    4: '#F2B701',
+    5: '#E73F74',
+    6: '#80BA5A',
+    7: '#E68310',
+    8: '#008695',
+    9: '#CF1C90',
+    10: '#f97b72',
+    other: '#A5AA99'
+  }
 };
+
+var legendTemplate = '\
+<div class="cartodb-legend"> \
+  <div class="colors"> \
+    <div class="quintile">{{ range.5 }}</div> \
+    <div class="quintile">{{ range.4 }}</div> \
+    <div class="quintile">{{ range.3 }}</div> \
+    <div class="quintile">{{ range.2 }}</div> \
+    <div class="quintile">{{ range.1 }}</div> \
+  </div> \
+  <div class="colors"> \
+    <div class="quintile" style="background-color:{{ ramp.5 }};"></div> \
+    <div class="quintile" style="background-color:{{ ramp.4 }};"></div> \
+    <div class="quintile" style="background-color:{{ ramp.3 }};"></div> \
+    <div class="quintile" style="background-color:{{ ramp.2 }};"></div> \
+    <div class="quintile" style="background-color:{{ ramp.1 }};"></div> \
+  </div> \
+</div>';
 
 /** choropleth visualization */
 
-var cartoCSS = '{{ramp}} \
+var cartoCSS = ' \
+@5:{{ ramp.5 }};\
+@4:{{ ramp.4 }};\
+@3:{{ ramp.3 }};\
+@2:{{ ramp.2 }};\
+@1:{{ ramp.1 }};\
 \
 #data { \
   polygon-opacity: 0.9; \
@@ -92,10 +134,43 @@ var cartoCSS = '{{ramp}} \
   } \
 }';
 
+var statsSQLPredenominated =
+  'SELECT MAX({{ numer_colname }}),   ' +
+  '       MIN({{ numer_colname }}),   ' +
+  '       AVG({{ numer_colname }}),   ' +
+  '       STDDEV_POP({{ numer_colname }})   ' +
+  'FROM {{ numer_tablename }} data';
+
+var statsSQLAreaNormalized =
+  'SELECT MAX({{ numer_colname }} / ' +
+  '           (ST_Area(geom.the_geom_webmercator) / 1000000.0)),   ' +
+  '       MIN({{ numer_colname }} / ' +
+  '           (ST_Area(geom.the_geom_webmercator) / 1000000.0)),   ' +
+  '       AVG({{ numer_colname }} / ' +
+  '           (ST_Area(geom.the_geom_webmercator) / 1000000.0)),   ' +
+  '       STDDEV_POP({{ numer_colname }} / ' +
+  '           (ST_Area(geom.the_geom_webmercator) / 1000000.0))   ' +
+  'FROM {{ numer_tablename }} data,  ' +
+  '     {{ geom_tablename }} geom    ' +
+  'WHERE data.{{ numer_geomref_colname }} =  ' +
+  '      geom.{{ geom_geomref_colname }} ';
+
+var statsSQLDenominated =
+  'SELECT MAX(numer.{{ numer_colname }} / ' +
+  '           NULLIF(denom.{{ denom_colname }}, 0)),   ' +
+  '       MIN(numer.{{ numer_colname }} / ' +
+  '           NULLIF(denom.{{ denom_colname }}, 0)),   ' +
+  '       AVG(numer.{{ numer_colname }} / ' +
+  '           NULLIF(denom.{{ denom_colname }}, 0)),   ' +
+  '       STDDEV_POP(numer.{{ numer_colname }} / ' +
+  '           NULLIF(denom.{{ denom_colname }}, 0))   ' +
+  'FROM {{ numer_tablename }} numer,  ' +
+  '     {{ denom_tablename }} denom    ' +
+  'WHERE numer.{{ numer_geomref_colname }} =  ' +
+  '      denom.{{ denom_geomref_colname }} ';
+
 var mapSQLPredenominated =
-  'WITH stats AS(SELECT MAX({{ numer_colname }}),   ' +
-  '                     MIN({{ numer_colname }})   ' +
-  '              FROM {{ numer_tablename }} data)   ' +
+  'WITH stats AS(' + statsSQLPredenominated + ')' +
   'SELECT data.cartodb_id, geom.the_geom_webmercator,   ' +
   '       (data.{{ numer_colname }} - stats.min) /   ' +
   '       (stats.max - stats.min) AS val   ' +
@@ -103,32 +178,20 @@ var mapSQLPredenominated =
   '     {{geom_tablename }} geom   ' +
   'WHERE data.{{ numer_geomref_colname }} = ' +
   'geom.{{ geom_geomref_colname }}';
+
 var mapSQLAreaNormalized =
-  'WITH stats AS(SELECT MAX({{ numer_colname }} / ' +
-  '                         ST_Area(geom.the_geom_webmercator)),   ' +
-  '                     MIN({{ numer_colname }} / ' +
-  '                         ST_Area(geom.the_geom_webmercator))   ' +
-  '              FROM {{ numer_tablename }} data,  ' +
-  '                   {{ geom_tablename }} geom    ' +
-  '              WHERE data.{{ numer_geomref_colname }} =  ' +
-  '                    geom.{{ geom_geomref_colname }} )   ' +
+  'WITH stats AS(' + statsSQLAreaNormalized + ')   ' +
   'SELECT data.cartodb_id, geom.the_geom_webmercator,   ' +
   '       ((data.{{ numer_colname }} /  ' +
-  '        ST_Area(geom.the_geom_webmercator)) - stats.min) /   ' +
+  '      (ST_Area(geom.the_geom_webmercator) / 1000000.0)) - stats.min) /   ' +
   '       (stats.max - stats.min) AS val   ' +
   'FROM stats, {{ numer_tablename }} data,   ' +
   '     {{geom_tablename }} geom   ' +
   'WHERE data.{{ numer_geomref_colname }} = ' +
   'geom.{{ geom_geomref_colname }}';
+
 var mapSQLDenominated =
-  'WITH stats AS(SELECT MAX(numer.{{ numer_colname }} / ' +
-  '                     NULLIF(denom.{{ denom_colname }}, 0)),   ' +
-  '                     MIN(numer.{{ numer_colname }} / ' +
-  '                     NULLIF(denom.{{ denom_colname }}, 0))   ' +
-  '              FROM {{ numer_tablename }} numer,  ' +
-  '                   {{ denom_tablename }} denom    ' +
-  '              WHERE numer.{{ numer_geomref_colname }} =  ' +
-  '                    denom.{{ denom_geomref_colname }} )   ' +
+  'WITH stats AS(' + statsSQLDenominated + ')   ' +
   'SELECT numer.cartodb_id, geom.the_geom_webmercator,   ' +
   '       ((numer.{{ numer_colname }} /  ' +
   '        NULLIF(denom.{{ denom_colname }}, 0)) - stats.min) /   ' +
@@ -211,6 +274,31 @@ var queries = {
     GROUP BY denom_id ORDER BY denom_id"
 };
 
+var calcRange = function (max, min, avg, stddev) {
+  return {
+    5: {
+      min: min,
+      max: avg - stddev * 3 / 2
+    },
+    4: {
+      min: avg - stddev * 3 / 2,
+      max: avg - stddev / 2
+    },
+    3: {
+      min: avg - stddev / 2,
+      max: avg + stddev / 2
+    },
+    2: {
+      min: avg + stddev / 2,
+      max: avg + stddev * 3 / 2
+    },
+    1: {
+      min: avg + stddev * 3 / 2,
+      max: max
+    }
+  };
+};
+
 var getSelection = function () {
   return {
     bounds: nativeMap.getBounds().toBBoxString(),
@@ -274,21 +362,36 @@ $( document ).ready(function () {
   var renderMap = function () {
     query('data').done(function (results) {
       var result = results[0];
+      var statsSql;
       if (!result) {
         return;
       }
       var unit = result.unit_tags[0];
-      if (result.numer_aggregate === 'sum') {
-        if (result.denom_tablename) {
-          measureSql = Mustache.render(mapSQLDenominated, result);
-        } else {
-          measureSql = Mustache.render(mapSQLAreaNormalized, result);
-        }
+      var ramp = ramps[unit];
+      if (result.denom_tablename) {
+        measureSql = Mustache.render(mapSQLDenominated, result);
+        statsSql = statsSQLDenominated;
+      } else if (result.numer_aggregate === 'sum') {
+        measureSql = Mustache.render(mapSQLAreaNormalized, result);
+        statsSql = statsSQLAreaNormalized;
       } else {
         measureSql = Mustache.render(mapSQLPredenominated, result);
+        statsSql = statsSQLPredenominated;
       }
       sublayer.setSQL(measureSql);
-      sublayer.setCartoCSS(Mustache.render(cartoCSS, {ramp: ramps[unit]}));
+      sublayer.setCartoCSS(Mustache.render(cartoCSS, {ramp: ramps}));
+      sql.execute(statsSql, result).done(function (rawdata) {
+        var stats = rawdata.rows[0];
+        var l = new cartodb.geo.ui.Legend({
+          type: 'custom',
+          template: '<div>' + Mustache.render(legendTemplate, {
+            stats: stats,
+            ramp: ramp
+          }) + '</div>'
+        });
+        l.render();
+        $('.cartodb-legend.wrapper').replaceWith(l.$el);
+      });
     });
 
     //renderStats();
@@ -349,9 +452,6 @@ $( document ).ready(function () {
         renderMenu();
         renderMap();
       });
-      //$('.box-boundarySelect').on('change', function (evt) {
-      //  var $select = $(evt.target);
-      //});
 
       $( ".box-input" ).on( "click", function () {
         $(this).toggleClass( "is-open" );
@@ -359,5 +459,6 @@ $( document ).ready(function () {
         $(".box-container").toggleClass( "is-hidden" );
       });
       renderMenu();
+      renderMap();
     });
 });

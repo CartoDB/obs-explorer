@@ -178,3 +178,8 @@ canvas#cover{
   position: absolute;
   pointer-events: none;
 }
+
+.quintile {
+  height: 40px;
+  width: 40px;
+}
