@@ -1,5 +1,5 @@
 /*jshint multistr: true, browser: true, maxstatements: 100, camelcase: false*/
-/*globals $, cartodb, _*/
+/*globals $, cartodb, _, Mustache*/
 
 var maxHeightList = function (){
   var heightScreen = $(window).height();
@@ -18,6 +18,8 @@ var sql = new cartodb.SQL({
 var nativeMap;
 
 var openSubsection = 'tags.housing';
+
+var measureSql;
 
 var palettes = {
         'tags.people':
@@ -177,24 +179,21 @@ $( document ).ready(function () {
 
   var renderMap = function () {
     query('data').done(function (results) {
-      debugger;
+      measureSql = Mustache.render(
+        'WITH stats AS(SELECT MAX({{ numer_colname }}),   ' +
+        '                     MIN({{ numer_colname }})   ' +
+        '              FROM {{ numer_tablename }})   ' +
+        'SELECT data.cartodb_id, geom.the_geom_webmercator,   ' +
+        '       (data.{{ numer_colname }} - stats.min) /   ' +
+        '       (stats.max - stats.min) AS val   ' +
+        'FROM stats, {{ numer_tablename }} data,   ' +
+        '     {{geom_tablename }} geom   ' +
+        'WHERE data.{{ numer_geomref_colname }} = ' +
+              'geom.{{ geom_geomref_colname }}', results[0]);
+      sublayer.setSQL(measureSql);
+      var css = sublayer.getCartoCSS();
+      sublayer.setCartoCSS(css);
     });
-    //measureSql =
-    //  'WITH stats AS(SELECT MAX(' + selectedMeasure.dataDataColname +
-    //                          '),   ' +
-    //  '                     MIN(' + selectedMeasure.dataDataColname +
-    //                           ')   ' +
-    //  '              FROM '+ selectedMeasure.dataTablename + ')   ' +
-    //  'SELECT data.cartodb_id, geom.the_geom_webmercator,   ' +
-    //  '       (data.'+ selectedMeasure.dataDataColname + '-stats.min)/   ' +
-    //  '       (stats.max-stats.min) AS val   ' +
-    //  'FROM stats, ' + selectedMeasure.dataTablename + ' data,   ' +
-    //     selectedBoundary.geomTablename + ' geom   ' +
-    //  'WHERE data.' + selectedMeasure.dataGeoidColname + ' = ' +
-    //        'geom.' + selectedBoundary.geomGeoidColname;
-    //sublayer.setSQL(measureSql);
-    //var css = sublayer.getCartoCSS();
-    //sublayer.setCartoCSS(css);
 
     //renderStats();
   };
@@ -207,12 +206,11 @@ $( document ).ready(function () {
       var $unavailable = $select.find('.box-optgroupUnavailable');
       $available.empty();
       $unavailable.empty();
-      //$select.append($('<option />').text('None').val(''));
       _.each(results, function (r) {
         var $option = $('<option />')
-                       .text(r[type + '_name'])
+                       .text(r[type + '_name'] || 'None')
                        .data(r)
-                       .val(r[type + '_id']);
+                       .val(r[type + '_id'] || '');
         if (r[type + '_id'] === selection[type + '_id']) {
           $option.prop('selected', true);
         }
