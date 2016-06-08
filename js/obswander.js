@@ -1,5 +1,5 @@
 /*jshint multistr: true, browser: true, maxstatements: 100, camelcase: false*/
-/*globals $, cartodb, _, Mustache*/
+/*globals $, cartodb, _, Mustache, numeral*/
 
 var maxHeightList = function (){
   var heightScreen = $(window).height();
@@ -43,7 +43,7 @@ var ramps = {
     2: '#dbbaed',
     1: '#f3e0f7'
   },
-  'tags.housing': {
+  'tags.housing_units': {
     5: '#2a5674',
     4: '#45829b',
     3: '#68abb8',
@@ -81,6 +81,7 @@ var ramps = {
 
 var legendTemplate = '\
 <div class="cartodb-legend"> \
+  <div class="legend-title">{{ unit }}</div> \
   <div class="colors"> \
     <div class="quintile">{{ range.5 }}</div> \
     <div class="quintile">{{ range.4 }}</div> \
@@ -170,7 +171,7 @@ var statsSQLDenominated =
   '      denom.{{ denom_geomref_colname }} ';
 
 var mapSQLPredenominated =
-  'WITH stats AS(' + statsSQLPredenominated + ')' +
+  'WITH stats AS(' + statsSQLPredenominated + ')   ' +
   'SELECT data.cartodb_id, geom.the_geom_webmercator,   ' +
   '       (data.{{ numer_colname }} - stats.min) /   ' +
   '       (stats.max - stats.min) AS val   ' +
@@ -274,28 +275,28 @@ var queries = {
     GROUP BY denom_id ORDER BY denom_id"
 };
 
-var calcRange = function (max, min, avg, stddev) {
+var calcRange = function (max, min, avg, stddev, unitHuman) {
+
+  var fmt;
+  if (max >= 1000) {
+    fmt = '0';
+  } else if (max >= 100) {
+    fmt = '0.[0]';
+  } else {
+    fmt = '0.[00]';
+  }
+  if (unitHuman === '%') {
+    fmt += '%';
+  }
+
   return {
-    5: {
-      min: min,
-      max: avg - stddev * 3 / 2
-    },
-    4: {
-      min: avg - stddev * 3 / 2,
-      max: avg - stddev / 2
-    },
-    3: {
-      min: avg - stddev / 2,
-      max: avg + stddev / 2
-    },
-    2: {
-      min: avg + stddev / 2,
-      max: avg + stddev * 3 / 2
-    },
-    1: {
-      min: avg + stddev * 3 / 2,
-      max: max
-    }
+    max: max,
+    5:  numeral(1 * (max  - min) + min).format(fmt),
+    4:  numeral(0.333 * (max  - min) + min).format(fmt),
+    3:  numeral(0.111 * (max  - min) + min).format(fmt),
+    2:  numeral(0.037 * (max  - min) + min).format(fmt),
+    1:  numeral(0.012 * (max  - min) + min).format(fmt),
+    min: numeral(min).format(fmt)
   };
 };
 
@@ -328,13 +329,7 @@ $( document ).ready(function () {
   var sublayer;
   var mapCenter = [37.804444, -122.270833];
 
-  /*** RENDERING FUNCTIONS ***/
-  //var renderStats = function () {
-  //  $('.figure-sql').val(measureSql.replace(/  (\s*)/g, '\n$1'));
-  //  $('.figure-timespan').text(selectedMeasure.timespan);
-  //};
-
-  var renderSubsections = function () {
+  /*var renderSubsections = function () {
     query('subsection').done(function (subsections) {
       $('.box-nav').empty();
       var $ul = $('<ul />', {"class": "box-navNavigation"});
@@ -353,11 +348,7 @@ $( document ).ready(function () {
       });
       $ul.appendTo('.box-nav');
     });
-
-      //renderMeasures(_.find(subsections, function (s) {
-      //  return s.label === selection.subsection;
-      //}));
-  };
+  };*/
 
   var renderMap = function () {
     query('data').done(function (results) {
@@ -368,25 +359,33 @@ $( document ).ready(function () {
       }
       var unit = result.unit_tags[0];
       var ramp = ramps[unit];
+      var unitHuman;
       if (result.denom_tablename) {
         measureSql = Mustache.render(mapSQLDenominated, result);
         statsSql = statsSQLDenominated;
+        unitHuman = '%';
       } else if (result.numer_aggregate === 'sum') {
         measureSql = Mustache.render(mapSQLAreaNormalized, result);
         statsSql = statsSQLAreaNormalized;
+        unitHuman = unit.replace('tags.', '') + ' per sq km';
       } else {
         measureSql = Mustache.render(mapSQLPredenominated, result);
         statsSql = statsSQLPredenominated;
+        unitHuman = unit;
       }
       sublayer.setSQL(measureSql);
-      sublayer.setCartoCSS(Mustache.render(cartoCSS, {ramp: ramps}));
+      sublayer.setCartoCSS(Mustache.render(cartoCSS, {ramp: ramp}));
       sql.execute(statsSql, result).done(function (rawdata) {
         var stats = rawdata.rows[0];
+        var range = calcRange(stats.max, stats.min, stats.avg,
+                              stats.stddev_pop, unitHuman);
         var l = new cartodb.geo.ui.Legend({
           type: 'custom',
           template: '<div>' + Mustache.render(legendTemplate, {
             stats: stats,
-            ramp: ramp
+            ramp: ramp,
+            range: range,
+            unit: unitHuman
           }) + '</div>'
         });
         l.render();
@@ -406,24 +405,33 @@ $( document ).ready(function () {
       $available.empty();
       $unavailable.empty();
       _.each(results, function (r) {
+        var selected = false;
         var $option = $('<option />')
                        .text(r[type + '_name'] || 'None')
                        .data(r)
                        .val(r[type + '_id'] || '');
-        if (r[type + '_id'] === selection[type + '_id']) {
+        if ((r[type + '_id'] || '') === selection[type + '_id']) {
           $option.prop('selected', true);
+          selected = true;
         }
-        if (r.valid_numer && r.valid_denom && r.valid_geom && r.valid_timespan) {
+        if (r.valid_numer && r.valid_denom && r.valid_geom &&
+            r.valid_timespan) {
           $available.append($option);
+          if (selected) {
+            $select.removeClass('has-error');
+          }
         } else {
           $unavailable.append($option);
+          if (selected) {
+            $select.addClass('has-error');
+          }
         }
       });
     });
   };
 
   var renderMenu = function () {
-    renderSubsections();
+    //renderSubsections();
     renderSelect('geom');
     renderSelect('numer');
     renderSelect('denom');

@@ -183,3 +183,13 @@ canvas#cover{
   height: 40px;
   width: 40px;
 }
+
+.colors {
+  text-align: right;
+  display: inline-block;
+}
+
+.has-error {
+  /*border: 1px solid #a94442*/
+  border: 1px solid red;
+}
