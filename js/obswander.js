@@ -179,17 +179,47 @@ $( document ).ready(function () {
 
   var renderMap = function () {
     query('data').done(function (results) {
-      measureSql = Mustache.render(
-        'WITH stats AS(SELECT MAX({{ numer_colname }}),   ' +
-        '                     MIN({{ numer_colname }})   ' +
-        '              FROM {{ numer_tablename }})   ' +
-        'SELECT data.cartodb_id, geom.the_geom_webmercator,   ' +
-        '       (data.{{ numer_colname }} - stats.min) /   ' +
-        '       (stats.max - stats.min) AS val   ' +
-        'FROM stats, {{ numer_tablename }} data,   ' +
-        '     {{geom_tablename }} geom   ' +
-        'WHERE data.{{ numer_geomref_colname }} = ' +
-              'geom.{{ geom_geomref_colname }}', results[0]);
+      results = results[0];
+      if (results.denom_tablename) {
+        measureSql = Mustache.render(
+          'WITH stats AS(SELECT MAX(numer.{{ numer_colname }} / ' +
+          '                         NULLIF(denom.{{ denom_colname }}, 0)),   ' +
+          '                     MIN(numer.{{ numer_colname }} / ' +
+          '                         NULLIF(denom.{{ denom_colname }}, 0))   ' +
+          '              FROM {{ numer_tablename }} numer,  ' +
+          '                   {{ denom_tablename }} denom    ' +
+          '              WHERE numer.{{ numer_geomref_colname }} =  ' +
+          '                    denom.{{ denom_geomref_colname }} )   ' +
+          'SELECT numer.cartodb_id, geom.the_geom_webmercator,   ' +
+          '       ((numer.{{ numer_colname }} /  ' +
+          '        NULLIF(denom.{{ denom_colname }}, 0)) - stats.min) /   ' +
+          '       (stats.max - stats.min) AS val   ' +
+          'FROM stats, {{ numer_tablename }} numer,   ' +
+          '     {{ denom_tablename }} denom,   ' +
+          '     {{ geom_tablename }} geom   ' +
+          'WHERE numer.{{ numer_geomref_colname }} = ' +
+                'denom.{{ denom_geomref_colname }} AND ' +
+                'denom.{{ denom_geomref_colname }} = ' +
+                'geom.{{ geom_geomref_colname }}', results);
+      } else {
+        measureSql = Mustache.render(
+          'WITH stats AS(SELECT MAX({{ numer_colname }} / ' +
+          '                         ST_Area(geom.the_geom_webmercator)),   ' +
+          '                     MIN({{ numer_colname }} / ' +
+          '                         ST_Area(geom.the_geom_webmercator))   ' +
+          '              FROM {{ numer_tablename }} data,  ' +
+          '                   {{ geom_tablename }} geom    ' +
+          '              WHERE data.{{ numer_geomref_colname }} =  ' +
+          '                    geom.{{ geom_geomref_colname }} )   ' +
+          'SELECT data.cartodb_id, geom.the_geom_webmercator,   ' +
+          '       ((data.{{ numer_colname }} /  ' +
+          '        ST_Area(geom.the_geom_webmercator)) - stats.min) /   ' +
+          '       (stats.max - stats.min) AS val   ' +
+          'FROM stats, {{ numer_tablename }} data,   ' +
+          '     {{geom_tablename }} geom   ' +
+          'WHERE data.{{ numer_geomref_colname }} = ' +
+                'geom.{{ geom_geomref_colname }}', results);
+      }
       sublayer.setSQL(measureSql);
       var css = sublayer.getCartoCSS();
       sublayer.setCartoCSS(css);
