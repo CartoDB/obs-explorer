@@ -329,27 +329,6 @@ $( document ).ready(function () {
   var sublayer;
   var mapCenter = [37.804444, -122.270833];
 
-  /*var renderSubsections = function () {
-    query('subsection').done(function (subsections) {
-      $('.box-nav').empty();
-      var $ul = $('<ul />', {"class": "box-navNavigation"});
-      // extract unique subsections from `data`
-      $.each( subsections, function (i, subsection) {
-        var $a = $("<a />", { href: '#' })
-          .text(subsection.name + ' (' + subsection.num_measures + ')')
-          .on('click', function () {
-            $(".js-box-input").text(subsection.label);
-            $(".box-navNavigation a").removeClass( "is-selected" );
-            $(this).toggleClass( "is-selected" );
-            //renderMeasures(subsection);
-          });
-        $('<li />').addClass(i === 0 ? 'is-selected' : '')
-                   .append($a).appendTo($ul);
-      });
-      $ul.appendTo('.box-nav');
-    });
-  };*/
-
   var renderMap = function () {
     query('data').done(function (results) {
       var result = results[0];
@@ -371,7 +350,7 @@ $( document ).ready(function () {
       } else {
         measureSql = Mustache.render(mapSQLPredenominated, result);
         statsSql = statsSQLPredenominated;
-        unitHuman = unit;
+        unitHuman = unit.replace('tags.', '');
       }
       sublayer.setSQL(measureSql);
       sublayer.setCartoCSS(Mustache.render(cartoCSS, {ramp: ramp}));
@@ -392,8 +371,6 @@ $( document ).ready(function () {
         $('.cartodb-legend.wrapper').replaceWith(l.$el);
       });
     });
-
-    //renderStats();
   };
 
   var renderSelect = function (type) {
@@ -418,20 +395,20 @@ $( document ).ready(function () {
             r.valid_timespan) {
           $available.append($option);
           if (selected) {
-            $select.removeClass('has-error');
+            $select.closest('.box-selectWrapper').removeClass('has-error');
           }
         } else {
           $unavailable.append($option);
           if (selected) {
-            $select.addClass('has-error');
+            $select.closest('.box-selectWrapper').addClass('has-error');
           }
         }
       });
+      $select.select2();
     });
   };
 
   var renderMenu = function () {
-    //renderSubsections();
     renderSelect('geom');
     renderSelect('numer');
     renderSelect('denom');

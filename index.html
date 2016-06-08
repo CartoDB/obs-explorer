@@ -5,9 +5,10 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>Data Observatory Sample Data</title>
   <link rel="stylesheet" type="text/css" href="css/reset.css">
-  <link rel="stylesheet" type="text/css" href="css/app.css">
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="css/app.css">
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
   <script src="js/jquery.nicescroll.min.js"></script>
@@ -30,10 +31,10 @@
           </div>
         </div>
         -->
-        <div class="box-select">
+        <div class="box-selectWrapper">
           <h2 class="box-selectTitle js-box-selectTitle">Numerator</h2>
           <div class="box-selectInfo">
-            <select class="box-numerSelect box-select">
+            <select class="box-numerSelect box-select" style="width:100%">
               <optgroup class="box-optgroupAvailable" label="Available">
                 <option value="us.census.acs.B11001001" selected="selected">&nbsp;</option>
               </optgroup>
@@ -41,10 +42,10 @@
             </select>
           </div>
         </div>
-        <div class="box-select">
+        <div class="box-selectWrapper">
           <h2 class="box-selectTitle js-box-selectTitle">Denominator</h2>
           <div class="box-selectInfo">
-            <select class="box-denomSelect box-select">
+            <select class="box-denomSelect box-select" style="width:100%">
               <optgroup class="box-optgroupAvailable" label="Available">
                 <option value="" selected="selected">&nbsp;</option>
               </optgroup>
@@ -52,10 +53,10 @@
             </select>
           </div>
         </div>
-        <div class="box-select">
+        <div class="box-selectWrapper">
           <h2 class="box-selectTitle js-box-selectTitle">Boundary</h2>
           <div class="box-selectInfo">
-            <select class="box-geomSelect box-select">
+            <select class="box-geomSelect box-select" style="width:100%">
               <optgroup class="box-optgroupAvailable" label="Available">
                 <option value="us.census.tiger.block_group_clipped" selected="selected">&nbsp;</option>
               </optgroup>
@@ -63,10 +64,10 @@
             </select>
           </div>
         </div>
-        <div class="box-select">
+        <div class="box-selectWrapper">
           <h2 class="box-selectTitle js-box-selectTitle">Timespan</h2>
           <div class="box-selectInfo">
-            <select class="box-timespanSelect box-select">
+            <select class="box-timespanSelect box-select" style="width:100%">
               <optgroup class="box-optgroupAvailable" label="Available">
                 <option value="2010 - 2014" selected="selected">&nbsp;</option>
               </optgroup>
