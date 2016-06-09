@@ -177,12 +177,13 @@ canvas#cover{
 
 .quintile {
   height: 40px;
-  width: 40px;
+  min-width: 40px;
 }
 
 .colors {
   text-align: right;
   display: inline-block;
+  padding: 0 10px 0 10px;
 }
 
 .has-error {

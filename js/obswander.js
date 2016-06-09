@@ -279,9 +279,9 @@ var calcRange = function (max, min, avg, stddev, unitHuman) {
 
   var fmt;
   if (max >= 1000) {
-    fmt = '0';
+    fmt = '0,0';
   } else if (max >= 100) {
-    fmt = '0.[0]';
+    fmt = '00.[0]';
   } else {
     fmt = '0.[00]';
   }
