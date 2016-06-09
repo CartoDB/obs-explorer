@@ -215,7 +215,8 @@ var queries = {
     WHERE st_intersects( \
         geom_bounds, st_makeenvelope({{ bounds }})) \
       AND '{{ numer_id }}' = numer_id \
-      AND ('{{ denom_id }}' = denom_id OR '{{ denom_id }}' = '') \
+      AND ('{{ denom_id }}' = denom_id OR \
+           ('{{ denom_id }}' = '' AND denom_id IS NULL)) \
       AND '{{ geom_id }}' = geom_id \
       AND '{{ timespan_id }}' = numer_timespan",
   subsection: "\
