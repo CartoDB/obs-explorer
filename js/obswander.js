@@ -36,6 +36,13 @@ var ramps = {
     2: '#80c799',
     1: '#c4e6c3'
   },
+  'tags.telephones': {
+    5: '#63589f',
+    4: '#9178c4',
+    3: '#b998dd',
+    2: '#dbbaed',
+    1: '#f3e0f7'
+  },
   'tags.households': {
     5: '#63589f',
     4: '#9178c4',
@@ -58,6 +65,20 @@ var ramps = {
     1: '#fde0c5'
   },
   'tags.index': {
+    5: '#eb4a40',
+    4: '#f17854',
+    3: '#f59e72',
+    2: '#f9c098',
+    1: '#fde0c5'
+  },
+  'tags.vehicles': {
+    5: '#eb4a40',
+    4: '#f17854',
+    3: '#f59e72',
+    2: '#f9c098',
+    1: '#fde0c5'
+  },
+  'tags.businesses': {
     5: '#eb4a40',
     4: '#f17854',
     3: '#f59e72',
