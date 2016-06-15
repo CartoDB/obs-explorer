@@ -15,6 +15,8 @@ var sql = new cartodb.SQL({
   https: true
 });
 
+var lastResult = {};
+
 var nativeMap;
 
 var openSubsection = 'tags.housing';
@@ -156,6 +158,37 @@ var cartoCSS = ' \
   } \
 }';
 
+var obsFragment = "\
+-- First, create a new table, name it how you'd like, \n\
+-- and replace <my table name> below with that name \n\
+\n\
+INSERT INTO <my table name> (the_geom, name)\n\
+SELECT * \n\
+FROM OBS_GetBoundariesByGeometry(\n\
+  st_makeenvelope({{ bounds }}, 4326),\n\
+  '{{ geom_id }}'\n\
+) As m(the_geom, geoid);\n\
+\n\
+\n\
+-- Next, add a column of type \"{{ numer_type }}\" named \"{{ numer_colname }}\"\n\
+\n\
+UPDATE <my table name>\n\
+SET {{ numer_colname }} = OBS_GetMeasureByID(name, \n\
+  '{{ numer_id }}', \n\
+  '{{ geom_id }}', \n\
+  '{{ numer_timespan }}') / \n\
+{{# denom_id }}\
+NULLIF(OBS_GetMeasureByID(name, \n\
+  '{{ denom_id }}', \n\
+  '{{ geom_id }}', \n\
+  '{{ denom_timespan }}'), 0)\
+{{/ denom_id }}\
+{{^ denom_id }}\
+  (ST_Area(the_geom_webmercator) / 1000000.0)\
+{{/ denom_id }}\
+;\
+";
+
 var statsSQLPredenominated =
   'SELECT MAX({{ numer_colname }}),   ' +
   '       MIN({{ numer_colname }}),   ' +
@@ -231,7 +264,10 @@ var queries = {
     SELECT numer_colname, numer_geomref_colname, numer_tablename, \
            denom_colname, denom_geomref_colname, denom_tablename, \
            geom_colname, geom_geomref_colname, geom_tablename, \
-           unit_tags, numer_aggregate  \
+           unit_tags, numer_aggregate,  \
+           numer_id, denom_id, geom_id, \
+           numer_timespan, denom_timespan, geom_timespan, \
+           numer_type, denom_type, geom_type \
     FROM obs_meta \
     WHERE st_intersects( \
         geom_bounds, st_makeenvelope({{ bounds }})) \
@@ -351,6 +387,11 @@ $( document ).ready(function () {
   var sublayer;
   var mapCenter = [37.804444, -122.270833];
 
+  var renderDialog = function () {
+    lastResult.bounds = nativeMap.getBounds().toBBoxString();
+    $('.obs-code-fragment').text(Mustache.render(obsFragment, lastResult));
+  };
+
   var renderMap = function () {
     query('data').done(function (results) {
       var result = results[0];
@@ -358,6 +399,8 @@ $( document ).ready(function () {
       if (!result) {
         return;
       }
+      lastResult = result;
+      renderDialog();
       var unit = result.unit_tags[0];
       var ramp = ramps[unit];
       var unitHuman;
@@ -453,6 +496,7 @@ $( document ).ready(function () {
 
       nativeMap.on('moveend', function () {
         renderMenu();
+        renderDialog();
       });
 
       $('.box-select').on('change', function () {
