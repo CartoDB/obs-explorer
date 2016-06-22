@@ -270,7 +270,7 @@ var queries = {
            numer_type, denom_type, geom_type \
     FROM obs_meta \
     WHERE st_intersects( \
-        geom_bounds, st_makeenvelope({{ bounds }})) \
+        the_geom, st_makeenvelope({{ bounds }}, 4326)) \
       AND '{{ numer_id }}' = numer_id \
       AND ('{{ denom_id }}' = denom_id OR \
            ('{{ denom_id }}' = '' AND denom_id IS NULL)) \
@@ -283,7 +283,7 @@ var queries = {
              COUNT(distinct numer_id) num_measures \
       FROM obs_meta \
       WHERE st_intersects( \
-        geom_bounds, st_makeenvelope({{ bounds }})) \
+        the_geom, st_makeenvelope({{ bounds }}, 4326)) \
       GROUP BY tag_id ) unnested JOIN obs_tag \
     ON unnested.tag_id = id",
   geom: "\
@@ -296,7 +296,7 @@ var queries = {
          ANY(ARRAY_AGG(DISTINCT numer_timespan)) valid_timespan, \
     true valid_geom \
     FROM obs_meta \
-    WHERE st_intersects(geom_bounds, st_makeenvelope({{ bounds }})) \
+    WHERE st_intersects(the_geom, st_makeenvelope({{ bounds }}, 4326)) \
     GROUP BY geom_id ORDER BY geom_id",
   timespan: "\
     SELECT numer_timespan timespan_id, numer_timespan timespan_name, \
@@ -306,7 +306,7 @@ var queries = {
     '{{ geom_id }}' = ANY(ARRAY_AGG(DISTINCT geom_id)) valid_geom, \
     true valid_timespan \
     FROM obs_meta \
-    WHERE st_intersects(geom_bounds, st_makeenvelope({{ bounds }})) \
+    WHERE st_intersects(the_geom, st_makeenvelope({{ bounds }}, 4326)) \
     GROUP BY numer_timespan ORDER BY numer_timespan DESC",
   numer: "\
     SELECT numer_id, MAX(numer_name) numer_name, \
@@ -318,7 +318,7 @@ var queries = {
             ANY(ARRAY_AGG(DISTINCT numer_timespan)) valid_timespan, \
     true valid_numer \
     FROM obs_meta \
-    WHERE st_intersects(geom_bounds, st_makeenvelope({{ bounds }})) \
+    WHERE st_intersects(the_geom, st_makeenvelope({{ bounds }}, 4326)) \
     GROUP BY numer_id ORDER BY numer_id",
   denom: "\
     SELECT denom_id, MAX(denom_name) denom_name, \
@@ -329,7 +329,7 @@ var queries = {
                ANY(ARRAY_AGG(DISTINCT numer_timespan)) valid_timespan, \
     true valid_denom \
     FROM obs_meta \
-    WHERE st_intersects(geom_bounds, st_makeenvelope({{ bounds }})) \
+    WHERE st_intersects(the_geom, st_makeenvelope({{ bounds }}, 4326)) \
     GROUP BY denom_id ORDER BY denom_id"
 };
 
