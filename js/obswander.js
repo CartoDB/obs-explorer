@@ -38,6 +38,13 @@ var ramps = {
     2: '#80c799',
     1: '#c4e6c3'
   },
+  'tags.years': {
+    5: '#1d4f60',
+    4: '#2d7974',
+    3: '#4da284',
+    2: '#80c799',
+    1: '#c4e6c3'
+  },
   'tags.telephones': {
     5: '#63589f',
     4: '#9178c4',
@@ -228,7 +235,9 @@ var mapSQLPredenominated =
   'WITH stats AS(' + statsSQLPredenominated + ')   ' +
   'SELECT data.cartodb_id, geom.the_geom_webmercator,   ' +
   '       (data.{{ numer_colname }} - stats.min) /   ' +
-  '       (stats.max - stats.min) AS val   ' +
+  '       (stats.max - stats.min) AS val,   ' +
+  '       data.{{ numer_colname}} orig_val, ' +
+  '       geom.{{ geom_geomref_colname }} geom_ref ' +
   'FROM stats, {{ numer_tablename }} data,   ' +
   '     {{geom_tablename }} geom   ' +
   'WHERE data.{{ numer_geomref_colname }} = ' +
@@ -239,7 +248,10 @@ var mapSQLAreaNormalized =
   'SELECT data.cartodb_id, geom.the_geom_webmercator,   ' +
   '       ((data.{{ numer_colname }} /  ' +
   '      (ST_Area(geom.the_geom_webmercator) / 1000000.0)) - stats.min) /   ' +
-  '       (stats.max - stats.min) AS val   ' +
+  '       (stats.max - stats.min) AS val,   ' +
+  '       data.{{ numer_colname}} /  ' +
+  '          (ST_Area(geom.the_geom_webmercator) / 1000000.0) orig_val, ' +
+  '       geom.{{ geom_geomref_colname }} geom_ref ' +
   'FROM stats, {{ numer_tablename }} data,   ' +
   '     {{geom_tablename }} geom   ' +
   'WHERE data.{{ numer_geomref_colname }} = ' +
@@ -250,7 +262,10 @@ var mapSQLDenominated =
   'SELECT numer.cartodb_id, geom.the_geom_webmercator,   ' +
   '       ((numer.{{ numer_colname }} /  ' +
   '        NULLIF(denom.{{ denom_colname }}, 0)) - stats.min) /   ' +
-  '       (stats.max - stats.min) AS val   ' +
+  '       (stats.max - stats.min) AS val,   ' +
+  '       data.{{ numer_colname}} /  ' +
+  '          NULLIF(denom.{{ denom_colname }}, 0) orig_val, ' +
+  '       geom.{{ geom_geomref_colname }} geom_ref ' +
   'FROM stats, {{ numer_tablename }} numer,   ' +
   '     {{ denom_tablename }} denom,   ' +
   '     {{ geom_tablename }} geom   ' +
@@ -402,6 +417,9 @@ $( document ).ready(function () {
       lastResult = result;
       renderDialog();
       var unit = result.unit_tags[0];
+      if (!ramps[unit]) {
+        throw Error('No ramp for unit "' + unit + '"');
+      }
       var ramp = ramps[unit];
       var unitHuman;
       if (result.denom_tablename) {
