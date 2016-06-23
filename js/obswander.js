@@ -263,7 +263,7 @@ var mapSQLDenominated =
   '       ((numer.{{ numer_colname }} /  ' +
   '        NULLIF(denom.{{ denom_colname }}, 0)) - stats.min) /   ' +
   '       (stats.max - stats.min) AS val,   ' +
-  '       data.{{ numer_colname}} /  ' +
+  '       numer.{{ numer_colname}} /  ' +
   '          NULLIF(denom.{{ denom_colname }}, 0) orig_val, ' +
   '       geom.{{ geom_geomref_colname }} geom_ref ' +
   'FROM stats, {{ numer_tablename }} numer,   ' +
@@ -461,11 +461,18 @@ $( document ).ready(function () {
     query(type).done(function (results) {
       var $select = $('.box-' + type + 'Select');
       var $available = $select.find('.box-optgroupAvailable');
+      var $changeOne = $select.find('.box-optgroupChangeOne');
+      var $changeTwo = $select.find('.box-optgroupChangeTwo');
+      var $changeThree = $select.find('.box-optgroupChangeThree');
       var $unavailable = $select.find('.box-optgroupUnavailable');
       $available.empty();
+      $changeOne.empty();
+      $changeTwo.empty();
+      $changeThree.empty();
       $unavailable.empty();
       _.each(results, function (r) {
         var selected = false;
+        var invalidCount;
         var $option = $('<option />')
                        .text(r[type + '_name'] || 'None')
                        .data(r)
@@ -474,16 +481,25 @@ $( document ).ready(function () {
           $option.prop('selected', true);
           selected = true;
         }
-        if (r.valid_numer && r.valid_denom && r.valid_geom &&
-            r.valid_timespan) {
-          $available.append($option);
+        invalidCount = (r.valid_numer ? 0 : 1) + (r.valid_denom ? 0 : 1) +
+          (r.valid_geom ? 0 : 1) + (r.valid_timespan ? 0 : 1);
+        if (invalidCount === 0) {
           if (selected) {
             $select.closest('.box-selectWrapper').removeClass('has-error');
           }
+          $available.append($option);
         } else {
-          $unavailable.append($option);
           if (selected) {
             $select.closest('.box-selectWrapper').addClass('has-error');
+          }
+          if (invalidCount === 1) {
+            $changeOne.append($option);
+          } else if (invalidCount === 2) {
+            $changeTwo.append($option);
+          } else if (invalidCount === 3) {
+            $changeThree.append($option);
+          } else {
+            $unavailable.append($option);
           }
         }
       });
