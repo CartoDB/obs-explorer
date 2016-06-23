@@ -113,11 +113,12 @@ var legendTemplate = '\
 <div class="cartodb-legend"> \
   <div class="legend-title">{{ unit }}</div> \
   <div class="colors"> \
-    <div class="quintile">{{ range.5 }}</div> \
-    <div class="quintile">{{ range.4 }}</div> \
-    <div class="quintile">{{ range.3 }}</div> \
-    <div class="quintile">{{ range.2 }}</div> \
-    <div class="quintile">{{ range.1 }}</div> \
+    <div class="quintile text">{{ max }}</div> \
+    <div class="quintile text">{{ headtails.3 }}</div> \
+    <div class="quintile text">{{ headtails.2 }}</div> \
+    <div class="quintile text">{{ headtails.1 }}</div> \
+    <div class="quintile text">{{ headtails.0 }}</div> \
+    <div class="quintile text">{{ min }}</div> \
   </div> \
   <div class="colors"> \
     <div class="quintile" style="background-color:{{ ramp.5 }};"></div> \
@@ -148,19 +149,19 @@ var cartoCSS = ' \
   [val=null]{ \
      polygon-fill: #cacdce; \
   } \
-  [val <= 1] { \
+  [val >= {{ headtails.3 }}] { \
      polygon-fill: @5; \
   } \
-  [val <= 0.333] { \
+  [val < {{ headtails.3 }}][val >= {{ headtails.2 }}] { \
      polygon-fill: @4; \
   } \
-  [val <= 0.111] { \
+  [val < {{ headtails.2 }}][val >= {{ headtails.1 }}] { \
      polygon-fill: @3; \
   } \
-  [val <= 0.037] { \
+  [val < {{ headtails.1 }}][val >= {{ headtails.0 }}] { \
      polygon-fill: @2; \
   } \
-  [val <= 0.012] { \
+  [val < {{ headtails.0 }}] { \
      polygon-fill: @1; \
   } \
 }';
@@ -196,83 +197,50 @@ NULLIF(OBS_GetMeasureByID(name, \n\
 ;\
 ";
 
-var statsSQLPredenominated =
-  'SELECT MAX({{ numer_colname }}),   ' +
-  '       MIN({{ numer_colname }}),   ' +
-  '       AVG({{ numer_colname }}),   ' +
-  '       STDDEV_POP({{ numer_colname }})   ' +
-  'FROM {{ numer_tablename }} data';
+var measureExprs = {
+  predenominated: 'data.{{ numer_colname }} val ',
+  areaNormalized: 'data.{{ numer_colname }}' +
+    ' / (ST_Area(geom.the_geom_webmercator) / 1000000.0) val ',
+  denominated: 'numer.{{ numer_colname }}' +
+  ' / NULLIF(denom.{{ denom_colname }}, 0) val '
+};
 
-var statsSQLAreaNormalized =
-  'SELECT MAX({{ numer_colname }} / ' +
-  '           (ST_Area(geom.the_geom_webmercator) / 1000000.0)),   ' +
-  '       MIN({{ numer_colname }} / ' +
-  '           (ST_Area(geom.the_geom_webmercator) / 1000000.0)),   ' +
-  '       AVG({{ numer_colname }} / ' +
-  '           (ST_Area(geom.the_geom_webmercator) / 1000000.0)),   ' +
-  '       STDDEV_POP({{ numer_colname }} / ' +
-  '           (ST_Area(geom.the_geom_webmercator) / 1000000.0))   ' +
-  'FROM {{ numer_tablename }} data,  ' +
-  '     {{ geom_tablename }} geom    ' +
-  'WHERE data.{{ numer_geomref_colname }} =  ' +
-  '      geom.{{ geom_geomref_colname }} ';
+var statsSql =
+  'SELECT MIN(val) min, MAX(val) max, ' +
+  'CDB_HeadsTailsBins(array_agg(distinct(val::numeric)), 4) as headtails ' +
+  'FROM ({{{ table }}}) _table_sql';
 
-var statsSQLDenominated =
-  'SELECT MAX(numer.{{ numer_colname }} / ' +
-  '           NULLIF(denom.{{ denom_colname }}, 0)),   ' +
-  '       MIN(numer.{{ numer_colname }} / ' +
-  '           NULLIF(denom.{{ denom_colname }}, 0)),   ' +
-  '       AVG(numer.{{ numer_colname }} / ' +
-  '           NULLIF(denom.{{ denom_colname }}, 0)),   ' +
-  '       STDDEV_POP(numer.{{ numer_colname }} / ' +
-  '           NULLIF(denom.{{ denom_colname }}, 0))   ' +
-  'FROM {{ numer_tablename }} numer,  ' +
-  '     {{ denom_tablename }} denom    ' +
-  'WHERE numer.{{ numer_geomref_colname }} =  ' +
-  '      denom.{{ denom_geomref_colname }} ';
+var tables = {
+  predenominated: 'SELECT ' + measureExprs.predenominated +
+    ', geom.cartodb_id, geom.the_geom_webmercator ' +
+    ', geom.{{ geom_geomref_colname }} geom_ref ' +
+    'FROM {{ numer_tablename }} data,   ' +
+    '     {{ geom_tablename }} geom   ' +
+    'WHERE data.{{ numer_geomref_colname }} =  geom.{{ geom_geomref_colname }}',
+  areaNormalized: 'SELECT ' + measureExprs.areaNormalized +
+    ', geom.cartodb_id, geom.the_geom_webmercator ' +
+    ', geom.{{ geom_geomref_colname }} geom_ref ' +
+    'FROM {{ numer_tablename }} data,   ' +
+    '     {{ geom_tablename }} geom   ' +
+    'WHERE data.{{ numer_geomref_colname }} = geom.{{ geom_geomref_colname }}',
+  denominated: 'SELECT ' + measureExprs.denominated +
+    ', geom.cartodb_id, geom.the_geom_webmercator ' +
+    ', geom.{{ geom_geomref_colname }} geom_ref ' +
+    'FROM {{ numer_tablename }} numer,   ' +
+    '     {{ denom_tablename }} denom,   ' +
+    '     {{ geom_tablename }} geom   ' +
+    'WHERE numer.{{ numer_geomref_colname }} = ' +
+    '     denom.{{ denom_geomref_colname }} AND ' +
+    '     denom.{{ denom_geomref_colname }} = ' +
+    '     geom.{{ geom_geomref_colname }}'
+};
 
-var mapSQLPredenominated =
-  'WITH stats AS(' + statsSQLPredenominated + ')   ' +
-  'SELECT data.cartodb_id, geom.the_geom_webmercator,   ' +
-  '       (data.{{ numer_colname }} - stats.min) /   ' +
-  '       (stats.max - stats.min) AS val,   ' +
-  '       data.{{ numer_colname}} orig_val, ' +
-  '       geom.{{ geom_geomref_colname }} geom_ref ' +
-  'FROM stats, {{ numer_tablename }} data,   ' +
-  '     {{geom_tablename }} geom   ' +
-  'WHERE data.{{ numer_geomref_colname }} = ' +
-  'geom.{{ geom_geomref_colname }}';
-
-var mapSQLAreaNormalized =
-  'WITH stats AS(' + statsSQLAreaNormalized + ')   ' +
-  'SELECT data.cartodb_id, geom.the_geom_webmercator,   ' +
-  '       ((data.{{ numer_colname }} /  ' +
-  '      (ST_Area(geom.the_geom_webmercator) / 1000000.0)) - stats.min) /   ' +
-  '       (stats.max - stats.min) AS val,   ' +
-  '       data.{{ numer_colname}} /  ' +
-  '          (ST_Area(geom.the_geom_webmercator) / 1000000.0) orig_val, ' +
-  '       geom.{{ geom_geomref_colname }} geom_ref ' +
-  'FROM stats, {{ numer_tablename }} data,   ' +
-  '     {{geom_tablename }} geom   ' +
-  'WHERE data.{{ numer_geomref_colname }} = ' +
-  'geom.{{ geom_geomref_colname }}';
-
-var mapSQLDenominated =
-  'WITH stats AS(' + statsSQLDenominated + ')   ' +
-  'SELECT numer.cartodb_id, geom.the_geom_webmercator,   ' +
-  '       ((numer.{{ numer_colname }} /  ' +
-  '        NULLIF(denom.{{ denom_colname }}, 0)) - stats.min) /   ' +
-  '       (stats.max - stats.min) AS val,   ' +
-  '       numer.{{ numer_colname}} /  ' +
-  '          NULLIF(denom.{{ denom_colname }}, 0) orig_val, ' +
-  '       geom.{{ geom_geomref_colname }} geom_ref ' +
-  'FROM stats, {{ numer_tablename }} numer,   ' +
-  '     {{ denom_tablename }} denom,   ' +
-  '     {{ geom_tablename }} geom   ' +
-  'WHERE numer.{{ numer_geomref_colname }} = ' +
-        'denom.{{ denom_geomref_colname }} AND ' +
-        'denom.{{ denom_geomref_colname }} = ' +
-        'geom.{{ geom_geomref_colname }}';
+var unitHuman = {
+  predenominated: function(unit) { return unit.replace('tags.', ''); },
+  areaNormalized: function(unit) {
+    return unit.replace('tags.', '') + ' per sq km'; },
+  denominated: function() { return '%'; }
+};
 
 var queries = {
   data: "\
@@ -348,29 +316,19 @@ var queries = {
     GROUP BY denom_id ORDER BY denom_id"
 };
 
-var calcRange = function (max, min, avg, stddev, unitHuman) {
-
-  var fmt;
+var fmt = function(val, max, unitHuman) {
+  var fmtstr;
   if (max >= 1000) {
-    fmt = '0,0';
+    fmtstr = '0,0';
   } else if (max >= 100) {
-    fmt = '00.[0]';
+    fmtstr = '00.[0]';
   } else {
-    fmt = '0.[00]';
+    fmtstr = '0.[00]';
   }
   if (unitHuman === '%') {
-    fmt += '%';
+    fmtstr += '%';
   }
-
-  return {
-    max: max,
-    5:  numeral(1 * (max  - min) + min).format(fmt),
-    4:  numeral(0.333 * (max  - min) + min).format(fmt),
-    3:  numeral(0.111 * (max  - min) + min).format(fmt),
-    2:  numeral(0.037 * (max  - min) + min).format(fmt),
-    1:  numeral(0.012 * (max  - min) + min).format(fmt),
-    min: numeral(min).format(fmt)
-  };
+  return numeral(val).format(fmtstr);
 };
 
 var getSelection = function () {
@@ -392,9 +350,6 @@ var query = function (type) {
     .done(function (rawdata) {
       $dfd.resolve(rawdata.rows);
     });
-    //.fail(function (err) {
-    //  $dfd.reject(err);
-    //});
   return $dfd.promise();
 };
 
@@ -410,7 +365,6 @@ $( document ).ready(function () {
   var renderMap = function () {
     query('data').done(function (results) {
       var result = results[0];
-      var statsSql;
       if (!result) {
         return;
       }
@@ -421,33 +375,37 @@ $( document ).ready(function () {
         throw Error('No ramp for unit "' + unit + '"');
       }
       var ramp = ramps[unit];
-      var unitHuman;
+      var mapType;
       if (result.denom_tablename) {
-        measureSql = Mustache.render(mapSQLDenominated, result);
-        statsSql = statsSQLDenominated;
-        unitHuman = '%';
+        mapType = 'denominated';
       } else if (result.numer_aggregate === 'sum') {
-        measureSql = Mustache.render(mapSQLAreaNormalized, result);
-        statsSql = statsSQLAreaNormalized;
-        unitHuman = unit.replace('tags.', '') + ' per sq km';
+        mapType = 'areaNormalized';
       } else {
-        measureSql = Mustache.render(mapSQLPredenominated, result);
-        statsSql = statsSQLPredenominated;
-        unitHuman = unit.replace('tags.', '');
+        mapType = 'predenominated';
       }
-      sublayer.setSQL(measureSql);
-      sublayer.setCartoCSS(Mustache.render(cartoCSS, {ramp: ramp}));
-      sql.execute(statsSql, result).done(function (rawdata) {
-        var stats = rawdata.rows[0];
-        var range = calcRange(stats.max, stats.min, stats.avg,
-                              stats.stddev_pop, unitHuman);
+      var tableSql = Mustache.render(tables[mapType], result);
+      sql.execute(statsSql, {table: tableSql}, function (stats) {
+        stats = stats.rows[0];
+        var min = stats.min;
+        var max = stats.max;
+        var headtails = stats.headtails;
+        var unitstr = unitHuman[mapType](unit);
+        var renderedCSS = Mustache.render(cartoCSS, {
+          ramp: ramp,
+          headtails: headtails
+        });
+        sublayer.setCartoCSS(renderedCSS);
+        sublayer.setSQL(tableSql);
         var l = new cartodb.geo.ui.Legend({
           type: 'custom',
           template: '<div>' + Mustache.render(legendTemplate, {
-            stats: stats,
+            max: fmt(max, max, unitstr),
+            min: fmt(min, max, unitstr),
             ramp: ramp,
-            range: range,
-            unit: unitHuman
+            headtails: _.map(headtails, function(ht) {
+              return fmt(ht, max, unitstr);
+            }),
+            unit: unitstr
           }) + '</div>'
         });
         l.render();

@@ -179,6 +179,12 @@ canvas#cover{
   min-width: 40px;
 }
 
+.quintile.text {
+  position: relative;
+  top: 5px;
+}
+
+
 .colors {
   text-align: right;
   display: inline-block;

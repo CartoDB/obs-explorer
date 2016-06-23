@@ -70,7 +70,7 @@ vizjson({
                   "title": false,
                   "position": 1
                 }, {
-                  "name": "orig_val",
+                  "name": "val",
                   "title": false,
                   "position": 2
                 }],
