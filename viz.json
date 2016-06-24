@@ -57,7 +57,7 @@ vizjson({
         "sql_api_endpoint": "/api/v2/sql",
         "sql_api_port": 80,
         "filter": "mapnik",
-        "minZoom": "4",
+        "minZoom": "5",
         "maxZoom": "18",
         "layer_definition": {
           "stat_tag": "d996e7b2-1c78-11e6-b921-0e31c9be1b51",
@@ -110,6 +110,96 @@ vizjson({
         },
         "attribution": ""
       }
+    },
+    {
+      "type": "layergroup",
+      "options": {
+        "user_name": "observatory",
+        "maps_api_template": "https://{user}.cartodb.com:443",
+        "sql_api_template": "https://{user}.cartodb.com:443",
+        "tiler_protocol": "http",
+        "tiler_domain": "cartodb.com",
+        "tiler_port": "80",
+        "sql_api_protocol": "http",
+        "sql_api_domain": "cartodb.com",
+        "sql_api_endpoint": "/api/v2/sql",
+        "sql_api_port": 80,
+        "filter": "mapnik",
+        "minZoom": "1",
+        "maxZoom": "3",
+        "layer_definition": {
+          "stat_tag": "",
+          "version": "1.0.1",
+          "layers": [
+            {
+              "id": "foobar",
+              "type": "CartoDB",
+              "infowindow": null,
+              "tooltip":{
+                 "fields":[
+                    {
+                       "position":1,
+                       "name":"num_boundaries",
+                       "title":true
+                    }, {
+                       "position":2,
+                       "name":"num_measures",
+                       "title":true
+                    }, {
+                       "position":3,
+                       "name":"num_times",
+                       "title":true
+                    }, {
+                       "position":1,
+                       "name":"section_name",
+                       "title":true
+                    }, {
+                       "position":4,
+                       "name":"str_desc",
+                       "title":true
+                    }
+                 ],
+                 "template_name":"",
+                 "template":"<div class=\"cartodb-tooltip-content-wrapper\">\n  <div class=\"cartodb-tooltip-content\">\n    <p>{{section_name}} has {{num_measures}} measures\n    across {{num_boundaries}} geographies\n    and {{num_times}} different timespans.</p>\n    <p>Topics covered:</p>\n    <ul>\n      {{{str_desc}}}\n    </ul>\n  </div>\n</div>",
+                 "alternative_names":{  
+
+                 },
+                 "maxHeight":180
+              },
+              "legend": null,
+              "order": 2,
+              "visible": true,
+              "options": {
+                "layer_name": "data",
+                "cartocss": "/** choropleth visualization */ #nation{ polygon-fill: #FFFFCC; polygon-opacity: 0.8; line-color: #FFF; line-width: 0.5; line-opacity: 1; } #nation [ num_boundaries <= 18] { polygon-fill: #0C2C84; } #nation [ num_boundaries <= 18] { polygon-fill: #225EA8; } #nation [ num_boundaries <= 18] { polygon-fill: #1D91C0; } #nation [ num_boundaries <= 3] { polygon-fill: #41B6C4; } #nation [ num_boundaries <= 3] { polygon-fill: #7FCDBB; } #nation [ num_boundaries <= 1] { polygon-fill: #C7E9B4; } #nation [ num_boundaries <= 1] { polygon-fill: #FFFFCC; }",
+                "cartocss_version": "2.1.1",
+                "interactivity": "cartodb_id,num_boundaries,num_measures,num_times,section_name,str_desc",
+                "sql": "SELECT row_number() over () as cartodb_id, MAX(sections.the_geom_webmercator) the_geom_webmercator, MAX(sections.the_geom) the_geom, section_tags.name as section_name, STRING_AGG(subsection_tags.name || ': ' || subsections.num_measures::text, '<li>') str_desc, MAX(sections.num_measures) num_measures, MAX(sections.num_boundaries) num_boundaries, MAX(sections.num_times) num_times FROM ( SELECT COUNT(DISTINCT numer_id) num_measures, COUNT(DISTINCT geom_id) num_boundaries, COUNT(DISTINCT numer_timespan) num_times, unnest(section_tags) section_id, unnest(subsection_tags) subsection_id FROM obs_meta GROUP BY section_id, subsection_id) subsections, ( SELECT MAX(the_geom_webmercator) the_geom_webmercator, MAX(the_geom) the_geom, COUNT(DISTINCT numer_id) num_measures, COUNT(DISTINCT geom_id) num_boundaries, COUNT(DISTINCT numer_timespan) num_times, unnest(section_tags) section_id FROM obs_meta GROUP BY section_id) sections, obs_tag section_tags, obs_tag subsection_tags WHERE subsections.section_id = sections.section_id AND sections.section_id = section_tags.id AND subsections.subsection_id = subsection_tags.id GROUP BY section_tags.name",
+                "table_name": "\"\"."
+              }
+            }
+          ]
+        },
+        "attribution": ""
+      }
+    },
+    {
+      "options": {
+        "default": "true",
+        "url": "http://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png",
+        "subdomains": "abcd",
+        "minZoom": "0",
+        "maxZoom": "18",
+        "attribution": "&copy; <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"http://cartodb.com/attributions\">CartoDB</a>",
+        "urlTemplate": "http://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png",
+        "type": "Tiled",
+        "name": "Positron Labels"
+      },
+      "infowindow": null,
+      "tooltip": null,
+      "id": "45f9591a-a90c-4beb-8f55-6781effe634c",
+      "order": 2,
+      "type": "tiled"
     },
     {
       "options": {

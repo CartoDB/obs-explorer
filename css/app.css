@@ -17,6 +17,14 @@ body {
   background: rgba(0, 0, 0, 0.1);
 }
 
+body.coverage .box {
+  display:none !important;
+}
+
+body.coverage .cartodb-legend-stack {
+  display:none !important;
+}
+
 .box {
   position: absolute;
   top: 20px;

@@ -485,6 +485,16 @@ $( document ).ready(function () {
       nativeMap.touchZoom.enable();
       nativeMap.keyboard.enable();
 
+      nativeMap.on('zoomend', function () {
+        if (nativeMap.getZoom() > 4) {
+          $('body').removeClass('coverage')
+                   .addClass('explore');
+        } else {
+          $('body').addClass('coverage')
+                   .removeClass('explore');
+        }
+      });
+
       nativeMap.on('moveend', function () {
         renderMenu();
         renderDialog();
