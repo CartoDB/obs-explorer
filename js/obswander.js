@@ -355,7 +355,6 @@ var query = function (type) {
 
 $( document ).ready(function () {
   var sublayer;
-  var mapCenter = [37.804444, -122.270833];
 
   var renderDialog = function () {
     lastResult.bounds = nativeMap.getBounds().toBBoxString();
@@ -473,7 +472,7 @@ $( document ).ready(function () {
   };
 
   cartodb.createVis('map', 'viz.json', {
-    zoom: 11, center: mapCenter, search: true
+    zoom: 2, center: [20, -20], search: true
   })
     .done(function (map, layers){
       sublayer = layers[1].getSubLayer(0);
