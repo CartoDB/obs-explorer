@@ -94,7 +94,7 @@ var ramps = {
     2: '#f9c098',
     1: '#fde0c5'
   },
-  'categorical': {
+  'tags.segmentation': {
     1: '#7F3C8D',
     2: '#11A579',
     3: '#3969AC',
@@ -109,8 +109,8 @@ var ramps = {
   }
 };
 
-var legendTemplate = '\
-<div class="cartodb-legend"> \
+var choroplethLegendTemplate = '\
+<div class="cartodb-legend legend-choropleth"> \
   <div class="legend-title">{{ unit }}</div> \
   <div class="colors"> \
     <div class="quintile text">{{ max }}</div> \
@@ -129,15 +129,42 @@ var legendTemplate = '\
   </div> \
 </div>';
 
-/** choropleth visualization */
+var categoricalLegendTemplate = '\
+<div class="cartodb-legend legend-category"> \
+  <div class="legend-title">{{ unit }}</div> \
+  <div class="colors"> \
+    <div class="quintile text">{{ buckets.1 }}</div> \
+    <div class="quintile text">{{ buckets.2 }}</div> \
+    <div class="quintile text">{{ buckets.3 }}</div> \
+    <div class="quintile text">{{ buckets.4 }}</div> \
+    <div class="quintile text">{{ buckets.5 }}</div> \
+    <div class="quintile text">{{ buckets.6 }}</div> \
+    <div class="quintile text">{{ buckets.7 }}</div> \
+    <div class="quintile text">{{ buckets.8 }}</div> \
+    <div class="quintile text">{{ buckets.9 }}</div> \
+    <div class="quintile text">{{ buckets.0 }}</div> \
+  </div> \
+  <div class="colors"> \
+    <div class="quintile" style="background-color:{{ ramp.1 }};"></div> \
+    <div class="quintile" style="background-color:{{ ramp.2 }};"></div> \
+    <div class="quintile" style="background-color:{{ ramp.3 }};"></div> \
+    <div class="quintile" style="background-color:{{ ramp.4 }};"></div> \
+    <div class="quintile" style="background-color:{{ ramp.5 }};"></div> \
+    <div class="quintile" style="background-color:{{ ramp.6 }};"></div> \
+    <div class="quintile" style="background-color:{{ ramp.7 }};"></div> \
+    <div class="quintile" style="background-color:{{ ramp.8 }};"></div> \
+    <div class="quintile" style="background-color:{{ ramp.9 }};"></div> \
+    <div class="quintile" style="background-color:{{ ramp.10 }};"></div> \
+  </div> \
+</div>';
 
-var cartoCSS = ' \
-@5:{{ ramp.5 }};\
-@4:{{ ramp.4 }};\
-@3:{{ ramp.3 }};\
-@2:{{ ramp.2 }};\
-@1:{{ ramp.1 }};\
-\
+var choroplethCSS = ' \
+@5:{{ ramp.5 }};\n\
+@4:{{ ramp.4 }};\n\
+@3:{{ ramp.3 }};\n\
+@2:{{ ramp.2 }};\n\
+@1:{{ ramp.1 }};\n\
+\n\
 #data { \
   polygon-opacity: 0.9; \
   polygon-gamma: 0.5; \
@@ -149,21 +176,55 @@ var cartoCSS = ' \
   [val=null]{ \
      polygon-fill: #cacdce; \
   } \
-  [val >= {{ headtails.3 }}] { \
+  [val >= {{ stats.buckets.3 }}] { \
      polygon-fill: @5; \
   } \
-  [val < {{ headtails.3 }}][val >= {{ headtails.2 }}] { \
+  [val < {{ stats.buckets.3 }}][val >= {{ stats.buckets.2 }}] { \
      polygon-fill: @4; \
   } \
-  [val < {{ headtails.2 }}][val >= {{ headtails.1 }}] { \
+  [val < {{ stats.buckets.2 }}][val >= {{ stats.buckets.1 }}] { \
      polygon-fill: @3; \
   } \
-  [val < {{ headtails.1 }}][val >= {{ headtails.0 }}] { \
+  [val < {{ stats.buckets.1 }}][val >= {{ stats.buckets.0 }}] { \
      polygon-fill: @2; \
   } \
-  [val < {{ headtails.0 }}] { \
+  [val < {{ stats.buckets.0 }}] { \
      polygon-fill: @1; \
   } \
+}';
+
+var categoricalCSS = ' \
+@other:{{ ramp.other }};\n\
+@10:{{ ramp.10 }};\n\
+@9:{{ ramp.9 }};\n\
+@8:{{ ramp.8 }};\n\
+@7:{{ ramp.7 }};\n\
+@6:{{ ramp.6 }};\n\
+@5:{{ ramp.5 }};\n\
+@4:{{ ramp.4 }};\n\
+@3:{{ ramp.3 }};\n\
+@2:{{ ramp.2 }};\n\
+@1:{{ ramp.1 }};\n\
+\n\
+#data { \
+  polygon-opacity: 0.9; \
+  polygon-gamma: 0.5; \
+  line-color: #000000; \
+  line-width: 0.25; \
+  line-opacity: 0.2; \
+  line-comp-op: hard-light; \
+ \
+  [val=null]{ polygon-fill: @other; } \
+  [val="{{ stats.buckets.9 }}"] { polygon-fill: @9; } \
+  [val="{{ stats.buckets.8 }}"] { polygon-fill: @8; } \
+  [val="{{ stats.buckets.7 }}"] { polygon-fill: @7; } \
+  [val="{{ stats.buckets.6 }}"] { polygon-fill: @6; } \
+  [val="{{ stats.buckets.5 }}"] { polygon-fill: @5; } \
+  [val="{{ stats.buckets.4 }}"] { polygon-fill: @4; } \
+  [val="{{ stats.buckets.3 }}"] { polygon-fill: @3; } \
+  [val="{{ stats.buckets.2 }}"] { polygon-fill: @2; } \
+  [val="{{ stats.buckets.1 }}"] { polygon-fill: @1; } \
+  [val="{{ stats.buckets.0 }}"] { polygon-fill: @10; } \
 }';
 
 var obsFragment = "\
@@ -202,19 +263,33 @@ NULLIF(OBS_GetMeasureByID(name, \n\
 
 var measureExprs = {
   predenominated: 'data.{{ numer_colname }} val ',
+  categorical: 'data.{{ numer_colname }} val ',
   areaNormalized: 'data.{{ numer_colname }}' +
     ' / (ST_Area(geom.the_geom_webmercator) / 1000000.0) val ',
   denominated: 'numer.{{ numer_colname }}' +
   ' / NULLIF(denom.{{ denom_colname }}, 0) val '
 };
 
-var statsSql =
+var categoryStatsSql =
+  'SELECT array_agg(buckets) buckets FROM ( ' +
+  'SELECT row_number() over () catname, val as buckets, COUNT(*) cnt ' +
+  'FROM ({{{ table }}}) _table_sql ' +
+  'GROUP BY val ORDER BY COUNT(*) DESC '+
+  ') foo';
+
+var measureStatsSql =
   'SELECT MIN(val) min, MAX(val) max, ' +
-  'CDB_HeadsTailsBins(array_agg(distinct(val::numeric)), 4) as headtails ' +
+  'CDB_HeadsTailsBins(array_agg(distinct(val::numeric)), 4) as buckets ' +
   'FROM ({{{ table }}}) _table_sql';
 
 var tables = {
   predenominated: 'SELECT ' + measureExprs.predenominated +
+    ', geom.cartodb_id, geom.the_geom_webmercator ' +
+    ', geom.{{ geom_geomref_colname }} geom_ref ' +
+    'FROM {{ numer_tablename }} data,   ' +
+    '     {{ geom_tablename }} geom   ' +
+    'WHERE data.{{ numer_geomref_colname }} =  geom.{{ geom_geomref_colname }}',
+  categorical: 'SELECT ' + measureExprs.categorical +
     ', geom.cartodb_id, geom.the_geom_webmercator ' +
     ', geom.{{ geom_geomref_colname }} geom_ref ' +
     'FROM {{ numer_tablename }} data,   ' +
@@ -240,6 +315,7 @@ var tables = {
 
 var unitHuman = {
   predenominated: function(unit) { return unit.replace('tags.', ''); },
+  categorical: function(_) { return ''; },
   areaNormalized: function(unit) {
     return unit.replace('tags.', '') + ' per sq km'; },
   denominated: function() { return '%'; }
@@ -378,38 +454,59 @@ $( document ).ready(function () {
       }
       var ramp = ramps[unit];
       var mapType;
+      var statsSql, cartoCSS, legendTemplate;
       if (result.denom_tablename) {
         mapType = 'denominated';
       } else if (result.numer_aggregate === 'sum') {
         mapType = 'areaNormalized';
+      } else if (unit === 'tags.segmentation') {
+        mapType = 'categorical';
       } else {
         mapType = 'predenominated';
       }
       var tableSql = Mustache.render(tables[mapType], result);
+      if (mapType === 'categorical') {
+        statsSql = categoryStatsSql;
+        cartoCSS = categoricalCSS;
+        legendTemplate = categoricalLegendTemplate;
+      } else {
+        statsSql = measureStatsSql;
+        cartoCSS = choroplethCSS;
+        legendTemplate = choroplethLegendTemplate;
+      }
       sql.execute(statsSql, {table: tableSql}, function (stats) {
+        var l, renderedCSS;
         stats = stats.rows[0];
-        var min = stats.min;
-        var max = stats.max;
-        var headtails = stats.headtails;
         var unitstr = unitHuman[mapType](unit);
-        var renderedCSS = Mustache.render(cartoCSS, {
+        renderedCSS = Mustache.render(cartoCSS, {
           ramp: ramp,
-          headtails: headtails
+          stats: stats
         });
+        if (legendTemplate === choroplethLegendTemplate) {
+          l = new cartodb.geo.ui.Legend({
+            type: 'custom',
+            template: '<div>' + Mustache.render(legendTemplate, {
+              max: fmt(stats.max, stats.max, unitstr),
+              min: fmt(stats.min, stats.max, unitstr),
+              ramp: ramp,
+              headtails: _.map(stats.buckets, function(ht) {
+                return fmt(ht, stats.max, unitstr);
+              }),
+              unit: unitstr
+            }) + '</div>'
+          });
+        } else {
+          l = new cartodb.geo.ui.Legend({
+            type: 'custom',
+            template: '<div>' + Mustache.render(legendTemplate, {
+              buckets: stats.buckets,
+              ramp: ramp,
+              unit: unitstr
+            }) + '</div>'
+          });
+        }
         sublayer.setCartoCSS(renderedCSS);
         sublayer.setSQL(tableSql);
-        var l = new cartodb.geo.ui.Legend({
-          type: 'custom',
-          template: '<div>' + Mustache.render(legendTemplate, {
-            max: fmt(max, max, unitstr),
-            min: fmt(min, max, unitstr),
-            ramp: ramp,
-            headtails: _.map(headtails, function(ht) {
-              return fmt(ht, max, unitstr);
-            }),
-            unit: unitstr
-          }) + '</div>'
-        });
         l.render();
         $('.cartodb-legend.wrapper').replaceWith(l.$el);
       });

@@ -187,11 +187,15 @@ canvas#cover{
   min-width: 40px;
 }
 
-.quintile.text {
+.legend-choropleth .quintile.text {
   position: relative;
   top: 5px;
 }
 
+.legend-category .quintile.text {
+  position: relative;
+  top: -15px;
+}
 
 .colors {
   text-align: right;
