@@ -194,7 +194,10 @@ NULLIF(OBS_GetMeasureByID(name, \n\
 {{^ denom_id }}\
   (ST_Area(the_geom_webmercator) / 1000000.0)\
 {{/ denom_id }}\
-;\
+;\n\n\
+-- numer: http://observatory.cartodb.com/tables/{{ numer_tablename }}\n\
+-- denom: http://observatory.cartodb.com/tables/{{ denom_tablename }}\n\
+-- geom: http://observatory.cartodb.com/tables/{{ geom_tablename }}\n\
 ";
 
 var measureExprs = {
