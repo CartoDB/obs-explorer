@@ -1,5 +1,5 @@
 /*jshint multistr: true, browser: true, maxstatements: 100, camelcase: false*/
-/*globals $, cartodb, _, Mustache, numeral*/
+/*globals $, cartodb, _, Mustache, numeral, JSON*/
 
 var maxHeightList = function (){
   var heightScreen = $(window).height();
@@ -345,7 +345,9 @@ var queries = {
              COUNT(distinct numer_id) num_measures \
       FROM obs_meta \
       WHERE st_intersects( \
-        the_geom, st_makeenvelope({{ bounds }}, 4326)) \
+          the_geom, st_makeenvelope({{ bounds }}, 4326)) \
+        AND ({{{ subsections }}} <@ subsection_tags::TEXT[] \
+             OR cardinality({{{ subsections }}}) = 0) \
       GROUP BY tag_id ) unnested JOIN obs_tag \
     ON unnested.tag_id = id",
   geom: "\
@@ -378,7 +380,8 @@ var queries = {
                        '{{ denom_id }}' = '' valid_denom, \
     '{{ timespan_id }}' = \
             ANY(ARRAY_AGG(DISTINCT numer_timespan)) valid_timespan, \
-    true valid_numer \
+    true valid_numer, \
+    MAX(subsection_tags) subsection_tags \
     FROM obs_meta \
     WHERE st_intersects(the_geom, st_makeenvelope({{ bounds }}, 4326)) \
     GROUP BY numer_id ORDER BY numer_id",
@@ -410,13 +413,19 @@ var fmt = function(val, max, unitHuman) {
   return numeral(val).format(fmtstr);
 };
 
+var getSubsections = function () {
+  return $('.box-subsectionSelect').val() || [];
+};
+
 var getSelection = function () {
   return {
     bounds: nativeMap.getBounds().toBBoxString(),
     numer_id: $('.box-numerSelect').val(),
     denom_id: $('.box-denomSelect').val(),
     geom_id: $('.box-geomSelect').val(),
-    timespan_id: $('.box-timespanSelect').val()
+    timespan_id: $('.box-timespanSelect').val(),
+    subsections: 'Array' + JSON.stringify(getSubsections()).replace(/"/g, "'") +
+                 '::TEXT[]'
   };
 };
 
@@ -513,6 +522,23 @@ $( document ).ready(function () {
     });
   };
 
+  var renderSubsections = function () {
+    var $select = $('.box-subsectionSelect');
+    query('subsection').done(function (results) {
+      var subsections = getSubsections();
+      $select.empty();
+      _.each(results, function (r) {
+        var $option = $('<option />').val(r.id)
+                        .text(r.name + ' (' + r.num_measures+ ')');
+        if (_.indexOf(subsections, r.id) !== -1) {
+          $option.prop('selected', true);
+        }
+        $select.append($option);
+      });
+      $select.select2();
+    });
+  };
+
   var renderSelect = function (type) {
     var selection = getSelection();
     query(type).done(function (results) {
@@ -522,12 +548,25 @@ $( document ).ready(function () {
       var $changeTwo = $select.find('.box-optgroupChangeTwo');
       var $changeThree = $select.find('.box-optgroupChangeThree');
       var $unavailable = $select.find('.box-optgroupUnavailable');
+      var subsections = getSubsections();
       $available.empty();
       $changeOne.empty();
       $changeTwo.empty();
       $changeThree.empty();
       $unavailable.empty();
       _.each(results, function (r) {
+
+        // Filter by subsection for numer, _all_ selected subsections must be
+        // tags
+        var ssTags = r.subsection_tags;
+        if (type === 'numer') {
+          if (subsections.length > 0 &&
+              _.intersection(subsections, ssTags).length !== subsections.length
+          ) {
+            return;
+          }
+        }
+
         var selected = false;
         var invalidCount;
         var $option = $('<option />')
@@ -597,12 +636,19 @@ $( document ).ready(function () {
 
       nativeMap.on('moveend', function () {
         renderMenu();
+        renderSubsections();
         renderDialog();
       });
 
       $('.box-select').on('change', function () {
         renderMenu();
+        renderSubsections();
         renderMap();
+      });
+
+      $('.box-subsectionSelect').on('change', function () {
+        renderMenu();
+        renderSubsections();
       });
 
       $( ".box-input" ).on( "click", function () {
@@ -611,6 +657,7 @@ $( document ).ready(function () {
         $(".box-container").toggleClass( "is-hidden" );
       });
       renderMenu();
+      renderSubsections();
       renderMap();
     });
 });

@@ -50,14 +50,13 @@
   <div class="box">
     <div class="box-inner">
       <div class="box-header">
-        <!--
-        <div class="box-select">
-          <h2 class="box-selectTitle">CHOOSE A SAMPLE MEASUREMENT</h2>
-          <div class="box-input">
-            <h2 class="js-box-input">Households</h2>
+        <div class="box-selectWrapper">
+          <h2 class="box-selectTitle js-box-selectTitle">Filter</h2>
+          <div class="box-selectInfo">
+            <select class="box-subsectionSelect" style="width:200px" multiple="multiple">
+            </select>
           </div>
         </div>
-        -->
         <div class="box-selectWrapper">
           <h2 class="box-selectTitle js-box-selectTitle">Numerator</h2>
           <div class="box-selectInfo">
@@ -117,24 +116,7 @@
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
             Get Data
         </button>
-        <!--
-        <div class="box-select">
-          <h2 class="box-selectTitle js-box-selectTitle">HOUSING UNITS</h2>
-          <div class="box-selectInfo">
-            <select class="box-boundarySelect"></select>
-            <textarea onClick="this.select();" class="box-figureCode figure-sql" spellcheck="false" readonly="true"></textarea>
-            <h3 class="box-figure figure-timespan"></h3>
-          </div>
-        </div>
-        -->
       </div>
-      <!--
-      <div class="box-container is-hidden">
-        <nav class="box-nav"></nav>
-        <div class="box-result">
-        </div>
-      </div>
-      -->
     </div>
   </div>
   <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/cartodb.js"></script>
