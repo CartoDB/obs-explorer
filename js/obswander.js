@@ -351,51 +351,29 @@ var queries = {
       GROUP BY tag_id ) unnested JOIN obs_tag \
     ON unnested.tag_id = id",
   geom: "\
-    SELECT geom_id, MAX(geom_name) geom_name, \
-                    MAX(geom_description) geom_description, \
-    '{{ numer_id }}' = ANY(ARRAY_AGG(DISTINCT numer_id)) valid_numer, \
-    '{{ denom_id }}' = ANY(ARRAY_AGG(DISTINCT denom_id)) OR \
-                       '{{ denom_id }}' = '' valid_denom, \
-    '{{ timespan_id }}' = \
-         ANY(ARRAY_AGG(DISTINCT numer_timespan)) valid_timespan, \
-    true valid_geom \
-    FROM obs_meta \
-    WHERE st_intersects(the_geom, st_makeenvelope({{ bounds }}, 4326)) \
-    GROUP BY geom_id ORDER BY geom_id",
+    SELECT geom_id, geom_name, geom_description, valid_numer, \
+           valid_denom, valid_timespan, true valid_geom \
+    FROM OBS_GetAvailableGeometries(st_makeenvelope({{ bounds }}, 4326), \
+         NULL, '{{ numer_id }}', '{{ denom_id }}', '{{ timespan_id }}')",
   timespan: "\
-    SELECT numer_timespan timespan_id, numer_timespan timespan_name, \
-    '{{ numer_id }}' = ANY(ARRAY_AGG(DISTINCT numer_id)) valid_numer, \
-    '{{ denom_id }}' = ANY(ARRAY_AGG(DISTINCT denom_id)) OR \
-                       '{{ denom_id }}' = '' valid_denom, \
-    '{{ geom_id }}' = ANY(ARRAY_AGG(DISTINCT geom_id)) valid_geom, \
-    true valid_timespan \
-    FROM obs_meta \
-    WHERE st_intersects(the_geom, st_makeenvelope({{ bounds }}, 4326)) \
-    GROUP BY numer_timespan ORDER BY numer_timespan DESC",
+    SELECT timespan_id, timespan_name, valid_numer, \
+           valid_denom, valid_geom, true valid_timespan \
+    FROM OBS_GetAvailableTimespans( \
+           st_makeenvelope({{ bounds }}, 4326), NULL, '{{ numer_id }}', \
+                          '{{ denom_id }}', '{{ geom_id }}')",
   numer: "\
-    SELECT numer_id, MAX(numer_name) numer_name, \
-                     MAX(numer_description) numer_description, \
-    '{{ geom_id }}' = ANY(ARRAY_AGG(DISTINCT geom_id)) valid_geom, \
-    '{{ denom_id }}' = ANY(ARRAY_AGG(DISTINCT denom_id)) OR \
-                       '{{ denom_id }}' = '' valid_denom, \
-    '{{ timespan_id }}' = \
-            ANY(ARRAY_AGG(DISTINCT numer_timespan)) valid_timespan, \
-    true valid_numer, \
-    MAX(subsection_tags) subsection_tags \
-    FROM obs_meta \
-    WHERE st_intersects(the_geom, st_makeenvelope({{ bounds }}, 4326)) \
-    GROUP BY numer_id ORDER BY numer_id",
+    SELECT numer_id, numer_name, numer_description, valid_geom, \
+           valid_denom, valid_timespan, true valid_numer, \
+           ARRAY['tags.age_gender'] subsection_tags \
+    FROM OBS_GetAvailableNumerators( \
+           st_makeenvelope({{ bounds }}, 4326), NULL, '{{ denom_id }}', \
+                          '{{ geom_id }}', '{{ timespan_id }}')",
   denom: "\
-    SELECT denom_id, MAX(denom_name) denom_name, \
-                     MAX(denom_description) denom_description, \
-    '{{ numer_id }}' = ANY(ARRAY_AGG(DISTINCT numer_id)) valid_numer, \
-    '{{ geom_id }}' = ANY(ARRAY_AGG(DISTINCT geom_id)) valid_geom, \
-    '{{ timespan_id }}' = \
-               ANY(ARRAY_AGG(DISTINCT numer_timespan)) valid_timespan, \
-    true valid_denom \
-    FROM obs_meta \
-    WHERE st_intersects(the_geom, st_makeenvelope({{ bounds }}, 4326)) \
-    GROUP BY denom_id ORDER BY denom_id"
+    SELECT denom_id, denom_name, denom_description, valid_numer, \
+           valid_numer, valid_geom, true valid_timespan, true valid_denom \
+    FROM OBS_GetAvailableDenominators( \
+           st_makeenvelope({{ bounds }}, 4326), NULL, '{{ numer_id }}', \
+                          '{{ denom_id }}', '{{ geom_id }}')"
 };
 
 var fmt = function(val, max, unitHuman) {
