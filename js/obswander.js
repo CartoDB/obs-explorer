@@ -24,6 +24,13 @@ var openSubsection = 'tags.housing';
 var measureSql;
 
 var ramps = {
+  'unknown': {
+    5: '#6c2167',
+    4: '#a24186',
+    3: '#ca699d',
+    2: '#e498b4',
+    1: '#f3cbd3'
+  },
   'tags.people': {
     5: '#6c2167',
     4: '#a24186',
@@ -435,7 +442,12 @@ $( document ).ready(function () {
       }
       lastResult = result;
       renderDialog();
-      var unit = result.unit_tags[0];
+      var unit;
+      if (result.unit_tags) {
+        unit = result.unit_tags[0];
+      } else {
+        unit = 'unknown';
+      }
       if (!ramps[unit]) {
         throw Error('No ramp for unit "' + unit + '"');
       }
