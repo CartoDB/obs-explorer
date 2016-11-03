@@ -1,5 +1,5 @@
 /*jshint multistr: true, browser: true, maxstatements: 100, camelcase: false*/
-/*globals $, cartodb, _, Mustache, numeral, JSON*/
+/*globals $, cartodb, _, Mustache, numeral, JSON, escape*/
 
 var maxHeightList = function (){
   var heightScreen = $(window).height();
@@ -25,93 +25,41 @@ var measureSql;
 
 var ramps = {
   'unknown': {
-    5: '#6c2167',
-    4: '#a24186',
-    3: '#ca699d',
-    2: '#e498b4',
-    1: '#f3cbd3'
+    5: '#6c2167', 4: '#a24186', 3: '#ca699d', 2: '#e498b4', 1: '#f3cbd3'
   },
   'tags.people': {
-    5: '#6c2167',
-    4: '#a24186',
-    3: '#ca699d',
-    2: '#e498b4',
-    1: '#f3cbd3'
+    5: '#6c2167', 4: '#a24186', 3: '#ca699d', 2: '#e498b4', 1: '#f3cbd3'
   },
   'tags.money': {
-    5: '#1d4f60',
-    4: '#2d7974',
-    3: '#4da284',
-    2: '#80c799',
-    1: '#c4e6c3'
+    5: '#1d4f60', 4: '#2d7974', 3: '#4da284', 2: '#80c799', 1: '#c4e6c3'
   },
   'tags.years': {
-    5: '#1d4f60',
-    4: '#2d7974',
-    3: '#4da284',
-    2: '#80c799',
-    1: '#c4e6c3'
+    5: '#1d4f60', 4: '#2d7974', 3: '#4da284', 2: '#80c799', 1: '#c4e6c3'
   },
   'tags.telephones': {
-    5: '#63589f',
-    4: '#9178c4',
-    3: '#b998dd',
-    2: '#dbbaed',
-    1: '#f3e0f7'
+    5: '#63589f', 4: '#9178c4', 3: '#b998dd', 2: '#dbbaed', 1: '#f3e0f7'
   },
   'tags.households': {
-    5: '#63589f',
-    4: '#9178c4',
-    3: '#b998dd',
-    2: '#dbbaed',
-    1: '#f3e0f7'
+    5: '#63589f', 4: '#9178c4', 3: '#b998dd', 2: '#dbbaed', 1: '#f3e0f7'
   },
   'tags.housing_units': {
-    5: '#2a5674',
-    4: '#45829b',
-    3: '#68abb8',
-    2: '#96d0d1',
-    1: '#d1eeea'
+    5: '#2a5674', 4: '#45829b', 3: '#68abb8', 2: '#96d0d1', 1: '#d1eeea'
   },
   'tags.ratio': {
-    5: '#eb4a40',
-    4: '#f17854',
-    3: '#f59e72',
-    2: '#f9c098',
-    1: '#fde0c5'
+    5: '#eb4a40', 4: '#f17854', 3: '#f59e72', 2: '#f9c098', 1: '#fde0c5'
   },
   'tags.index': {
-    5: '#eb4a40',
-    4: '#f17854',
-    3: '#f59e72',
-    2: '#f9c098',
-    1: '#fde0c5'
+    5: '#eb4a40', 4: '#f17854', 3: '#f59e72', 2: '#f9c098', 1: '#fde0c5'
   },
   'tags.vehicles': {
-    5: '#eb4a40',
-    4: '#f17854',
-    3: '#f59e72',
-    2: '#f9c098',
-    1: '#fde0c5'
+    5: '#eb4a40', 4: '#f17854', 3: '#f59e72', 2: '#f9c098', 1: '#fde0c5'
   },
   'tags.businesses': {
-    5: '#eb4a40',
-    4: '#f17854',
-    3: '#f59e72',
-    2: '#f9c098',
-    1: '#fde0c5'
+    5: '#eb4a40', 4: '#f17854', 3: '#f59e72', 2: '#f9c098', 1: '#fde0c5'
   },
   'tags.segmentation': {
-    1: '#7F3C8D',
-    2: '#11A579',
-    3: '#3969AC',
-    4: '#F2B701',
-    5: '#E73F74',
-    6: '#80BA5A',
-    7: '#E68310',
-    8: '#008695',
-    9: '#CF1C90',
-    10: '#f97b72',
+    1: '#7F3C8D', 2: '#11A579', 3: '#3969AC', 4: '#F2B701', 5: '#E73F74',
+    6: '#80BA5A', 7: '#E68310', 8: '#008695', 9: '#CF1C90', 10: '#f97b72',
     other: '#A5AA99'
   }
 };
@@ -293,19 +241,19 @@ var tables = {
   predenominated: 'SELECT ' + measureExprs.predenominated +
     ', geom.cartodb_id, geom.the_geom_webmercator ' +
     ', geom.{{ geom_geomref_colname }} geom_ref ' +
-    'FROM {{ numer_tablename }} data,   ' +
+    'FROM {{ numer_tablename }} as data,   ' +
     '     {{ geom_tablename }} geom   ' +
     'WHERE data.{{ numer_geomref_colname }} =  geom.{{ geom_geomref_colname }}',
   categorical: 'SELECT ' + measureExprs.categorical +
     ', geom.cartodb_id, geom.the_geom_webmercator ' +
     ', geom.{{ geom_geomref_colname }} geom_ref ' +
-    'FROM {{ numer_tablename }} data,   ' +
+    'FROM {{ numer_tablename }} as data,   ' +
     '     {{ geom_tablename }} geom   ' +
     'WHERE data.{{ numer_geomref_colname }} =  geom.{{ geom_geomref_colname }}',
   areaNormalized: 'SELECT ' + measureExprs.areaNormalized +
     ', geom.cartodb_id, geom.the_geom_webmercator ' +
     ', geom.{{ geom_geomref_colname }} geom_ref ' +
-    'FROM {{ numer_tablename }} data,   ' +
+    'FROM {{ numer_tablename }} as data,   ' +
     '     {{ geom_tablename }} geom   ' +
     'WHERE data.{{ numer_geomref_colname }} = geom.{{ geom_geomref_colname }}',
   denominated: 'SELECT ' + measureExprs.denominated +
@@ -346,32 +294,36 @@ var queries = {
       AND '{{ geom_id }}' = geom_id \
       AND '{{ timespan_id }}' = numer_timespan",
   subsection: "\
-    SELECT id, name, num_measures \
+    SELECT numer_tags AS id, obs_tag.name, count(*) num_measures \
     FROM ( \
-      SELECT UNNEST(subsection_tags) tag_id, \
-             COUNT(distinct numer_id) num_measures \
-      FROM obs_meta \
-      WHERE st_intersects( \
-          the_geom, st_makeenvelope({{ bounds }}, 4326)) \
-        AND ({{{ subsections }}} <@ subsection_tags::TEXT[] \
-             OR cardinality({{{ subsections }}}) = 0) \
-      GROUP BY tag_id ) unnested JOIN obs_tag \
-    ON unnested.tag_id = id",
+      SELECT jsonb_object_keys(numer_tags) numer_tags \
+      FROM obs_meta_numer \
+      WHERE the_geom && ST_MakeEnvelope({{ bounds }}, 4326) \
+        AND (numer_tags ?| {{{ subsections }}} OR \
+             Cardinality({{{ subsections }}}::TEXT[]) = 0) \
+    ) foo, obs_tag \
+    WHERE numer_tags like 'subsection/%' \
+      AND REPLACE(numer_tags, 'subsection/', '') = obs_tag.id \
+    GROUP BY numer_tags, obs_tag.name",
+    // Temporarily force "true" for valid_timespan
   geom: "\
     SELECT geom_id, geom_name, geom_description, valid_numer, \
-           valid_denom, valid_timespan, true valid_geom \
+           coalesce(valid_denom, true) valid_denom, true as valid_timespan, \
+           true valid_geom \
     FROM OBS_GetAvailableGeometries(st_makeenvelope({{ bounds }}, 4326), \
-         NULL, '{{ numer_id }}', '{{ denom_id }}', '{{ timespan_id }}')",
+         NULL, '{{ numer_id }}', '{{ denom_id }}', '{{ timespan_id }}') \
+    ORDER BY score DESC",
   timespan: "\
     SELECT timespan_id, timespan_name, valid_numer, \
-           valid_denom, valid_geom, true valid_timespan \
+           coalesce(valid_denom, true) valid_denom, valid_geom, \
+           true valid_timespan \
     FROM OBS_GetAvailableTimespans( \
            st_makeenvelope({{ bounds }}, 4326), NULL, '{{ numer_id }}', \
                           '{{ denom_id }}', '{{ geom_id }}')",
   numer: "\
     SELECT numer_id, numer_name, numer_description, valid_geom, \
-           valid_denom, valid_timespan, true valid_numer, \
-           ARRAY['tags.age_gender'] subsection_tags \
+           coalesce(valid_denom, true) valid_denom, valid_timespan, \
+           true valid_numer, numer_tags \
     FROM OBS_GetAvailableNumerators( \
            st_makeenvelope({{ bounds }}, 4326), NULL, '{{ denom_id }}', \
                           '{{ geom_id }}', '{{ timespan_id }}')",
@@ -380,7 +332,7 @@ var queries = {
            valid_numer, valid_geom, true valid_timespan, true valid_denom \
     FROM OBS_GetAvailableDenominators( \
            st_makeenvelope({{ bounds }}, 4326), NULL, '{{ numer_id }}', \
-                          '{{ denom_id }}', '{{ geom_id }}')"
+                          '{{ geom_id }}', '{{ timespan_id }}')"
 };
 
 var fmt = function(val, max, unitHuman) {
@@ -449,7 +401,8 @@ $( document ).ready(function () {
         unit = 'unknown';
       }
       if (!ramps[unit]) {
-        throw Error('No ramp for unit "' + unit + '"');
+        //throw Error('No ramp for unit "' + unit + '"');
+        unit = 'unknown';
       }
       var ramp = ramps[unit];
       var mapType;
@@ -473,7 +426,10 @@ $( document ).ready(function () {
         cartoCSS = choroplethCSS;
         legendTemplate = choroplethLegendTemplate;
       }
-      sql.execute(statsSql, {table: tableSql}, function (stats) {
+      sql.execute(statsSql, {table: tableSql.replace(
+        ' as data,',
+        ' as data TABLESAMPLE SYSTEM(5),')
+      }, function (stats) {
         var l, renderedCSS;
         stats = stats.rows[0];
         var unitstr = unitHuman[mapType](unit);
@@ -548,10 +504,10 @@ $( document ).ready(function () {
 
         // Filter by subsection for numer, _all_ selected subsections must be
         // tags
-        var ssTags = r.subsection_tags;
         if (type === 'numer') {
+          var tags = JSON.parse(r.numer_tags);
           if (subsections.length > 0 &&
-              _.intersection(subsections, ssTags).length !== subsections.length
+              _.intersection(subsections, _.keys(tags)).length !== subsections.length
           ) {
             return;
           }
@@ -560,7 +516,7 @@ $( document ).ready(function () {
         var selected = false;
         var invalidCount;
         var $option = $('<option />')
-                       .text(r[type + '_name'] || 'None')
+                       .text(decodeURIComponent(escape(r[type + '_name'])) || 'None')
                        .data(r)
                        .val(r[type + '_id'] || '');
         if ((r[type + '_id'] || '') === selection[type + '_id']) {
@@ -625,20 +581,26 @@ $( document ).ready(function () {
       });
 
       nativeMap.on('moveend', function () {
-        renderMenu();
-        renderSubsections();
-        renderDialog();
+        if (nativeMap.getZoom() > 4) {
+          renderMenu();
+          renderSubsections();
+          renderDialog();
+        }
       });
 
       $('.box-select').on('change', function () {
-        renderMenu();
-        renderSubsections();
-        renderMap();
+        if (nativeMap.getZoom() > 4) {
+          renderMenu();
+          renderSubsections();
+          renderMap();
+        }
       });
 
       $('.box-subsectionSelect').on('change', function () {
-        renderMenu();
-        renderSubsections();
+        if (nativeMap.getZoom() > 4) {
+          renderMenu();
+          renderSubsections();
+        }
       });
 
       $( ".box-input" ).on( "click", function () {
@@ -646,8 +608,11 @@ $( document ).ready(function () {
         maxHeightList();
         $(".box-container").toggleClass( "is-hidden" );
       });
-      renderMenu();
-      renderSubsections();
-      renderMap();
+
+      if (nativeMap.getZoom() > 4) {
+        renderMenu();
+        renderSubsections();
+        renderMap();
+      }
     });
 });

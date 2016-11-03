@@ -57,7 +57,7 @@ vizjson({
         "sql_api_endpoint": "/api/v2/sql",
         "sql_api_port": 80,
         "filter": "mapnik",
-        "minZoom": "5",
+        "minZoom": "4",
         "maxZoom": "18",
         "layer_definition": {
           "stat_tag": "d996e7b2-1c78-11e6-b921-0e31c9be1b51",
