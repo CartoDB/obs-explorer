@@ -306,10 +306,20 @@ var queries = {
       AND REPLACE(numer_tags, 'subsection/', '') = obs_tag.id \
     GROUP BY numer_tags, obs_tag.name",
     // Temporarily force "true" for valid_timespan
+    //
+    //   score NUMERIC,
+    //     numtiles BIGINT,
+    //       notnull_percent NUMERIC,
+    //         numgeoms NUMERIC,
+    //           percentfill NUMERIC,
+    //             estnumgeoms NUMERIC,
+    //               meanmediansize NUMERIC
+    //
   geom: "\
     SELECT geom_id, geom_name, geom_description, valid_numer, \
            coalesce(valid_denom, true) valid_denom, true as valid_timespan, \
-           true valid_geom \
+           true valid_geom, score, numtiles, notnull_percent, numgeoms, \
+           percentfill, estnumgeoms, meanmediansize \
     FROM OBS_GetAvailableGeometries(st_makeenvelope({{ bounds }}, 4326), \
          NULL, '{{ numer_id }}', '{{ denom_id }}', '{{ timespan_id }}') \
     ORDER BY score DESC",
@@ -515,8 +525,12 @@ $( document ).ready(function () {
 
         var selected = false;
         var invalidCount;
+        var name = decodeURIComponent(escape(r[type + '_name'])) || 'None';
+        if (type === 'geom') {
+          name += ' (' + r.numgeoms.toFixed(0) + ')';
+        }
         var $option = $('<option />')
-                       .text(decodeURIComponent(escape(r[type + '_name'])) || 'None')
+                       .text(name)
                        .data(r)
                        .val(r[type + '_id'] || '');
         if ((r[type + '_id'] || '') === selection[type + '_id']) {
