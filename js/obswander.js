@@ -286,9 +286,7 @@ var queries = {
            numer_timespan, denom_timespan, geom_timespan, \
            numer_type, denom_type, geom_type \
     FROM obs_meta \
-    WHERE st_intersects( \
-        the_geom, st_makeenvelope({{ bounds }}, 4326)) \
-      AND '{{ numer_id }}' = numer_id \
+    WHERE '{{ numer_id }}' = numer_id \
       AND ('{{ denom_id }}' = denom_id OR \
            ('{{ denom_id }}' = '' AND denom_id IS NULL)) \
       AND '{{ geom_id }}' = geom_id \
