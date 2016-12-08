@@ -523,7 +523,11 @@ $( document ).ready(function () {
 
         var selected = false;
         var invalidCount;
-        var name = decodeURIComponent(escape(r[type + '_name'])) || 'None';
+        try {
+          var name = decodeURIComponent(escape(r[type + '_name'])) || 'None';
+        } catch (err) {
+          var name = r[type + '_name'] || 'None';
+        }
         if (type === 'geom') {
           name += ' (' + r.numgeoms.toFixed(0) + ')';
         }
