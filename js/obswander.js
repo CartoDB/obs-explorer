@@ -513,7 +513,7 @@ $( document ).ready(function () {
         // Filter by subsection for numer, _all_ selected subsections must be
         // tags
         if (type === 'numer') {
-          var tags = JSON.parse(r.numer_tags);
+          var tags = r.numer_tags;
           if (subsections.length > 0 &&
               _.intersection(subsections, _.keys(tags)).length !== subsections.length
           ) {
