@@ -27,6 +27,11 @@ var ramps = {
   'unknown': {
     5: '#6c2167', 4: '#a24186', 3: '#ca699d', 2: '#e498b4', 1: '#f3cbd3'
   },
+  'unknown-categorical': {
+    1: '#7F3C8D', 2: '#11A579', 3: '#3969AC', 4: '#F2B701', 5: '#E73F74',
+    6: '#80BA5A', 7: '#E68310', 8: '#008695', 9: '#CF1C90', 10: '#f97b72',
+    other: '#A5AA99'
+  },
   'tags.people': {
     5: '#6c2167', 4: '#a24186', 3: '#ca699d', 2: '#e498b4', 1: '#f3cbd3'
   },
@@ -419,8 +424,11 @@ $( document ).ready(function () {
         mapType = 'denominated';
       } else if (result.numer_aggregate === 'sum') {
         mapType = 'areaNormalized';
-      } else if (unit === 'tags.segmentation') {
+      } else if (unit === 'tags.segmentation' || result.numer_type.match(/Text/i)) {
         mapType = 'categorical';
+        if (unit === 'unknown') {
+          ramp = ramps['unknown-categorical']
+        }
       } else {
         mapType = 'predenominated';
       }
