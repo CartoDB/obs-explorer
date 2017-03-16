@@ -561,6 +561,21 @@ $( document ).ready(function () {
           }
         }
       });
+      /** Always include an option for no denom **/
+      if ($available.children().length === 0 && type === 'denom') {
+        var $noDenomOption = $('<option />')
+                              .text("None")
+                              .data({
+                                denom_description : "",
+                                denom_id : "",
+                                denom_name : "None"
+                              }).val('');
+        if (selection[type + '_id'] === "") {
+          $noDenomOption.prop('selected', true);
+          //selected = true;
+        }
+        $available.append($noDenomOption);
+      }
       $select.select2();
     });
   };
