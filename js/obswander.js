@@ -191,35 +191,43 @@ var obsFragment = "\
 -- First, create a new table, name it how you'd like, \n\
 -- and replace <my table name> below with that name \n\
 \n\
-INSERT INTO <my table name> (the_geom, name)\n\
-SELECT * \n\
-FROM OBS_GetBoundariesByGeometry(\n\
+ALTER TABLE <my table name>\n\
+ADD COLUMN {{ numer_colname }} {{ numer_type }};\n\
+\n\
+WITH meta AS (SELECT OBS_GetMeta(\n\
   st_makeenvelope({{ bounds }}, 4326),\n\
-  '{{ geom_id }}'\n\
-) As m(the_geom, geoid);\n\
-\n\
-\n\
--- Next, add a column of type \"{{ numer_type }}\" named \"{{ numer_colname }}\"\n\
-\n\
-UPDATE <my table name>\n\
-SET {{ numer_colname }} = OBS_GetMeasureByID(name, \n\
-  '{{ numer_id }}', \n\
-  '{{ geom_id }}', \n\
-  '{{ numer_timespan }}') / \n\
-{{# denom_id }}\
-NULLIF(OBS_GetMeasureByID(name, \n\
-  '{{ denom_id }}', \n\
-  '{{ geom_id }}', \n\
-  '{{ denom_timespan }}'), 0)\
-{{/ denom_id }}\
-{{^ denom_id }}\
-  (ST_Area(the_geom_webmercator) / 1000000.0)\
-{{/ denom_id }}\
+  '[{\"geom_id\": \"{{ geom_id }}\"},\n\
+    {\"numer_id\": \"{{ numer_id }}\",\n\
+     \"denom_id\": \"{{ denom_id }}\",\n\
+     \"numer_timespan\": \"{{ numer_timespan }}\",\n\
+     \"geom_id\": \"{{ geom_id }}\"}]'\n\
+) meta)\n\
+INSERT INTO <my table name> (the_geom, {{ numer_colname }})\n\
+SELECT (data->0->>'value')::Geometry the_geom, \n\
+       (data->1->>'value')::{{ numer_type }} {{ colname }} \n\
+FROM OBS_GetData(\n\
+  Array[(ST_MakeEnvelope({{ bounds }}, 4326), 1)::geomval],\n\
+  (SELECT meta FROM meta), false)\n\
 ;\n\n\
 -- numer: http://observatory.cartodb.com/tables/{{ numer_tablename }}\n\
 -- denom: http://observatory.cartodb.com/tables/{{ denom_tablename }}\n\
 -- geom: http://observatory.cartodb.com/tables/{{ geom_tablename }}\n\
 ";
+
+var uploadFragment = "\
+WITH meta AS (SELECT OBS_GetMeta(\
+  st_makeenvelope({{ bounds }}, 4326),\
+  '[{\"geom_id\": \"{{ geom_id }}\"},\
+    {\"numer_id\": \"{{ numer_id }}\",\
+     \"denom_id\": \"{{ denom_id }}\",\
+     \"numer_timespan\": \"{{ numer_timespan }}\",\
+     \"geom_id\": \"{{ geom_id }}\"}]'\
+) meta)\
+SELECT (data->0->>'value')::Geometry the_geom, \
+       (data->1->>'value')::{{ numer_type }} {{ colname }} \
+FROM OBS_GetData(\
+  Array[(ST_MakeEnvelope({{ bounds }}, 4326), 1)::geomval],\
+  (SELECT meta FROM meta), false)";
 
 var measureExprs = {
   predenominated: 'data.{{ numer_colname }} val ',
@@ -397,7 +405,18 @@ $( document ).ready(function () {
   var renderDialog = function () {
     lastResult.bounds = nativeMap.getBounds().toBBoxString();
     $('.obs-code-fragment').text(Mustache.render(obsFragment, lastResult));
+    $('#upload-sql').attr('value', Mustache.render(uploadFragment, lastResult));
   };
+
+  $('#upload').on('click', function (evt) {
+    var $el = $('#upload');
+
+    var url = "http://oneclick.carto.com/?file=" + encodeURIComponent(encodeURI(
+      "http://jkrauss.carto.com/api/v2/sql?q=" +
+      $('#upload-sql').val() +
+      "&format=csv&api_key=" + $("#api_key").val()))
+    $el.attr('href', url);
+  });
 
   var renderMap = function () {
     query('data').done(function (results) {
