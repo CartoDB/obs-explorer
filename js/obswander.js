@@ -400,31 +400,31 @@ var query = function (type) {
 };
 
 /**
- * Get or set an API key, depending on if `new_api_key` is passed in.
+ * Get or set an element of state in hash
  */
-var api_key = function (new_api_key) {
-  var hash = window.location.hash.substr(1);
-  if (new_api_key) {
+var state = function (key, val) {
+  var hash = decodeURIComponent(window.location.hash.substr(1));
+  var state;
+  if (val) {
     if (hash.length > 0) {
-      var state = JSON.parse(hash);
-      state.api_key = api_key;
-      window.location.hash = JSON.stringify(state);
+      state = JSON.parse(hash);
     } else {
-      window.location.hash = JSON.stringify({api_key: new_api_key});
+      state = {};
     }
+    state[key] = val;
+    window.location.hash = JSON.stringify(state);
   } else {
     if (hash.length > 0) {
-      return JSON.parse(hash).api_key;
+      return JSON.parse(hash)[key];
     }
-    return $('#foobar').val();
   }
 };
 
 $( document ).ready(function () {
   var sublayer;
 
-  if (api_key()) {
-    $('#foobar').val(api_key());
+  if (state('api_key')) {
+    $('#api_yek').val(state('api_key'));
   }
 
   var renderDialog = function () {
@@ -433,17 +433,25 @@ $( document ).ready(function () {
     $('#upload-sql').attr('value', Mustache.render(uploadFragment, lastResult));
   };
 
-  $('#foobar').on('change', function (evt) {
-    if ($('#store_api_key').is(':checked')) {
-      api_key($(evt.target).val());
+  $('#api_yek').on('change', function (evt) {
+    if ($('#store_credentials').is(':checked')) {
+      state('api_key', $(evt.target).val());
+    }
+  });
+
+  $('#user').on('change', function (evt) {
+    if ($('#store_credentials').is(':checked')) {
+      state('user', $(evt.target).val());
     }
   });
 
   $('.open-in-carto').on('click', function (evt) {
-    var key = api_key(), $a = $(evt.target).parent('a');
-    if (key) {
+    var key = state('api_key') || $('#api_yek').val(),
+        user = state('user') || $('#user').val(),
+        $a = $(evt.target).parent('a');
+    if (key && user) {
       var url = "http://oneclick.carto.com/?file=" + encodeURIComponent(encodeURI(
-        "http://jkrauss.carto.com/api/v2/sql?q=" +
+        "http://" + user + ".carto.com/api/v2/sql?q=" +
         $('#upload-sql').val() +
         "&format=csv&api_key=" + key))
       $a.attr('href', url);
