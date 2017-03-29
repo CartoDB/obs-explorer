@@ -28,7 +28,7 @@
 </head>
 
 <body class="coverage">
-  <div id='myModal' class="modal fade" tabindex="-1" role="dialog">
+  <div id='getDataModal' class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -41,9 +41,34 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
-        <input type="text" name="api_key" placeholder="API Key" value="" id="api_key"/>
-        <input type="hidden" name="sql" value="" id="upload-sql" />
-        <a id="upload" target="_blank">Open in CARTO (Must have entered API key)</a>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <div id='openInCartoModal' class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Enter your API key</h4>
+        </div>
+        <div class="modal-body">
+          <p>In order to open in CARTO, you need to supply an API key.</p>
+          <p>
+            <label for="store_api_key">Remember my API key</label>
+            <input type="checkbox" name="store_api_key" checked="checked" id="store_api_key"/>
+            <input type="text" name="foobar" placeholder="API Key" value="" id="foobar"/>
+            <input type="hidden" name="sql" value="" id="upload-sql" />
+          </p>
+          <p>
+            <a class="open-in-carto" target="_blank"><button type="button" class="btn btn-primary">
+                Open in Carto
+            </button></a>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
@@ -53,6 +78,18 @@
   <div class="box">
     <div class="box-inner">
       <div class="box-header">
+        <div>
+          <p>
+            <a class="open-in-carto" target="_blank"><button type="button" class="btn btn-primary">
+                Open in Carto
+            </button></a>
+          </p>
+          <p>
+            <a><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#getDataModal">
+                Get Data
+            </button></a>
+          <p>
+        </div>
         <div class="box-selectWrapper">
           <h2 class="box-selectTitle js-box-selectTitle">Filter</h2>
           <div class="box-selectInfo">
@@ -116,9 +153,6 @@
             </select>
           </div>
         </div>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-            Get Data
-        </button>
       </div>
     </div>
   </div>

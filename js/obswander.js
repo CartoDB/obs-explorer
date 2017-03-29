@@ -399,23 +399,57 @@ var query = function (type) {
   return $dfd.promise();
 };
 
+/**
+ * Get or set an API key, depending on if `new_api_key` is passed in.
+ */
+var api_key = function (new_api_key) {
+  var hash = window.location.hash.substr(1);
+  if (new_api_key) {
+    if (hash.length > 0) {
+      var state = JSON.parse(hash);
+      state.api_key = api_key;
+      window.location.hash = JSON.stringify(state);
+    } else {
+      window.location.hash = JSON.stringify({api_key: new_api_key});
+    }
+  } else {
+    if (hash.length > 0) {
+      return JSON.parse(hash).api_key;
+    }
+    return $('#foobar').val();
+  }
+};
+
 $( document ).ready(function () {
   var sublayer;
 
+  if (api_key()) {
+    $('#foobar').val(api_key());
+  }
+
   var renderDialog = function () {
-    lastResult.bounds = nativeMap.getBounds().toBBoxString();
+    lastResult.bounds = nativeMap.getBounds().toBBoxString().replace(/(\.\d\d)\d*/g, '$1');
     $('.obs-code-fragment').text(Mustache.render(obsFragment, lastResult));
     $('#upload-sql').attr('value', Mustache.render(uploadFragment, lastResult));
   };
 
-  $('#upload').on('click', function (evt) {
-    var $el = $('#upload');
+  $('#foobar').on('change', function (evt) {
+    if ($('#store_api_key').is(':checked')) {
+      api_key($(evt.target).val());
+    }
+  });
 
-    var url = "http://oneclick.carto.com/?file=" + encodeURIComponent(encodeURI(
-      "http://jkrauss.carto.com/api/v2/sql?q=" +
-      $('#upload-sql').val() +
-      "&format=csv&api_key=" + $("#api_key").val()))
-    $el.attr('href', url);
+  $('.open-in-carto').on('click', function (evt) {
+    var key = api_key(), $a = $(evt.target).parent('a');
+    if (key) {
+      var url = "http://oneclick.carto.com/?file=" + encodeURIComponent(encodeURI(
+        "http://jkrauss.carto.com/api/v2/sql?q=" +
+        $('#upload-sql').val() +
+        "&format=csv&api_key=" + key))
+      $a.attr('href', url);
+    } else {
+      $('#openInCartoModal').modal('show');
+    }
   });
 
   var renderMap = function () {
