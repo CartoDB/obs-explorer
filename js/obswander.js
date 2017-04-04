@@ -204,6 +204,7 @@ WITH meta AS (SELECT OBS_GetMeta(\n\
 ) meta)\n\
 INSERT INTO <my table name> (the_geom, {{ numer_colname }})\n\
 SELECT (data->0->>'value')::Geometry the_geom, \n\
+       (data->0->>'geomref') geomref, \n\
        (data->1->>'value')::{{ numer_type }} {{ colname }} \n\
 FROM OBS_GetData(\n\
   Array[(ST_MakeEnvelope({{ bounds }}, 4326), 1)::geomval],\n\
@@ -224,6 +225,7 @@ WITH meta AS (SELECT OBS_GetMeta(\
      \"geom_id\": \"{{ geom_id }}\"}]'\
 ) meta)\
 SELECT (data->0->>'value')::Geometry the_geom, \
+       (data->0->>'geomref') geomref, \n\
        (data->1->>'value')::{{ numer_type }} {{ colname }} \
 FROM OBS_GetData(\
   Array[(ST_MakeEnvelope({{ bounds }}, 4326), 1)::geomval],\
