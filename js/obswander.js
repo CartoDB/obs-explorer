@@ -202,7 +202,7 @@ WITH meta AS (SELECT OBS_GetMeta(\n\
      \"numer_timespan\": \"{{ numer_timespan }}\",\n\
      \"geom_id\": \"{{ geom_id }}\"}]'\n\
 ) meta)\n\
-INSERT INTO <my table name> (the_geom, {{ numer_colname }})\n\
+INSERT INTO <my table name> (the_geom, name, {{ numer_colname }})\n\
 SELECT (data->0->>'value')::Geometry the_geom, \n\
        (data->0->>'geomref') geomref, \n\
        (data->1->>'value')::{{ numer_type }} {{ colname }} \n\
